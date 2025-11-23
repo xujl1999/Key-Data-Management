@@ -366,8 +366,20 @@
       const loadCSV = async () => {
         statusEl.textContent = "正在加载数据...";
         try {
-          const response = await fetch("../video_ls.csv", { cache: "no-cache" });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          // 优先尝试从 GitHub raw 加载，如果失败则尝试本地路径
+          const githubUrl = "https://raw.githubusercontent.com/xujl1999/data-management/main/video_ls.csv";
+          const localUrl = "../video_ls.csv";
+          
+          let response;
+          try {
+            response = await fetch(githubUrl, { cache: "no-cache" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          } catch (e) {
+            // 如果 GitHub 加载失败，尝试本地路径
+            response = await fetch(localUrl, { cache: "no-cache" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          }
+          
           const text = await response.text();
           const rows = parseCSV(text);
           if (!rows.length) {

@@ -90,6 +90,7 @@ for i in tqdm(range(len(author_config))):
 
 df = pd.DataFrame(rows)
 df.to_csv('video_ls.csv')
+df.to_csv('../web/video_ls.csv')
 
 # # 筛选优质博主 # 改为前端逻辑
 # df = pd.read_csv('video_ls.csv')

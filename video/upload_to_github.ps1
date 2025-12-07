@@ -49,7 +49,7 @@ git status --short
 
 # 提交更改
 Write-Host "`n提交更改..." -ForegroundColor Yellow
-$commitMessage = "更新 mini-bilibili 项目"
+$commitMessage = "更新数据"
 git commit -m $commitMessage
 
 # 推送到 GitHub

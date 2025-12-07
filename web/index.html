@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Key-Data-Management</title>
+    <style>
+      :root {
+        font-family: "Inter", "PingFang SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #f8fafc;
+        background-color: #020617;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        display: flex;
+        justify-content: center;
+        background: radial-gradient(circle at top, rgba(37, 99, 235, 0.15), transparent 60%) #020617;
+      }
+      main {
+        width: min(960px, 100%);
+        background: #0f172a;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 30px 80px rgba(2, 8, 23, 0.85);
+      }
+      header {
+        margin-bottom: 24px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.75rem;
+      }
+      p {
+        margin: 0;
+        color: #cbd5f5;
+      }
+      .status {
+        margin-top: 16px;
+        font-size: 0.95rem;
+        color: #60a5fa;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        font-size: 0.95rem;
+      }
+      thead {
+        position: sticky;
+        top: 0;
+        background: rgba(30, 41, 59, 0.85);
+        z-index: 1;
+      }
+      th,
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.35);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        font-weight: 600;
+        color: #e2e8f0;
+        letter-spacing: 0.02em;
+      }
+      tbody tr:nth-child(odd) {
+        background-color: rgba(15, 23, 42, 0.7);
+      }
+      tbody tr:hover {
+        background-color: rgba(37, 99, 235, 0.25);
+      }
+      a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .scroll-wrap {
+        overflow-x: auto;
+        border-radius: 12px;
+      }
+      .filters {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .filter-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 180px;
+      }
+      .filter-field span {
+        font-size: 0.85rem;
+        color: #475569;
+      }
+      .chip-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: transparent;
+        color: #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 14px;
+        line-height: 17px;
+        width: 75px;
+        height: 34px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .chip:hover {
+        border-color: #93c5fd;
+        color: #93c5fd;
+      }
+      .chip--active {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+      }
+      input[type="number"],
+      select {
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        background: #1f2937;
+        color: #e2e8f0;
+      }
+      .tab-bar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .tab-button {
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.05);
+        color: #cbd5f5;
+        padding: 10px 18px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .tab-button--active {
+        background: #2563eb;
+        border-color: #93c5fd;
+        color: #fff;
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel--active {
+        display: block;
+      }
+      @media (max-width: 640px) {
+        main {
+          padding: 20px;
+        }
+        table {
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header style="margin-bottom: 16px;">
+        <h1>Key-Data-Management</h1>
+      </header>
+      <div class="tab-bar">
+        <button class="tab-button" data-tab="health">健康</button>
+        <button class="tab-button tab-button--active" data-tab="entertainment">娱乐</button>
+        <button class="tab-button" data-tab="knowledge">知识库</button>
+      </div>
+      <section class="tab-panel" id="tab-health">
+        <p>健康板块建设中，敬请期待。</p>
+      </section>
+      <section class="tab-panel tab-panel--active" id="tab-entertainment">
+      <header>
+        <p>更新时间：<span id="update-time" style="margin-left: 8px; font-size: 0.9rem;"></span></p>
+        <div class="status" id="status">正在加载数据...</div>
+        <div class="filters">
+          <div class="filter-field">
+            <span>视频类型</span>
+            <div class="chip-group" id="category-group"></div>
+          </div>
+          <label class="filter-field">
+            <span>单作者视频条数</span>
+            <select id="limit-input"></select>
+          </label>
+        </div>
+      </header>
+      <div class="scroll-wrap">
+        <table>
+          <thead>
+            <tr id="table-head"></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      </section>
+      <section class="tab-panel" id="tab-knowledge">
+        <p>知识库敬请期待。</p>
+      </section>
+    </main>
+    <script>
+      const statusEl = document.getElementById("status");
+      const updateTimeEl = document.getElementById("update-time");
+      const headRow = document.getElementById("table-head");
+      const bodyEl = document.getElementById("table-body");
+      const categoryGroup = document.getElementById("category-group");
+      const limitInput = document.getElementById("limit-input");
+      const tabButtons = document.querySelectorAll(".tab-button");
+      const tabPanels = document.querySelectorAll(".tab-panel");
+
+      const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
+      const DEFAULT_CATEGORY = "超优质";
+      const DEFAULT_LIMIT = 1;
+      const MAX_LIMIT = 10;
+      const CSV_SOURCES = [
+        { url: "video_ls.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/data-management/master/video_ls.csv", label: "GitHub Raw" },
+      ];
+
+      let records = [];
+      let activeCategory = CATEGORY_OPTIONS.includes(DEFAULT_CATEGORY) ? DEFAULT_CATEGORY : CATEGORY_OPTIONS[0];
+
+      const fallbackHeader = (text, index) => {
+        if (text && text.trim()) return text.trim();
+        return index === 0 ? "id" : `col_${index}`;
+      };
+
+      const parseCSV = (text) => {
+        const rows = [];
+        let current = "";
+        let row = [];
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+          const next = text[i + 1];
+
+          if (char === "\r" && next === "\n" && !inQuotes) {
+            continue;
+          }
+
+          if (char === "\n" && !inQuotes) {
+            row.push(current);
+            rows.push(row);
+            row = [];
+            current = "";
+            continue;
+          }
+
+          if (char === '"') {
+            if (inQuotes && next === '"') {
+              current += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+            continue;
+          }
+
+          if (char === "," && !inQuotes) {
+            row.push(current);
+            current = "";
+            continue;
+          }
+
+          current += char;
+        }
+
+        if (current.length > 0 || row.length) {
+          row.push(current);
+          rows.push(row);
+        }
+
+        return rows.filter((cells) => cells.some((cell) => cell.trim().length));
+      };
+
+      const normalizeKey = (text) => text.trim().toLowerCase();
+
+      const createCell = (tag, text, linkHref = "") => {
+        const cell = document.createElement(tag);
+        if (linkHref && text) {
+          const link = document.createElement("a");
+          link.href = linkHref;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.textContent = text;
+          cell.appendChild(link);
+        } else {
+          cell.textContent = text || "";
+        }
+        return cell;
+      };
+
+      const parsePublishDate = (text) => {
+        if (!text) return 0;
+        const now = new Date();
+        const cleaned = text.trim();
+        if (!cleaned) return 0;
+
+        const normalized = cleaned.replace(/\./g, "-");
+        const direct = Date.parse(normalized);
+        if (!Number.isNaN(direct)) {
+          return direct;
+        }
+
+        const mmddPattern = /^(\d{1,2})-(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?$/;
+        const mmddMatch = cleaned.match(mmddPattern);
+        if (mmddMatch) {
+          const year = now.getFullYear();
+          const month = parseInt(mmddMatch[1], 10) - 1;
+          const day = parseInt(mmddMatch[2], 10);
+          const hour = mmddMatch[3] ? parseInt(mmddMatch[3], 10) : 0;
+          const minute = mmddMatch[4] ? parseInt(mmddMatch[4], 10) : 0;
+          const guessed = new Date(year, month, day, hour, minute);
+          if (guessed > now) {
+            guessed.setFullYear(year - 1);
+          }
+          return guessed.getTime();
+        }
+
+        const relHour = cleaned.match(/^(\d+)\s*小时前$/);
+        if (relHour) {
+          const diff = parseInt(relHour[1], 10);
+          const d = new Date(now);
+          d.setHours(d.getHours() - diff);
+          return d.getTime();
+        }
+
+        const relMinute = cleaned.match(/^(\d+)\s*分钟前$/);
+        if (relMinute) {
+          const diff = parseInt(relMinute[1], 10);
+          const d = new Date(now);
+          d.setMinutes(d.getMinutes() - diff);
+          return d.getTime();
+        }
+
+        const yesterdayMatch = cleaned.match(/^昨天(?:\s+(\d{1,2}):(\d{2}))?$/);
+        if (yesterdayMatch) {
+          const d = new Date(now);
+          d.setDate(d.getDate() - 1);
+          const hour = yesterdayMatch[1] ? parseInt(yesterdayMatch[1], 10) : 0;
+          const minute = yesterdayMatch[2] ? parseInt(yesterdayMatch[2], 10) : 0;
+          d.setHours(hour, minute, 0, 0);
+          return d.getTime();
+        }
+
+        const todayTime = cleaned.match(/^(\d{1,2}):(\d{2})$/);
+        if (todayTime) {
+          const d = new Date(now);
+          d.setHours(parseInt(todayTime[1], 10), parseInt(todayTime[2], 10), 0, 0);
+          return d.getTime();
+        }
+
+        if (cleaned === "刚刚") {
+          return now.getTime();
+        }
+
+        return 0;
+      };
+
+      const ensureLimitValue = () => {
+        let value = parseInt(limitInput.value, 10);
+        if (Number.isNaN(value) || value < 1) {
+          value = DEFAULT_LIMIT;
+        }
+        value = Math.min(value, MAX_LIMIT);
+        limitInput.value = value;
+        return value;
+      };
+
+      const initLimitSelect = () => {
+        limitInput.innerHTML = "";
+        for (let i = 1; i <= MAX_LIMIT; i++) {
+          const option = document.createElement("option");
+          option.value = i;
+          option.textContent = i;
+          if (i === DEFAULT_LIMIT) {
+            option.selected = true;
+          }
+          limitInput.appendChild(option);
+        }
+      };
+
+      const switchTab = (target) => {
+        tabButtons.forEach((button) => {
+          button.classList.toggle("tab-button--active", button.dataset.tab === target);
+        });
+        tabPanels.forEach((panel) => {
+          panel.classList.toggle("tab-panel--active", panel.id === `tab-${target}`);
+        });
+      };
+
+      const renderCategoryChips = () => {
+        categoryGroup.innerHTML = "";
+        CATEGORY_OPTIONS.forEach((label) => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = `chip${label === activeCategory ? " chip--active" : ""}`;
+          chip.textContent = label;
+          chip.addEventListener("click", () => {
+            if (activeCategory === label) return;
+            activeCategory = label;
+            renderCategoryChips();
+            applyFilters();
+          });
+          categoryGroup.appendChild(chip);
+        });
+      };
+
+      const buildRecords = (rows) => {
+        if (!rows.length) return [];
+        const headers = rows[0].map(fallbackHeader).map(normalizeKey);
+        return rows.slice(1).map((row) => {
+          const record = {};
+          headers.forEach((key, idx) => {
+            record[key] = (row[idx] || "").trim();
+          });
+          record._timestamp = parsePublishDate(record.publish_date || record["publish_date"]);
+          return record;
+        });
+      };
+
+      const renderHeader = () => {
+        headRow.innerHTML = "";
+        ["作者", "视频发布时间", "视频名称"].forEach((text) => {
+          headRow.appendChild(createCell("th", text));
+        });
+      };
+
+      const renderBody = (rows) => {
+        bodyEl.innerHTML = "";
+        if (!rows.length) {
+          const tr = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 3;
+          cell.textContent = "暂无数据";
+          tr.appendChild(cell);
+          bodyEl.appendChild(tr);
+          return;
+        }
+
+        rows.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.appendChild(createCell("td", item.author || "-"));
+          tr.appendChild(createCell("td", item.publish_date || "-"));
+          tr.appendChild(createCell("td", item.title || "", item.url || ""));
+          bodyEl.appendChild(tr);
+        });
+      };
+
+      const applyFilters = () => {
+        if (!records.length) {
+          renderBody([]);
+          statusEl.textContent = "暂无数据";
+          return;
+        }
+
+        const limit = ensureLimitValue();
+        const authorCounts = new Map();
+        const authorSet = new Set();
+        const rows = [];
+
+        records.forEach((record) => {
+          const category = record.category || record["category"] || "";
+          if (!record.author || !record.title) return;
+          if (activeCategory !== "全部" && category !== activeCategory) return;
+
+          const used = authorCounts.get(record.author) || 0;
+          if (used >= limit) return;
+
+          authorCounts.set(record.author, used + 1);
+          authorSet.add(record.author);
+          rows.push(record);
+        });
+
+        rows.sort((a, b) => (b._timestamp || 0) - (a._timestamp || 0));
+
+        renderBody(rows);
+
+        if (rows.length) {
+          statusEl.textContent = `筛选：${activeCategory} · 作者 ${authorSet.size} 位，共 ${rows.length} 条（每位最多 ${limit} 条）`;
+        } else {
+          statusEl.textContent = "暂无匹配数据";
+        }
+      };
+
+      limitInput.addEventListener("change", () => {
+        ensureLimitValue();
+        applyFilters();
+      });
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => switchTab(button.dataset.tab));
+      });
+
+      const formatUpdateTime = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        return ` ${year}-${month}-${day} ${hours}:${minutes}`;
+      };
+
+      const isSameOrigin = (url) => {
+        try {
+          const absolute = new URL(url, window.location.href);
+          return absolute.origin === window.location.origin;
+        } catch (error) {
+          console.warn("Invalid URL for origin check", url, error);
+          return false;
+        }
+      };
+
+      const resolveLastModified = async (response, url) => {
+        const headerValue = response.headers.get("Last-Modified");
+        if (headerValue) {
+          const parsed = new Date(headerValue);
+          if (!Number.isNaN(parsed.getTime())) {
+            return parsed;
+          }
+        }
+        if (!isSameOrigin(url)) {
+          return null;
+        }
+        try {
+          const headResp = await fetch(url, { method: "HEAD", cache: "no-store" });
+          if (headResp.ok) {
+            const headValue = headResp.headers.get("Last-Modified");
+            if (headValue) {
+              const fallback = new Date(headValue);
+              if (!Number.isNaN(fallback.getTime())) {
+                return fallback;
+              }
+            }
+          }
+        } catch (error) {
+          console.warn("HEAD request failed", error);
+        }
+        return null;
+      };
+
+      const fetchCSVSource = async () => {
+        const errors = [];
+        for (const source of CSV_SOURCES) {
+          try {
+            const response = await fetch(source.url, { cache: "no-store" });
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            const text = await response.text();
+            const lastModified = await resolveLastModified(response, source.url);
+            return { text, lastModified, sourceLabel: source.label };
+          } catch (error) {
+            errors.push(`${source.label}: ${error.message}`);
+          }
+        }
+        throw new Error(errors.join(" | "));
+      };
+
+      const loadCSV = async () => {
+        statusEl.textContent = "正在加载数据...";
+        updateTimeEl.textContent = " 正在获取...";
+        try {
+          const { text, lastModified, sourceLabel } = await fetchCSVSource();
+          if (lastModified) {
+            updateTimeEl.textContent = formatUpdateTime(lastModified);
+            updateTimeEl.title = `${lastModified.toString()} · 来源：${sourceLabel}`;
+          } else {
+            updateTimeEl.textContent = ` 无可用数据（来源：${sourceLabel})`;
+            updateTimeEl.removeAttribute("title");
+          }
+          const rows = parseCSV(text);
+          if (!rows.length) {
+            statusEl.textContent = "CSV 文件为空";
+            records = [];
+            renderBody([]);
+            return;
+          }
+          records = buildRecords(rows);
+          applyFilters();
+        } catch (error) {
+          console.error(error);
+          statusEl.textContent = "加载失败，请确认 CSV 文件路径正确";
+          records = [];
+          renderBody([]);
+        }
+      };
+
+      renderCategoryChips();
+      initLimitSelect();
+      ensureLimitValue();
+      renderHeader();
+      renderBody([]);
+      loadCSV();
+    </script>
+  </body>
+</html>

@@ -783,14 +783,14 @@
 </html>
       const isoWeekKey = (dateObj) => {
         const d = new Date(dateObj);
-        d.setHours(0, 0, 0, 0);
-        const dayNum = (d.getDay() + 6) % 7; // Monday=0
-        d.setDate(d.getDate() - dayNum + 3);
-        const firstThursday = new Date(d.getFullYear(), 0, 4);
-        const firstDayNum = (firstThursday.getDay() + 6) % 7;
-        firstThursday.setDate(firstThursday.getDate() - firstDayNum + 3);
-        const week = 1 + Math.round((d - firstThursday) / 604800000);
-        return `${firstThursday.getFullYear()}-W${String(week).padStart(2, "0")}`;
+        const utc = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+        const day = (new Date(utc).getUTCDay() + 6) % 7; // Monday=0
+        const thursday = utc + (3 - day) * 86400000; // this week's Thursday UTC
+        const thursdayDate = new Date(thursday);
+        const firstThursday = Date.UTC(thursdayDate.getUTCFullYear(), 0, 4);
+        const week = 1 + Math.round((thursday - firstThursday) / 604800000);
+        const weekYear = thursdayDate.getUTCFullYear();
+        return `${weekYear}-W${String(week).padStart(2, "0")}`;
       };
 
       const monthKey = (dateObj) => {

@@ -248,8 +248,8 @@
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/video/video_ls.csv", label: "GitHub Raw" },
       ];
       const HEALTH_SOURCES = [
-        { url: "health/sleep_sessions.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_sessions.csv", label: "GitHub Raw" },
+        { url: "health/sleep_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_daily.csv", label: "GitHub Raw" },
       ];
 
       let records = [];
@@ -690,32 +690,30 @@
           const headers = rows[0].map(fallbackHeader).map(normalizeKey);
           const dataRows = rows.slice(1);
 
-          const dailyMap = new Map();
+          const daily = [];
+          dataRows.forEach((row) => {
+            const record = {};
+            headers.forEach((key, idx) => {
+              record[key] = row[idx] || "";
+            });
+            const d = parseDate(record["date"]);
+            const hours = parseFloat(record["sleep_hours"] || "0");
+            if (!d || Number.isNaN(hours)) return;
+            daily.push({ date: d, hours });
+          });
+
           const now = new Date();
           const ninetyDaysAgo = new Date(now);
           ninetyDaysAgo.setDate(now.getDate() - 90);
           const oneYearAgo = new Date(now);
           oneYearAgo.setFullYear(now.getFullYear() - 1);
 
-          dataRows.forEach((row) => {
-            const record = {};
-            headers.forEach((key, idx) => {
-              record[key] = row[idx] || "";
-            });
-            const startDate = parseDate(record["start"]);
-            const duration = parseFloat(record["duration_hours"] || "0");
-            if (!startDate || Number.isNaN(duration)) return;
-            const dateKey = startDate.toISOString().slice(0, 10);
-            dailyMap.set(dateKey, (dailyMap.get(dateKey) || 0) + duration);
-          });
-
           // 近三个月按周聚合（ISO 周）
           const weekly = new Map();
-          dailyMap.forEach((val, key) => {
-            const d = parseDate(key);
-            if (!d || d < ninetyDaysAgo) return;
-            const wk = isoWeekKey(d);
-            weekly.set(wk, (weekly.get(wk) || 0) + val);
+          daily.forEach(({ date, hours }) => {
+            if (date < ninetyDaysAgo) return;
+            const wk = isoWeekKey(date);
+            weekly.set(wk, (weekly.get(wk) || 0) + hours);
           });
           const weeklyData = Array.from(weekly.entries())
             .map(([label, value]) => ({ label, value }))
@@ -723,11 +721,10 @@
 
           // 近一年按月聚合
           const monthly = new Map();
-          dailyMap.forEach((val, key) => {
-            const d = parseDate(key);
-            if (!d || d < oneYearAgo) return;
-            const mk = monthKey(d);
-            monthly.set(mk, (monthly.get(mk) || 0) + val);
+          daily.forEach(({ date, hours }) => {
+            if (date < oneYearAgo) return;
+            const mk = monthKey(date);
+            monthly.set(mk, (monthly.get(mk) || 0) + hours);
           });
           const monthlyData = Array.from(monthly.entries())
             .map(([label, value]) => ({ label, value }))

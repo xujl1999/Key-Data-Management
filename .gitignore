@@ -1,2 +1,3 @@
-health/
-*.zip
+health/导出.zip
+health/*导出*.zip
+health/sleep_sessions.csv

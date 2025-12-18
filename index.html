@@ -184,7 +184,19 @@
         <button class="tab-button" data-tab="knowledge">知识库</button>
       </div>
       <section class="tab-panel" id="tab-health">
-        <p>健康板块建设中，敬请期待。</p>
+        <div id="health-status" class="status">正在加载健康数据...</div>
+        <div class="scroll-wrap" style="margin-top: 12px;">
+          <div id="health-charts" style="display: grid; gap: 16px;">
+            <div>
+              <h3 style="margin: 0 0 8px;">近三个月睡眠时长（按周）</h3>
+              <div id="sleep-weekly-chart"></div>
+            </div>
+            <div>
+              <h3 style="margin: 0 0 8px;">近一年睡眠时长（按月）</h3>
+              <div id="sleep-monthly-chart"></div>
+            </div>
+          </div>
+        </div>
       </section>
       <section class="tab-panel tab-panel--active" id="tab-entertainment">
       <header>
@@ -223,6 +235,9 @@
       const limitInput = document.getElementById("limit-input");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabPanels = document.querySelectorAll(".tab-panel");
+      const healthStatus = document.getElementById("health-status");
+      const sleepWeeklyChart = document.getElementById("sleep-weekly-chart");
+      const sleepMonthlyChart = document.getElementById("sleep-monthly-chart");
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
       const DEFAULT_CATEGORY = "超优质";
@@ -231,6 +246,10 @@
       const CSV_SOURCES = [
         { url: "video/video_ls.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/data-management/main/video/video_ls.csv", label: "GitHub Raw" },
+      ];
+      const HEALTH_SOURCES = [
+        { url: "health/sleep_sessions.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/data-management/main/health/sleep_sessions.csv", label: "GitHub Raw" },
       ];
 
       let records = [];
@@ -291,6 +310,11 @@
       };
 
       const normalizeKey = (text) => text.trim().toLowerCase();
+
+      const parseDate = (text) => {
+        const d = new Date(text);
+        return Number.isNaN(d.getTime()) ? null : d;
+      };
 
       const createCell = (tag, text, linkHref = "") => {
         const cell = document.createElement(tag);
@@ -404,6 +428,72 @@
         tabPanels.forEach((panel) => {
           panel.classList.toggle("tab-panel--active", panel.id === `tab-${target}`);
         });
+      };
+
+      const renderLineChart = (container, data, options = {}) => {
+        container.innerHTML = "";
+        if (!data.length) {
+          container.textContent = "暂无数据";
+          return;
+        }
+        const width = options.width || 800;
+        const height = options.height || 280;
+        const padding = 30;
+
+        const xs = data.map((_, idx) => idx);
+        const ys = data.map((d) => d.value);
+        const minY = Math.min(...ys, 0);
+        const maxY = Math.max(...ys, 1);
+        const yRange = maxY - minY || 1;
+
+        const scaleX = (x) =>
+          padding + (x / Math.max(xs.length - 1, 1)) * (width - padding * 2);
+        const scaleY = (y) =>
+          height - padding - ((y - minY) / yRange) * (height - padding * 2);
+
+        const points = data.map((d, idx) => `${scaleX(idx)},${scaleY(d.value)}`).join(" ");
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", "320");
+
+        // Axes (minimal)
+        const axis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        axis.setAttribute("x1", padding);
+        axis.setAttribute("y1", scaleY(minY));
+        axis.setAttribute("x2", width - padding);
+        axis.setAttribute("y2", scaleY(minY));
+        axis.setAttribute("stroke", "rgba(148,163,184,0.4)");
+        axis.setAttribute("stroke-width", "1");
+        svg.appendChild(axis);
+
+        const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        polyline.setAttribute("points", points);
+        polyline.setAttribute("fill", "none");
+        polyline.setAttribute("stroke", options.color || "#60a5fa");
+        polyline.setAttribute("stroke-width", "2");
+        svg.appendChild(polyline);
+
+        // Labels (first/last)
+        const addLabel = (text, x, y) => {
+          const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          t.setAttribute("x", x);
+          t.setAttribute("y", y);
+          t.setAttribute("fill", "#cbd5f5");
+          t.setAttribute("font-size", "12");
+          t.textContent = text;
+          svg.appendChild(t);
+        };
+
+        if (data.length) {
+          addLabel(data[0].label, scaleX(0), height - padding + 14);
+          addLabel(data[data.length - 1].label, scaleX(data.length - 1) - 20, height - padding + 14);
+          addLabel(maxY.toFixed(1), padding, scaleY(maxY) - 6);
+          addLabel(minY.toFixed(1), padding, scaleY(minY) + 14);
+        }
+
+        container.appendChild(svg);
       };
 
       const renderCategoryChips = () => {
@@ -574,6 +664,84 @@
         throw new Error(errors.join(" | "));
       };
 
+      const fetchHealthSource = async () => {
+        const errors = [];
+        for (const src of HEALTH_SOURCES) {
+          try {
+            const resp = await fetch(src.url, { cache: "no-store" });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const text = await resp.text();
+            return { text, sourceLabel: src.label };
+          } catch (err) {
+            errors.push(`${src.label}: ${err.message}`);
+          }
+        }
+        throw new Error(errors.join(" | "));
+      };
+
+      const loadSleepData = async () => {
+        try {
+          const { text, sourceLabel } = await fetchHealthSource();
+          const rows = parseCSV(text);
+          if (!rows.length) {
+            healthStatus.textContent = "睡眠数据为空";
+            return;
+          }
+          const headers = rows[0].map(fallbackHeader).map(normalizeKey);
+          const dataRows = rows.slice(1);
+
+          const dailyMap = new Map();
+          const now = new Date();
+          const ninetyDaysAgo = new Date(now);
+          ninetyDaysAgo.setDate(now.getDate() - 90);
+          const oneYearAgo = new Date(now);
+          oneYearAgo.setFullYear(now.getFullYear() - 1);
+
+          dataRows.forEach((row) => {
+            const record = {};
+            headers.forEach((key, idx) => {
+              record[key] = row[idx] || "";
+            });
+            const startDate = parseDate(record["start"]);
+            const duration = parseFloat(record["duration_hours"] || "0");
+            if (!startDate || Number.isNaN(duration)) return;
+            const dateKey = startDate.toISOString().slice(0, 10);
+            dailyMap.set(dateKey, (dailyMap.get(dateKey) || 0) + duration);
+          });
+
+          // 近三个月按周聚合（ISO 周）
+          const weekly = new Map();
+          dailyMap.forEach((val, key) => {
+            const d = parseDate(key);
+            if (!d || d < ninetyDaysAgo) return;
+            const wk = isoWeekKey(d);
+            weekly.set(wk, (weekly.get(wk) || 0) + val);
+          });
+          const weeklyData = Array.from(weekly.entries())
+            .map(([label, value]) => ({ label, value }))
+            .sort((a, b) => (a.label > b.label ? 1 : -1));
+
+          // 近一年按月聚合
+          const monthly = new Map();
+          dailyMap.forEach((val, key) => {
+            const d = parseDate(key);
+            if (!d || d < oneYearAgo) return;
+            const mk = monthKey(d);
+            monthly.set(mk, (monthly.get(mk) || 0) + val);
+          });
+          const monthlyData = Array.from(monthly.entries())
+            .map(([label, value]) => ({ label, value }))
+            .sort((a, b) => (a.label > b.label ? 1 : -1));
+
+          renderLineChart(sleepWeeklyChart, weeklyData, { color: "#22c55e" });
+          renderLineChart(sleepMonthlyChart, monthlyData, { color: "#a855f7" });
+          healthStatus.textContent = `睡眠趋势加载完成（来源：${sourceLabel}）`;
+        } catch (error) {
+          console.error(error);
+          healthStatus.textContent = "睡眠数据加载失败";
+        }
+      };
+
       const loadCSV = async () => {
         statusEl.textContent = "正在加载数据...";
         updateTimeEl.textContent = " 正在获取...";
@@ -609,6 +777,23 @@
       renderHeader();
       renderBody([]);
       loadCSV();
+      loadSleepData();
     </script>
   </body>
 </html>
+      const isoWeekKey = (dateObj) => {
+        const d = new Date(dateObj);
+        d.setHours(0, 0, 0, 0);
+        const dayNum = (d.getDay() + 6) % 7; // Monday=0
+        d.setDate(d.getDate() - dayNum + 3);
+        const firstThursday = new Date(d.getFullYear(), 0, 4);
+        const firstDayNum = (firstThursday.getDay() + 6) % 7;
+        firstThursday.setDate(firstThursday.getDate() - firstDayNum + 3);
+        const week = 1 + Math.round((d - firstThursday) / 604800000);
+        return `${firstThursday.getFullYear()}-W${String(week).padStart(2, "0")}`;
+      };
+
+      const monthKey = (dateObj) => {
+        const d = new Date(dateObj);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      };

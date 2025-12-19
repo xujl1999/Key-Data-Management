@@ -163,51 +163,6 @@
       .tab-panel--active {
         display: block;
       }
-      .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 12px;
-        margin: 12px 0 6px;
-      }
-      .metric-card {
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(16, 185, 129, 0.12));
-        border: 1px solid rgba(148, 163, 184, 0.25);
-        border-radius: 12px;
-        padding: 14px 16px;
-        color: #e2e8f0;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.45);
-      }
-      .metric-label {
-        font-size: 1rem;
-        color: #cbd5f5;
-        margin-bottom: 8px;
-        font-weight: 600;
-      }
-      .metric-row {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        padding: 6px 0;
-        border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
-        gap: 10px;
-      }
-      .metric-row:last-child {
-        border-bottom: none;
-      }
-      .metric-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-      }
-      .metric-delta {
-        font-size: 0.95rem;
-        color: #a5b4fc;
-      }
-      .metric-delta.positive {
-        color: #34d399;
-      }
-      .metric-delta.negative {
-        color: #f87171;
-      }
       .plan-block {
         margin: 12px 0 20px;
         padding: 16px 18px;
@@ -273,58 +228,6 @@
               <li>每日饮食成分分析</li>
               <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
             </ul>
-          </div>
-        </div>
-        <div class="metric-grid">
-          <div class="metric-card">
-            <div class="metric-label">睡眠概览（7日滚动）</div>
-            <div class="metric-row">
-              <span>近7天均时长</span>
-              <span class="metric-value" id="metric-avg7">--</span>
-            </div>
-            <div class="metric-row">
-              <span>周环比</span>
-              <span class="metric-value">
-                <span id="metric-wow">--</span>
-                <span class="metric-delta" id="metric-wow-detail" style="margin-left: 8px;">—</span>
-              </span>
-            </div>
-            <div class="metric-row">
-              <span>月环比</span>
-              <span class="metric-value">
-                <span id="metric-mom">--</span>
-                <span class="metric-delta" id="metric-mom-detail" style="margin-left: 8px;">—</span>
-              </span>
-            </div>
-            <div class="metric-row" style="padding-top: 2px;">
-              <span>说明</span>
-              <span class="metric-delta" id="metric-avg7-detail">—</span>
-            </div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">体重概览（7日滚动）</div>
-            <div class="metric-row">
-              <span>近7天均体重</span>
-              <span class="metric-value" id="metric-w-avg7">--</span>
-            </div>
-            <div class="metric-row">
-              <span>周环比</span>
-              <span class="metric-value">
-                <span id="metric-w-wow">--</span>
-                <span class="metric-delta" id="metric-w-wow-detail" style="margin-left: 8px;">—</span>
-              </span>
-            </div>
-            <div class="metric-row">
-              <span>月环比</span>
-              <span class="metric-value">
-                <span id="metric-w-mom">--</span>
-                <span class="metric-delta" id="metric-w-mom-detail" style="margin-left: 8px;">—</span>
-              </span>
-            </div>
-            <div class="metric-row" style="padding-top: 2px;">
-              <span>说明</span>
-              <span class="metric-delta" id="metric-w-avg7-detail">—</span>
-            </div>
           </div>
         </div>
         <div class="scroll-wrap" style="margin-top: 10px;">
@@ -424,18 +327,6 @@
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabPanels = document.querySelectorAll(".tab-panel");
       const healthStatus = document.getElementById("health-status");
-      const metricAvg7 = document.getElementById("metric-avg7");
-      const metricAvg7Detail = document.getElementById("metric-avg7-detail");
-      const metricWow = document.getElementById("metric-wow");
-      const metricWowDetail = document.getElementById("metric-wow-detail");
-      const metricMom = document.getElementById("metric-mom");
-      const metricMomDetail = document.getElementById("metric-mom-detail");
-      const metricWAvg7 = document.getElementById("metric-w-avg7");
-      const metricWAvg7Detail = document.getElementById("metric-w-avg7-detail");
-      const metricWWow = document.getElementById("metric-w-wow");
-      const metricWWowDetail = document.getElementById("metric-w-wow-detail");
-      const metricWMom = document.getElementById("metric-w-mom");
-      const metricWMomDetail = document.getElementById("metric-w-mom-detail");
       const metricTableBody = document.getElementById("health-metric-body");
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
@@ -462,12 +353,160 @@
         { url: "health/energy_daily.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/energy_daily.csv", label: "GitHub Raw" },
       ];
+      const EXERCISE_SOURCES = [
+        { url: "health/exercise_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/exercise_daily.csv", label: "GitHub Raw" },
+      ];
+      const DISTANCE_SOURCES = [
+        { url: "health/distance_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/distance_daily.csv", label: "GitHub Raw" },
+      ];
+      const RESTING_HR_SOURCES = [
+        { url: "health/resting_hr_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/resting_hr_daily.csv", label: "GitHub Raw" },
+      ];
+      const BODY_SOURCES = [
+        { url: "health/body_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/body_daily.csv", label: "GitHub Raw" },
+      ];
+      const HEART_RATE_SOURCES = [
+        { url: "health/heart_rate_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/heart_rate_daily.csv", label: "GitHub Raw" },
+      ];
+      const HRV_SOURCES = [
+        { url: "health/hrv_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/hrv_daily.csv", label: "GitHub Raw" },
+      ];
+      const RESPIRATORY_SOURCES = [
+        { url: "health/respiratory_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/respiratory_daily.csv", label: "GitHub Raw" },
+      ];
+      const SPO2_SOURCES = [
+        { url: "health/spo2_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/spo2_daily.csv", label: "GitHub Raw" },
+      ];
+      const VO2MAX_SOURCES = [
+        { url: "health/vo2max_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/vo2max_daily.csv", label: "GitHub Raw" },
+      ];
+      const FLIGHTS_SOURCES = [
+        { url: "health/flights_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/flights_daily.csv", label: "GitHub Raw" },
+      ];
+      const DAYLIGHT_SOURCES = [
+        { url: "health/daylight_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/daylight_daily.csv", label: "GitHub Raw" },
+      ];
+      const WALKING_HR_SOURCES = [
+        { url: "health/walking_hr_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_hr_daily.csv", label: "GitHub Raw" },
+      ];
+      const WALKING_METRICS_SOURCES = [
+        { url: "health/walking_metrics_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_metrics_daily.csv", label: "GitHub Raw" },
+      ];
+      const WALKING_STEP_LENGTH_SOURCES = [
+        { url: "health/walking_step_length_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_step_length_daily.csv", label: "GitHub Raw" },
+      ];
+      const WALKING_DOUBLE_SUPPORT_SOURCES = [
+        { url: "health/walking_double_support_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_double_support_daily.csv", label: "GitHub Raw" },
+      ];
+      const WALKING_ASYMMETRY_SOURCES = [
+        { url: "health/walking_asymmetry_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_asymmetry_daily.csv", label: "GitHub Raw" },
+      ];
+      const WALKING_STEADINESS_SOURCES = [
+        { url: "health/walking_steadiness_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_steadiness_daily.csv", label: "GitHub Raw" },
+      ];
+      const RUNNING_SPEED_SOURCES = [
+        { url: "health/running_speed_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_speed_daily.csv", label: "GitHub Raw" },
+      ];
+      const RUNNING_POWER_SOURCES = [
+        { url: "health/running_power_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_power_daily.csv", label: "GitHub Raw" },
+      ];
+      const RUNNING_STRIDE_LENGTH_SOURCES = [
+        { url: "health/running_stride_length_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_stride_length_daily.csv", label: "GitHub Raw" },
+      ];
+      const RUNNING_VERTICAL_OSC_SOURCES = [
+        { url: "health/running_vertical_osc_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_vertical_osc_daily.csv", label: "GitHub Raw" },
+      ];
+      const RUNNING_GROUND_CONTACT_SOURCES = [
+        { url: "health/running_ground_contact_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_ground_contact_daily.csv", label: "GitHub Raw" },
+      ];
+      const STAIR_ASCENT_SPEED_SOURCES = [
+        { url: "health/stair_ascent_speed_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/stair_ascent_speed_daily.csv", label: "GitHub Raw" },
+      ];
+      const STAIR_DESCENT_SPEED_SOURCES = [
+        { url: "health/stair_descent_speed_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/stair_descent_speed_daily.csv", label: "GitHub Raw" },
+      ];
+      const AUDIO_EXPOSURE_SOURCES = [
+        { url: "health/audio_exposure_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/audio_exposure_daily.csv", label: "GitHub Raw" },
+      ];
+      const HEADPHONE_AUDIO_SOURCES = [
+        { url: "health/headphone_audio_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/headphone_audio_daily.csv", label: "GitHub Raw" },
+      ];
+      const SLEEP_TEMP_SOURCES = [
+        { url: "health/sleep_temp_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_temp_daily.csv", label: "GitHub Raw" },
+      ];
+      const DISTANCE_CYCLING_SOURCES = [
+        { url: "health/distance_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/distance_daily.csv", label: "GitHub Raw" },
+      ];
 
       const METRIC_DEFS = [
         { label: "睡眠时长", valueKey: "sleep_hours", unit: "小时", sources: HEALTH_SOURCES },
         { label: "体重", valueKey: "weight_kg", unit: "kg", sources: WEIGHT_SOURCES },
         { label: "步数", valueKey: "steps", unit: "步", sources: STEPS_SOURCES },
         { label: "主动能量", valueKey: "active_energy", unit: "kcal", sources: ENERGY_SOURCES },
+        { label: "基础代谢", valueKey: "basal_energy", unit: "kcal", sources: ENERGY_SOURCES },
+        { label: "身体负荷指数", valueKey: "physical_effort", unit: "AU", sources: ENERGY_SOURCES },
+        { label: "锻炼时长", valueKey: "exercise_time_min", unit: "分钟", sources: EXERCISE_SOURCES },
+        { label: "站立时长", valueKey: "stand_time_min", unit: "分钟", sources: EXERCISE_SOURCES },
+        { label: "站立小时数", valueKey: "stand_hours", unit: "小时", sources: EXERCISE_SOURCES },
+        { label: "步行跑步距离", valueKey: "distance_walk_run_km", unit: "km", sources: DISTANCE_SOURCES },
+        { label: "骑行距离", valueKey: "distance_cycling_km", unit: "km", sources: DISTANCE_CYCLING_SOURCES },
+        { label: "爬楼层数", valueKey: "flights_climbed", unit: "层", sources: FLIGHTS_SOURCES },
+        { label: "户外日照时长", valueKey: "time_in_daylight_min", unit: "分钟", sources: DAYLIGHT_SOURCES },
+        { label: "静息心率", valueKey: "resting_hr_avg", unit: "bpm", sources: RESTING_HR_SOURCES },
+        { label: "心率均值", valueKey: "hr_avg", unit: "bpm", sources: HEART_RATE_SOURCES },
+        { label: "心率最小值", valueKey: "hr_min", unit: "bpm", sources: HEART_RATE_SOURCES },
+        { label: "心率最大值", valueKey: "hr_max", unit: "bpm", sources: HEART_RATE_SOURCES },
+        { label: "步行心率均值", valueKey: "walk_hr_avg", unit: "bpm", sources: WALKING_HR_SOURCES },
+        { label: "HRV-SDNN均值", valueKey: "sdnn_avg", unit: "ms", sources: HRV_SOURCES },
+        { label: "呼吸频率均值", valueKey: "resp_avg", unit: "次/分", sources: RESPIRATORY_SOURCES },
+        { label: "血氧均值", valueKey: "spo2_avg", unit: "%", sources: SPO2_SOURCES },
+        { label: "最大摄氧量均值", valueKey: "vo2max_avg", unit: "ml·kg⁻¹·min⁻¹", sources: VO2MAX_SOURCES },
+        { label: "BMI", valueKey: "bmi", unit: "", sources: BODY_SOURCES },
+        { label: "体脂率", valueKey: "body_fat_pct", unit: "%", sources: BODY_SOURCES },
+        { label: "去脂体重", valueKey: "lean_mass_kg", unit: "kg", sources: BODY_SOURCES },
+        { label: "行走速度均值", valueKey: "walking_speed_avg", unit: "m/s", sources: WALKING_METRICS_SOURCES },
+        { label: "步长均值", valueKey: "step_length_avg", unit: "cm", sources: WALKING_STEP_LENGTH_SOURCES },
+        { label: "双支撑占比均值", valueKey: "double_support_pct_avg", unit: "%", sources: WALKING_DOUBLE_SUPPORT_SOURCES },
+        { label: "步态不对称均值", valueKey: "asymmetry_pct_avg", unit: "%", sources: WALKING_ASYMMETRY_SOURCES },
+        { label: "步态稳定度均值", valueKey: "steady_avg", unit: "分", sources: WALKING_STEADINESS_SOURCES },
+        { label: "跑步速度均值", valueKey: "running_speed_avg", unit: "m/s", sources: RUNNING_SPEED_SOURCES },
+        { label: "跑步功率均值", valueKey: "running_power_avg", unit: "W", sources: RUNNING_POWER_SOURCES },
+        { label: "跑步步幅均值", valueKey: "running_stride_len_avg", unit: "m", sources: RUNNING_STRIDE_LENGTH_SOURCES },
+        { label: "跑步垂直振幅均值", valueKey: "running_vertical_osc_avg", unit: "cm", sources: RUNNING_VERTICAL_OSC_SOURCES },
+        { label: "着地时间均值", valueKey: "ground_contact_ms_avg", unit: "ms", sources: RUNNING_GROUND_CONTACT_SOURCES },
+        { label: "上楼速度均值", valueKey: "stair_ascent_speed_avg", unit: "m/s", sources: STAIR_ASCENT_SPEED_SOURCES },
+        { label: "下楼速度均值", valueKey: "stair_descent_speed_avg", unit: "m/s", sources: STAIR_DESCENT_SPEED_SOURCES },
+        { label: "环境噪声均值", valueKey: "env_audio_avg", unit: "dB", sources: AUDIO_EXPOSURE_SOURCES },
+        { label: "耳机音量均值", valueKey: "headphone_audio_avg", unit: "dB", sources: HEADPHONE_AUDIO_SOURCES },
+        { label: "睡眠手腕温度均值", valueKey: "temp_avg", unit: "°C", sources: SLEEP_TEMP_SOURCES },
       ];
 
       let records = [];
@@ -864,54 +903,6 @@
         return null;
       };
 
-      const fetchHealthSource = async () => {
-        const errors = [];
-        for (const source of HEALTH_SOURCES) {
-          try {
-            const response = await fetch(source.url, { cache: "no-store" });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const text = await response.text();
-            return { text, sourceLabel: source.label };
-          } catch (error) {
-            errors.push(`${source.label}: ${error.message}`);
-          }
-        }
-        throw new Error(errors.join(" | "));
-      };
-
-      const parseHealth = (text) => {
-        const rows = parseCSV(text);
-        if (!rows.length) return [];
-        const headers = rows[0].map((h) => h.trim().toLowerCase());
-        const idxDate = headers.indexOf("date");
-        const idxHours = headers.indexOf("sleep_hours");
-        if (idxDate === -1 || idxHours === -1) return [];
-        return rows
-          .slice(1)
-          .map((cells) => {
-            const d = parseDate(cells[idxDate]);
-            const h = parseFloat(cells[idxHours]);
-            if (!d || Number.isNaN(h)) return null;
-            return { date: d, hours: h };
-          })
-          .filter(Boolean)
-          .sort((a, b) => a.date - b.date);
-      };
-
-      const computeRolling = (items, window = 7) => {
-        const result = [];
-        const queue = [];
-        let sum = 0;
-        items.forEach((item) => {
-          queue.push(item.hours);
-          sum += item.hours;
-          if (queue.length > window) {
-            sum -= queue.shift();
-          }
-          result.push({ date: item.date, ma: sum / queue.length });
-        });
-        return result;
-      };
 
       const avgWindow = (series, count, offset = 0) => {
         if (series.length < count + offset) return null;
@@ -966,10 +957,16 @@
         if (!series.length) return null;
         const lastDate = series[series.length - 1].date;
         const end = new Date(lastDate);
+        end.setHours(23, 59, 59, 999); // 设置为当天的结束时间
         end.setDate(end.getDate() - offsetDays);
         const start = new Date(end);
         start.setDate(start.getDate() - (days - 1));
-        const window = series.filter((item) => item.date >= start && item.date <= end);
+        start.setHours(0, 0, 0, 0); // 设置为开始日期的开始时间
+        const window = series.filter((item) => {
+          const itemDate = new Date(item.date);
+          itemDate.setHours(0, 0, 0, 0);
+          return itemDate >= start && itemDate <= end;
+        });
         if (!window.length) return null;
         const total = window.reduce((acc, cur) => acc + cur.value, 0);
         return total / window.length;
@@ -977,14 +974,42 @@
 
       const formatValueWithUnit = (val, unit) => {
         if (val === null || Number.isNaN(val)) return "--";
-        return `${Number(val).toPrecision(3)} ${unit}`;
+        const num = Number(val);
+        // 体脂率：将小数转换为百分比
+        if (unit === "%" && num < 1) {
+          return `${(num * 100).toFixed(1)}%`;
+        }
+        // 空单位：不显示单位
+        if (!unit || unit === "") {
+          return num.toFixed(2);
+        }
+        // 3位有效数字：智能格式化（整数或包含小数点）
+        const formatted = formatThreeSignificantDigits(num);
+        return `${formatted} ${unit}`;
+      };
+
+      const formatThreeSignificantDigits = (num) => {
+        if (num === 0) return "0";
+        const absNum = Math.abs(num);
+        // 如果数值 >= 1000，保留整数部分
+        if (absNum >= 1000) {
+          return Math.round(num).toString();
+        }
+        // 如果数值 < 1000，保留3位有效数字
+        // 如果是整数或接近整数（小数部分小于0.001），显示整数
+        if (Math.abs(num % 1) < 0.001) {
+          return num.toString();
+        }
+        // 否则使用3位有效数字
+        return num.toPrecision(3);
       };
 
       const formatDeltaColored = (current, previous) => {
         if (current === null || previous === null || previous === 0) return "—";
         const delta = ((current - previous) / previous) * 100;
-        if (Math.abs(delta) < 5) return "—";
-        const cls = delta > 0 ? "delta-pos" : "delta-neg";
+        // 变化超过5%才标注颜色，否则使用默认颜色
+        const absDelta = Math.abs(delta);
+        const cls = absDelta >= 5 ? (delta > 0 ? "delta-pos" : "delta-neg") : "";
         const sign = delta > 0 ? "+" : "";
         return `<span class="${cls}">${sign}${delta.toFixed(1)}%</span>`;
       };
@@ -1024,6 +1049,8 @@
                 rows.push({ label: def.label, weekAvg: "--", wow: "—", mom: "—", yoy: "—" });
                 continue;
               }
+              
+              // 统一使用原始数据直接计算周日均值（7日滚动平均仅用于趋势图）
               const avg7 = avgWindowByDate(series, 7, 0);
               const prev7 = avgWindowByDate(series, 7, 7);
               const avg30 = avgWindowByDate(series, 30, 0);
@@ -1050,116 +1077,6 @@
         }
       };
 
-      const loadHealth = async () => {
-        healthStatus.textContent = "正在加载健康数据...";
-        try {
-          const { text, sourceLabel } = await fetchHealthSource();
-          const items = parseHealth(text);
-          if (!items.length) {
-            healthStatus.textContent = "健康数据为空";
-            return;
-          }
-          const rolling = computeRolling(items, 7);
-          const lastDate = items[items.length - 1].date;
-          const last7 = avgWindow(rolling, 7, 0);
-          const prev7 = avgWindow(rolling, 7, 7);
-          const last30 = avgWindow(rolling, 30, 0);
-          const prev30 = avgWindow(rolling, 30, 30);
-
-          const fmtHours = (val) => (val === null ? "--" : `${val.toFixed(2)} 小时`);
-          metricAvg7.textContent = fmtHours(last7);
-          const wow = formatDelta(last7, prev7);
-          metricWow.textContent = wow.text === "—" ? "--" : wow.text;
-          metricWowDetail.textContent = prev7 === null ? "样本不足" : "相较前7天";
-          metricWowDetail.className = `metric-delta ${wow.cls}`;
-
-          const mom = formatDelta(last30, prev30);
-          metricMom.textContent = mom.text === "—" ? "--" : mom.text;
-          metricMomDetail.textContent = prev30 === null ? "样本不足" : "相较前30天";
-          metricMomDetail.className = `metric-delta ${mom.cls}`;
-
-          metricAvg7Detail.textContent = last7 === null ? "样本不足" : `截止 ${formatUpdateTime(lastDate).trim()}`;
-
-          const totalDays = items.length;
-          healthStatus.textContent = `数据截止 ${formatUpdateTime(lastDate).trim()} · 共 ${totalDays} 天 · 来源：${sourceLabel}`;
-        } catch (error) {
-          console.error(error);
-          healthStatus.textContent = "健康数据加载失败";
-        }
-      };
-
-      const fetchWeightSource = async () => {
-        const errors = [];
-        for (const source of WEIGHT_SOURCES) {
-          try {
-            const response = await fetch(source.url, { cache: "no-store" });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const text = await response.text();
-            return { text, sourceLabel: source.label };
-          } catch (error) {
-            errors.push(`${source.label}: ${error.message}`);
-          }
-        }
-        throw new Error(errors.join(" | "));
-      };
-
-      const parseWeight = (text) => {
-        const rows = parseCSV(text);
-        if (!rows.length) return [];
-        const headers = rows[0].map((h) => h.trim().toLowerCase());
-        const idxDate = headers.indexOf("date");
-        const idxW = headers.indexOf("weight_kg");
-        if (idxDate === -1 || idxW === -1) return [];
-        return rows
-          .slice(1)
-          .map((cells) => {
-            const d = parseDate(cells[idxDate]);
-            const w = parseFloat(cells[idxW]);
-            if (!d || Number.isNaN(w)) return null;
-            return { date: d, value: w };
-          })
-          .filter(Boolean)
-          .sort((a, b) => a.date - b.date);
-      };
-
-      const loadWeight = async () => {
-        try {
-          const { text, sourceLabel } = await fetchWeightSource();
-          const items = parseWeight(text);
-          if (!items.length) {
-            metricWAvg7.textContent = "--";
-            metricWAvg7Detail.textContent = "体重数据为空";
-            return;
-          }
-          const rolling = computeRolling(
-            items.map((i) => ({ date: i.date, hours: i.value })), // 复用计算函数
-            7
-          );
-          const lastDate = items[items.length - 1].date;
-          const last7 = avgWindow(rolling, 7, 0);
-          const prev7 = avgWindow(rolling, 7, 7);
-          const last30 = avgWindow(rolling, 30, 0);
-          const prev30 = avgWindow(rolling, 30, 30);
-
-          const fmtKg = (val) => (val === null ? "--" : `${val.toFixed(2)} kg`);
-          metricWAvg7.textContent = fmtKg(last7);
-          const wow = formatDelta(last7, prev7);
-          metricWWow.textContent = wow.text === "—" ? "--" : wow.text;
-          metricWWowDetail.textContent = prev7 === null ? "样本不足" : "相较前7天";
-          metricWWowDetail.className = `metric-delta ${wow.cls}`;
-
-          const mom = formatDelta(last30, prev30);
-          metricWMom.textContent = mom.text === "—" ? "--" : mom.text;
-          metricWMomDetail.textContent = prev30 === null ? "样本不足" : "相较前30天";
-          metricWMomDetail.className = `metric-delta ${mom.cls}`;
-
-          metricWAvg7Detail.textContent = last7 === null ? "样本不足" : `截至 ${formatUpdateTime(lastDate).trim()} · 来源：${sourceLabel}`;
-        } catch (error) {
-          console.error(error);
-          metricWAvg7.textContent = "--";
-          metricWAvg7Detail.textContent = "体重数据加载失败";
-        }
-      };
 
       const fetchCSVSource = async () => {
         const errors = [];
@@ -1213,8 +1130,6 @@
       ensureLimitValue();
       renderHeader();
       renderBody([]);
-      loadHealth();
-      loadWeight();
       loadMetricTable();
       loadCSV();
     </script>

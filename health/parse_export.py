@@ -9,8 +9,12 @@ from typing import Optional
 
 import pandas as pd
 
-EXPORT_ZIP = Path(__file__).resolve().parent / "导出.zip"
-OUTPUT_DIR = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent
+EXPORT_ZIP = ROOT / "导出.zip"
+if not EXPORT_ZIP.exists():
+    alt = ROOT / "å¯¼å‡º.zip"  # 兼容历史编码
+    if alt.exists():
+        EXPORT_ZIP = alt
 
 
 def find_main_xml(zf: zipfile.ZipFile) -> str:
@@ -59,6 +63,7 @@ def parse_export():
     steps = defaultdict(float)
     active_energy = defaultdict(float)
     sleep_daily = defaultdict(float)
+    weight_daily = defaultdict(list)
 
     with zipfile.ZipFile(EXPORT_ZIP) as zf:
         xml_name = find_main_xml(zf)
@@ -95,6 +100,13 @@ def parse_export():
                         duration_hours = (end_dt - start_dt).total_seconds() / 3600
                         sleep_daily[start_dt.date()] += duration_hours
 
+                elif record_type == "HKQuantityTypeIdentifierBodyMass":
+                    if start_dt and value:
+                        try:
+                            weight_daily[start_dt.date()].append(float(value))
+                        except Exception:
+                            pass
+
                 elem.clear()
 
     if steps:
@@ -103,17 +115,15 @@ def parse_export():
             .sort_values("date")
             .reset_index(drop=True)
         )
-        df_steps.to_csv(OUTPUT_DIR / "steps_daily.csv", index=False, encoding="utf-8")
+        df_steps.to_csv(ROOT / "steps_daily.csv", index=False, encoding="utf-8")
 
     if active_energy:
         df_energy = (
-            pd.DataFrame(
-                {"date": list(active_energy.keys()), "active_energy": active_energy.values()}
-            )
+            pd.DataFrame({"date": list(active_energy.keys()), "active_energy": active_energy.values()})
             .sort_values("date")
             .reset_index(drop=True)
         )
-        df_energy.to_csv(OUTPUT_DIR / "energy_daily.csv", index=False, encoding="utf-8")
+        df_energy.to_csv(ROOT / "energy_daily.csv", index=False, encoding="utf-8")
 
     if sleep_daily:
         df_sleep = (
@@ -121,7 +131,21 @@ def parse_export():
             .sort_values("date")
             .reset_index(drop=True)
         )
-        df_sleep.to_csv(OUTPUT_DIR / "sleep_daily.csv", index=False, encoding="utf-8")
+        df_sleep.to_csv(ROOT / "sleep_daily.csv", index=False, encoding="utf-8")
+
+    if weight_daily:
+        rows = []
+        for day, values in weight_daily.items():
+            if not values:
+                continue
+            avg_val = sum(values) / len(values)
+            rows.append((day, avg_val))
+        df_weight = (
+            pd.DataFrame(rows, columns=["date", "weight_kg"])
+            .sort_values("date")
+            .reset_index(drop=True)
+        )
+        df_weight.to_csv(ROOT / "weight_daily.csv", index=False, encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -1,113 +1,113 @@
-| 文件 | 指标 | 取值/单位 | 最近7天区间 | 最近7天日均值 |
-| --- | --- | --- | --- | --- |
-| audio_exposure_daily.csv | env_audio_avg | dB | 2025-12-12 至 2025-12-18 | 60.658 |
-| audio_exposure_daily.csv | env_audio_min | dB | 2025-12-12 至 2025-12-18 | 38.165 |
-| audio_exposure_daily.csv | env_audio_max | dB | 2025-12-12 至 2025-12-18 | 80.586 |
-| audio_exposure_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 42.143 |
-| body_daily.csv | weight_kg | kg | 2025-12-12 至 2025-12-18 | 78.200 |
-| body_daily.csv | bmi | — | 2025-12-12 至 2025-12-18 | 25.200 |
-| body_daily.csv | body_fat_pct | % | 2025-12-12 至 2025-12-18 | 0.239 |
-| body_daily.csv | lean_mass_kg | kg | 2025-12-12 至 2025-12-18 | 59.500 |
-| body_daily.csv | height_m | m | 2025-12-12 至 2025-12-18 | -- |
-| daylight_daily.csv | time_in_daylight_min | 分钟 | 2025-12-12 至 2025-12-18 | 28.000 |
-| diet_daily.csv | dietary_kcal | kcal | 2025-06-13 至 2025-06-19 | 591.400 |
-| diet_daily.csv | dietary_fat_g | g | 2025-06-13 至 2025-06-19 | 33.150 |
-| diet_daily.csv | dietary_carb_g | g | 2025-06-13 至 2025-06-19 | 148.350 |
-| diet_daily.csv | dietary_protein_g | g | 2025-06-13 至 2025-06-19 | 97.250 |
-| diet_daily.csv | dietary_water | mL | 2025-06-13 至 2025-06-19 | 0.000 |
-| distance_daily.csv | distance_walk_run_km | km | 2025-12-12 至 2025-12-18 | 0.012 |
-| distance_daily.csv | distance_cycling_km | km | 2025-12-12 至 2025-12-18 | 0.004 |
-| energy_daily.csv | active_energy | kcal | 2025-12-12 至 2025-12-18 | 675.790 |
-| energy_daily.csv | basal_energy | kcal | 2025-12-12 至 2025-12-18 | 1953.035 |
-| energy_daily.csv | physical_effort | AU | 2025-12-12 至 2025-12-18 | 1650.786 |
-| exercise_daily.csv | exercise_time_min | 分钟 | 2025-12-12 至 2025-12-18 | 39.714 |
-| exercise_daily.csv | stand_time_min | 分钟 | 2025-12-12 至 2025-12-18 | 153.286 |
-| exercise_daily.csv | stand_hours | 小时 | 2025-12-12 至 2025-12-18 | 21.143 |
-| flights_daily.csv | flights_climbed | (原始单位) | 2025-12-12 至 2025-12-18 | 37.143 |
-| headphone_audio_daily.csv | headphone_audio_avg | dB | 2025-12-12 至 2025-12-18 | 73.924 |
-| headphone_audio_daily.csv | headphone_audio_min | dB | 2025-12-12 至 2025-12-18 | 42.654 |
-| headphone_audio_daily.csv | headphone_audio_max | dB | 2025-12-12 至 2025-12-18 | 87.780 |
-| headphone_audio_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 55.500 |
-| heart_rate_daily.csv | hr_avg | bpm | 2025-12-12 至 2025-12-18 | 87.029 |
-| heart_rate_daily.csv | hr_min | bpm | 2025-12-12 至 2025-12-18 | 44.429 |
-| heart_rate_daily.csv | hr_max | bpm | 2025-12-12 至 2025-12-18 | 135.571 |
-| heart_rate_daily.csv | hr_count | (原始单位) | 2025-12-12 至 2025-12-18 | 1004.714 |
-| hrv_daily.csv | sdnn_avg | ms | 2025-12-12 至 2025-12-18 | 60.726 |
-| hrv_daily.csv | sdnn_min | ms | 2025-12-12 至 2025-12-18 | 30.239 |
-| hrv_daily.csv | sdnn_max | ms | 2025-12-12 至 2025-12-18 | 124.308 |
-| hrv_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 10.429 |
-| respiratory_daily.csv | resp_avg | 次/分 | 2025-12-12 至 2025-12-18 | 17.196 |
-| respiratory_daily.csv | resp_min | 次/分 | 2025-12-12 至 2025-12-18 | 14.786 |
-| respiratory_daily.csv | resp_max | 次/分 | 2025-12-12 至 2025-12-18 | 20.500 |
-| respiratory_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 39.429 |
-| resting_hr_daily.csv | resting_hr_avg | bpm | 2025-12-12 至 2025-12-18 | 55.857 |
-| resting_hr_daily.csv | resting_hr_min | bpm | 2025-12-12 至 2025-12-18 | 55.857 |
-| resting_hr_daily.csv | resting_hr_max | bpm | 2025-12-12 至 2025-12-18 | 55.857 |
-| resting_hr_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 1.000 |
-| running_ground_contact_daily.csv | ground_contact_ms_avg | ms | 2025-11-02 至 2025-11-08 | 287.242 |
-| running_ground_contact_daily.csv | ground_contact_ms_min | ms | 2025-11-02 至 2025-11-08 | 212.500 |
-| running_ground_contact_daily.csv | ground_contact_ms_max | ms | 2025-11-02 至 2025-11-08 | 342.000 |
-| running_ground_contact_daily.csv | count | (原始单位) | 2025-11-02 至 2025-11-08 | 974.000 |
-| running_power_daily.csv | running_power_avg | W | 2025-11-02 至 2025-11-08 | 159.919 |
-| running_power_daily.csv | running_power_min | W | 2025-11-02 至 2025-11-08 | 55.000 |
-| running_power_daily.csv | running_power_max | W | 2025-11-02 至 2025-11-08 | 316.500 |
-| running_power_daily.csv | count | (原始单位) | 2025-11-02 至 2025-11-08 | 2859.500 |
-| running_speed_daily.csv | running_speed_avg | m/s | 2025-11-02 至 2025-11-08 | 7.086 |
-| running_speed_daily.csv | running_speed_min | m/s | 2025-11-02 至 2025-11-08 | 0.643 |
-| running_speed_daily.csv | running_speed_max | m/s | 2025-11-02 至 2025-11-08 | 12.844 |
-| running_speed_daily.csv | count | (原始单位) | 2025-11-02 至 2025-11-08 | 2873.000 |
-| running_stride_length_daily.csv | running_stride_len_avg | m | 2025-11-02 至 2025-11-08 | 0.919 |
-| running_stride_length_daily.csv | running_stride_len_min | m | 2025-11-02 至 2025-11-08 | 0.770 |
-| running_stride_length_daily.csv | running_stride_len_max | m | 2025-11-02 至 2025-11-08 | 1.325 |
-| running_stride_length_daily.csv | count | (原始单位) | 2025-11-02 至 2025-11-08 | 823.500 |
-| running_vertical_osc_daily.csv | running_vertical_osc_avg | cm | 2025-11-02 至 2025-11-08 | 10.876 |
-| running_vertical_osc_daily.csv | running_vertical_osc_min | cm | 2025-11-02 至 2025-11-08 | 8.700 |
-| running_vertical_osc_daily.csv | running_vertical_osc_max | cm | 2025-11-02 至 2025-11-08 | 12.250 |
-| running_vertical_osc_daily.csv | count | (原始单位) | 2025-11-02 至 2025-11-08 | 1019.000 |
-| sleep_daily.csv | sleep_hours | 小时 | 2025-12-12 至 2025-12-18 | 6.618 |
-| sleep_temp_daily.csv | temp_avg | °C | 2025-12-11 至 2025-12-17 | 35.536 |
-| sleep_temp_daily.csv | temp_min | °C | 2025-12-11 至 2025-12-17 | 35.536 |
-| sleep_temp_daily.csv | temp_max | °C | 2025-12-11 至 2025-12-17 | 35.536 |
-| sleep_temp_daily.csv | count | (原始单位) | 2025-12-11 至 2025-12-17 | 1.000 |
-| spo2_daily.csv | spo2_avg | % | 2025-12-12 至 2025-12-18 | 0.974 |
-| spo2_daily.csv | spo2_min | % | 2025-12-12 至 2025-12-18 | 0.931 |
-| spo2_daily.csv | spo2_max | % | 2025-12-12 至 2025-12-18 | 0.997 |
-| spo2_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 20.571 |
-| stair_ascent_speed_daily.csv | stair_ascent_speed_avg | m/s | 2025-12-12 至 2025-12-18 | 0.315 |
-| stair_ascent_speed_daily.csv | stair_ascent_speed_min | m/s | 2025-12-12 至 2025-12-18 | 0.283 |
-| stair_ascent_speed_daily.csv | stair_ascent_speed_max | m/s | 2025-12-12 至 2025-12-18 | 0.349 |
-| stair_ascent_speed_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 8.333 |
-| stair_descent_speed_daily.csv | stair_descent_speed_avg | m/s | 2025-12-12 至 2025-12-18 | 0.330 |
-| stair_descent_speed_daily.csv | stair_descent_speed_min | m/s | 2025-12-12 至 2025-12-18 | 0.266 |
-| stair_descent_speed_daily.csv | stair_descent_speed_max | m/s | 2025-12-12 至 2025-12-18 | 0.410 |
-| stair_descent_speed_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 5.714 |
-| steps_daily.csv | steps | 步 | 2025-12-12 至 2025-12-18 | 18121.429 |
-| vo2max_daily.csv | vo2max_avg | ml·kg⁻¹·min⁻¹ | 2025-12-08 至 2025-12-14 | 46.640 |
-| vo2max_daily.csv | vo2max_min | ml·kg⁻¹·min⁻¹ | 2025-12-08 至 2025-12-14 | 46.640 |
-| vo2max_daily.csv | vo2max_max | ml·kg⁻¹·min⁻¹ | 2025-12-08 至 2025-12-14 | 46.640 |
-| vo2max_daily.csv | count | (原始单位) | 2025-12-08 至 2025-12-14 | 1.000 |
-| walking_asymmetry_daily.csv | asymmetry_pct_avg | % | 2025-12-12 至 2025-12-18 | 0.023 |
-| walking_asymmetry_daily.csv | asymmetry_pct_min | % | 2025-12-12 至 2025-12-18 | 0.000 |
-| walking_asymmetry_daily.csv | asymmetry_pct_max | % | 2025-12-12 至 2025-12-18 | 0.284 |
-| walking_asymmetry_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 25.429 |
-| walking_double_support_daily.csv | double_support_pct_avg | % | 2025-12-12 至 2025-12-18 | 0.291 |
-| walking_double_support_daily.csv | double_support_pct_min | % | 2025-12-12 至 2025-12-18 | 0.261 |
-| walking_double_support_daily.csv | double_support_pct_max | % | 2025-12-12 至 2025-12-18 | 0.321 |
-| walking_double_support_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 43.429 |
-| walking_hr_daily.csv | walk_hr_avg | bpm | 2025-12-12 至 2025-12-18 | 85.714 |
-| walking_hr_daily.csv | walk_hr_min | bpm | 2025-12-12 至 2025-12-18 | 85.714 |
-| walking_hr_daily.csv | walk_hr_max | bpm | 2025-12-12 至 2025-12-18 | 85.714 |
-| walking_hr_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 1.000 |
-| walking_metrics_daily.csv | walking_speed_avg | m/s | 2025-12-12 至 2025-12-18 | 4.190 |
-| walking_metrics_daily.csv | walking_speed_min | m/s | 2025-12-12 至 2025-12-18 | 2.397 |
-| walking_metrics_daily.csv | walking_speed_max | m/s | 2025-12-12 至 2025-12-18 | 5.462 |
-| walking_metrics_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 48.286 |
-| walking_steadiness_daily.csv | steady_avg | 分 | 2025-12-03 至 2025-12-09 | 0.961 |
-| walking_steadiness_daily.csv | steady_min | 分 | 2025-12-03 至 2025-12-09 | 0.961 |
-| walking_steadiness_daily.csv | steady_max | 分 | 2025-12-03 至 2025-12-09 | 0.961 |
-| walking_steadiness_daily.csv | count | (原始单位) | 2025-12-03 至 2025-12-09 | 1.000 |
-| walking_step_length_daily.csv | step_length_avg | m | 2025-12-12 至 2025-12-18 | 69.073 |
-| walking_step_length_daily.csv | step_length_min | m | 2025-12-12 至 2025-12-18 | 42.714 |
-| walking_step_length_daily.csv | step_length_max | m | 2025-12-12 至 2025-12-18 | 88.143 |
-| walking_step_length_daily.csv | count | (原始单位) | 2025-12-12 至 2025-12-18 | 48.286 |
-| weight_daily.csv | weight_kg | kg | 2025-12-12 至 2025-12-18 | 78.200 |
+| 文件 | 指标 | 指标中文名 | 取值/单位 | 最近7天区间 | 最近7天日均值 |
+| --- | --- | --- | --- | --- | --- |
+| audio_exposure_daily.csv | env_audio_avg | 环境噪声均值 | dB | 2025-12-12 至 2025-12-18 | 60.658 |
+| audio_exposure_daily.csv | env_audio_min | 环境噪声最小值 | dB | 2025-12-12 至 2025-12-18 | 38.165 |
+| audio_exposure_daily.csv | env_audio_max | 环境噪声最大值 | dB | 2025-12-12 至 2025-12-18 | 80.586 |
+| audio_exposure_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 42.143 |
+| body_daily.csv | weight_kg | 体重 | kg | 2025-12-12 至 2025-12-18 | 78.200 |
+| body_daily.csv | bmi | BMI | — | 2025-12-12 至 2025-12-18 | 25.200 |
+| body_daily.csv | body_fat_pct | 体脂率 | % | 2025-12-12 至 2025-12-18 | 0.239 |
+| body_daily.csv | lean_mass_kg | 去脂体重 | kg | 2025-12-12 至 2025-12-18 | 59.500 |
+| body_daily.csv | height_m | 身高 | m | 2025-12-12 至 2025-12-18 | -- |
+| daylight_daily.csv | time_in_daylight_min | 户外日照时长 | 分钟 | 2025-12-12 至 2025-12-18 | 28.000 |
+| diet_daily.csv | dietary_kcal | 摄入热量 | kcal | 2025-06-13 至 2025-06-19 | 591.400 |
+| diet_daily.csv | dietary_fat_g | 脂肪摄入 | g | 2025-06-13 至 2025-06-19 | 33.150 |
+| diet_daily.csv | dietary_carb_g | 碳水摄入 | g | 2025-06-13 至 2025-06-19 | 148.350 |
+| diet_daily.csv | dietary_protein_g | 蛋白质摄入 | g | 2025-06-13 至 2025-06-19 | 97.250 |
+| diet_daily.csv | dietary_water | 饮水量 | mL | 2025-06-13 至 2025-06-19 | 0.000 |
+| distance_daily.csv | distance_walk_run_km | 步行跑步距离 | km | 2025-12-12 至 2025-12-18 | 0.012 |
+| distance_daily.csv | distance_cycling_km | 骑行距离 | km | 2025-12-12 至 2025-12-18 | 0.004 |
+| energy_daily.csv | active_energy | 主动能量 | kcal | 2025-12-12 至 2025-12-18 | 675.790 |
+| energy_daily.csv | basal_energy | 基础代谢 | kcal | 2025-12-12 至 2025-12-18 | 1953.035 |
+| energy_daily.csv | physical_effort | 身体负荷指数 | AU | 2025-12-12 至 2025-12-18 | 1650.786 |
+| exercise_daily.csv | exercise_time_min | 锻炼时长 | 分钟 | 2025-12-12 至 2025-12-18 | 39.714 |
+| exercise_daily.csv | stand_time_min | 站立时长 | 分钟 | 2025-12-12 至 2025-12-18 | 153.286 |
+| exercise_daily.csv | stand_hours | 站立小时数 | 小时 | 2025-12-12 至 2025-12-18 | 21.143 |
+| flights_daily.csv | flights_climbed | flights_climbed | (原始单位) | 2025-12-12 至 2025-12-18 | 37.143 |
+| headphone_audio_daily.csv | headphone_audio_avg | 耳机音量均值 | dB | 2025-12-12 至 2025-12-18 | 73.924 |
+| headphone_audio_daily.csv | headphone_audio_min | 耳机音量最小值 | dB | 2025-12-12 至 2025-12-18 | 42.654 |
+| headphone_audio_daily.csv | headphone_audio_max | 耳机音量最大值 | dB | 2025-12-12 至 2025-12-18 | 87.780 |
+| headphone_audio_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 55.500 |
+| heart_rate_daily.csv | hr_avg | 心率均值 | bpm | 2025-12-12 至 2025-12-18 | 87.029 |
+| heart_rate_daily.csv | hr_min | 心率最小值 | bpm | 2025-12-12 至 2025-12-18 | 44.429 |
+| heart_rate_daily.csv | hr_max | 心率最大值 | bpm | 2025-12-12 至 2025-12-18 | 135.571 |
+| heart_rate_daily.csv | hr_count | hr_count | (原始单位) | 2025-12-12 至 2025-12-18 | 1004.714 |
+| hrv_daily.csv | sdnn_avg | HRV-SDNN均值 | ms | 2025-12-12 至 2025-12-18 | 60.726 |
+| hrv_daily.csv | sdnn_min | HRV-SDNN最小值 | ms | 2025-12-12 至 2025-12-18 | 30.239 |
+| hrv_daily.csv | sdnn_max | HRV-SDNN最大值 | ms | 2025-12-12 至 2025-12-18 | 124.308 |
+| hrv_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 10.429 |
+| respiratory_daily.csv | resp_avg | 呼吸频率均值 | 次/分 | 2025-12-12 至 2025-12-18 | 17.196 |
+| respiratory_daily.csv | resp_min | 呼吸频率最小值 | 次/分 | 2025-12-12 至 2025-12-18 | 14.786 |
+| respiratory_daily.csv | resp_max | 呼吸频率最大值 | 次/分 | 2025-12-12 至 2025-12-18 | 20.500 |
+| respiratory_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 39.429 |
+| resting_hr_daily.csv | resting_hr_avg | 静息心率均值 | bpm | 2025-12-12 至 2025-12-18 | 55.857 |
+| resting_hr_daily.csv | resting_hr_min | 静息心率最小值 | bpm | 2025-12-12 至 2025-12-18 | 55.857 |
+| resting_hr_daily.csv | resting_hr_max | 静息心率最大值 | bpm | 2025-12-12 至 2025-12-18 | 55.857 |
+| resting_hr_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 1.000 |
+| running_ground_contact_daily.csv | ground_contact_ms_avg | 着地时间均值 | ms | 2025-11-02 至 2025-11-08 | 287.242 |
+| running_ground_contact_daily.csv | ground_contact_ms_min | 着地时间最小值 | ms | 2025-11-02 至 2025-11-08 | 212.500 |
+| running_ground_contact_daily.csv | ground_contact_ms_max | 着地时间最大值 | ms | 2025-11-02 至 2025-11-08 | 342.000 |
+| running_ground_contact_daily.csv | count | 样本数 | (原始单位) | 2025-11-02 至 2025-11-08 | 974.000 |
+| running_power_daily.csv | running_power_avg | 跑步功率均值 | W | 2025-11-02 至 2025-11-08 | 159.919 |
+| running_power_daily.csv | running_power_min | 跑步功率最小值 | W | 2025-11-02 至 2025-11-08 | 55.000 |
+| running_power_daily.csv | running_power_max | 跑步功率最大值 | W | 2025-11-02 至 2025-11-08 | 316.500 |
+| running_power_daily.csv | count | 样本数 | (原始单位) | 2025-11-02 至 2025-11-08 | 2859.500 |
+| running_speed_daily.csv | running_speed_avg | 跑步速度均值 | m/s | 2025-11-02 至 2025-11-08 | 7.086 |
+| running_speed_daily.csv | running_speed_min | 跑步速度最小值 | m/s | 2025-11-02 至 2025-11-08 | 0.643 |
+| running_speed_daily.csv | running_speed_max | 跑步速度最大值 | m/s | 2025-11-02 至 2025-11-08 | 12.844 |
+| running_speed_daily.csv | count | 样本数 | (原始单位) | 2025-11-02 至 2025-11-08 | 2873.000 |
+| running_stride_length_daily.csv | running_stride_len_avg | 跑步步幅均值 | m | 2025-11-02 至 2025-11-08 | 0.919 |
+| running_stride_length_daily.csv | running_stride_len_min | 跑步步幅最小值 | m | 2025-11-02 至 2025-11-08 | 0.770 |
+| running_stride_length_daily.csv | running_stride_len_max | 跑步步幅最大值 | m | 2025-11-02 至 2025-11-08 | 1.325 |
+| running_stride_length_daily.csv | count | 样本数 | (原始单位) | 2025-11-02 至 2025-11-08 | 823.500 |
+| running_vertical_osc_daily.csv | running_vertical_osc_avg | 跑步垂直振幅均值 | cm | 2025-11-02 至 2025-11-08 | 10.876 |
+| running_vertical_osc_daily.csv | running_vertical_osc_min | 跑步垂直振幅最小值 | cm | 2025-11-02 至 2025-11-08 | 8.700 |
+| running_vertical_osc_daily.csv | running_vertical_osc_max | 跑步垂直振幅最大值 | cm | 2025-11-02 至 2025-11-08 | 12.250 |
+| running_vertical_osc_daily.csv | count | 样本数 | (原始单位) | 2025-11-02 至 2025-11-08 | 1019.000 |
+| sleep_daily.csv | sleep_hours | 睡眠时长 | 小时 | 2025-12-12 至 2025-12-18 | 6.618 |
+| sleep_temp_daily.csv | temp_avg | 睡眠手腕温度均值 | °C | 2025-12-11 至 2025-12-17 | 35.536 |
+| sleep_temp_daily.csv | temp_min | 睡眠手腕温度最小值 | °C | 2025-12-11 至 2025-12-17 | 35.536 |
+| sleep_temp_daily.csv | temp_max | 睡眠手腕温度最大值 | °C | 2025-12-11 至 2025-12-17 | 35.536 |
+| sleep_temp_daily.csv | count | 样本数 | (原始单位) | 2025-12-11 至 2025-12-17 | 1.000 |
+| spo2_daily.csv | spo2_avg | 血氧均值 | % | 2025-12-12 至 2025-12-18 | 0.974 |
+| spo2_daily.csv | spo2_min | 血氧最小值 | % | 2025-12-12 至 2025-12-18 | 0.931 |
+| spo2_daily.csv | spo2_max | 血氧最大值 | % | 2025-12-12 至 2025-12-18 | 0.997 |
+| spo2_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 20.571 |
+| stair_ascent_speed_daily.csv | stair_ascent_speed_avg | 上楼速度均值 | m/s | 2025-12-12 至 2025-12-18 | 0.315 |
+| stair_ascent_speed_daily.csv | stair_ascent_speed_min | 上楼速度最小值 | m/s | 2025-12-12 至 2025-12-18 | 0.283 |
+| stair_ascent_speed_daily.csv | stair_ascent_speed_max | 上楼速度最大值 | m/s | 2025-12-12 至 2025-12-18 | 0.349 |
+| stair_ascent_speed_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 8.333 |
+| stair_descent_speed_daily.csv | stair_descent_speed_avg | 下楼速度均值 | m/s | 2025-12-12 至 2025-12-18 | 0.330 |
+| stair_descent_speed_daily.csv | stair_descent_speed_min | 下楼速度最小值 | m/s | 2025-12-12 至 2025-12-18 | 0.266 |
+| stair_descent_speed_daily.csv | stair_descent_speed_max | 下楼速度最大值 | m/s | 2025-12-12 至 2025-12-18 | 0.410 |
+| stair_descent_speed_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 5.714 |
+| steps_daily.csv | steps | 步数 | 步 | 2025-12-12 至 2025-12-18 | 18121.429 |
+| vo2max_daily.csv | vo2max_avg | 最大摄氧量均值 | ml·kg⁻¹·min⁻¹ | 2025-12-08 至 2025-12-14 | 46.640 |
+| vo2max_daily.csv | vo2max_min | 最大摄氧量最小值 | ml·kg⁻¹·min⁻¹ | 2025-12-08 至 2025-12-14 | 46.640 |
+| vo2max_daily.csv | vo2max_max | 最大摄氧量最大值 | ml·kg⁻¹·min⁻¹ | 2025-12-08 至 2025-12-14 | 46.640 |
+| vo2max_daily.csv | count | 样本数 | (原始单位) | 2025-12-08 至 2025-12-14 | 1.000 |
+| walking_asymmetry_daily.csv | asymmetry_pct_avg | 步态不对称均值 | % | 2025-12-12 至 2025-12-18 | 0.023 |
+| walking_asymmetry_daily.csv | asymmetry_pct_min | 步态不对称最小值 | % | 2025-12-12 至 2025-12-18 | 0.000 |
+| walking_asymmetry_daily.csv | asymmetry_pct_max | 步态不对称最大值 | % | 2025-12-12 至 2025-12-18 | 0.284 |
+| walking_asymmetry_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 25.429 |
+| walking_double_support_daily.csv | double_support_pct_avg | 双支撑占比均值 | % | 2025-12-12 至 2025-12-18 | 0.291 |
+| walking_double_support_daily.csv | double_support_pct_min | 双支撑占比最小值 | % | 2025-12-12 至 2025-12-18 | 0.261 |
+| walking_double_support_daily.csv | double_support_pct_max | 双支撑占比最大值 | % | 2025-12-12 至 2025-12-18 | 0.321 |
+| walking_double_support_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 43.429 |
+| walking_hr_daily.csv | walk_hr_avg | 步行心率均值 | bpm | 2025-12-12 至 2025-12-18 | 85.714 |
+| walking_hr_daily.csv | walk_hr_min | 步行心率最小值 | bpm | 2025-12-12 至 2025-12-18 | 85.714 |
+| walking_hr_daily.csv | walk_hr_max | 步行心率最大值 | bpm | 2025-12-12 至 2025-12-18 | 85.714 |
+| walking_hr_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 1.000 |
+| walking_metrics_daily.csv | walking_speed_avg | 行走速度均值 | m/s | 2025-12-12 至 2025-12-18 | 4.190 |
+| walking_metrics_daily.csv | walking_speed_min | 行走速度最小值 | m/s | 2025-12-12 至 2025-12-18 | 2.397 |
+| walking_metrics_daily.csv | walking_speed_max | 行走速度最大值 | m/s | 2025-12-12 至 2025-12-18 | 5.462 |
+| walking_metrics_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 48.286 |
+| walking_steadiness_daily.csv | steady_avg | 步态稳定度均值 | 分 | 2025-12-03 至 2025-12-09 | 0.961 |
+| walking_steadiness_daily.csv | steady_min | 步态稳定度最小值 | 分 | 2025-12-03 至 2025-12-09 | 0.961 |
+| walking_steadiness_daily.csv | steady_max | 步态稳定度最大值 | 分 | 2025-12-03 至 2025-12-09 | 0.961 |
+| walking_steadiness_daily.csv | count | 样本数 | (原始单位) | 2025-12-03 至 2025-12-09 | 1.000 |
+| walking_step_length_daily.csv | step_length_avg | 步长均值 | m | 2025-12-12 至 2025-12-18 | 69.073 |
+| walking_step_length_daily.csv | step_length_min | 步长最小值 | m | 2025-12-12 至 2025-12-18 | 42.714 |
+| walking_step_length_daily.csv | step_length_max | 步长最大值 | m | 2025-12-12 至 2025-12-18 | 88.143 |
+| walking_step_length_daily.csv | count | 样本数 | (原始单位) | 2025-12-12 至 2025-12-18 | 48.286 |
+| weight_daily.csv | weight_kg | 体重 | kg | 2025-12-12 至 2025-12-18 | 78.200 |

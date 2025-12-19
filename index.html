@@ -164,6 +164,9 @@
         display: block;
       }
       .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
         margin: 12px 0 6px;
       }
       .metric-card {
@@ -288,6 +291,31 @@
               <span class="metric-delta" id="metric-avg7-detail">—</span>
             </div>
           </div>
+          <div class="metric-card">
+            <div class="metric-label">体重概览（7日滚动）</div>
+            <div class="metric-row">
+              <span>近7天均体重</span>
+              <span class="metric-value" id="metric-w-avg7">--</span>
+            </div>
+            <div class="metric-row">
+              <span>周环比</span>
+              <span class="metric-value">
+                <span id="metric-w-wow">--</span>
+                <span class="metric-delta" id="metric-w-wow-detail" style="margin-left: 8px;">—</span>
+              </span>
+            </div>
+            <div class="metric-row">
+              <span>月环比</span>
+              <span class="metric-value">
+                <span id="metric-w-mom">--</span>
+                <span class="metric-delta" id="metric-w-mom-detail" style="margin-left: 8px;">—</span>
+              </span>
+            </div>
+            <div class="metric-row" style="padding-top: 2px;">
+              <span>说明</span>
+              <span class="metric-delta" id="metric-w-avg7-detail">—</span>
+            </div>
+          </div>
         </div>
         <div class="scroll-wrap" style="margin-top: 12px;">
           <div id="health-charts" style="display: grid; gap: 18px;">
@@ -362,6 +390,12 @@
       const metricWowDetail = document.getElementById("metric-wow-detail");
       const metricMom = document.getElementById("metric-mom");
       const metricMomDetail = document.getElementById("metric-mom-detail");
+      const metricWAvg7 = document.getElementById("metric-w-avg7");
+      const metricWAvg7Detail = document.getElementById("metric-w-avg7-detail");
+      const metricWWow = document.getElementById("metric-w-wow");
+      const metricWWowDetail = document.getElementById("metric-w-wow-detail");
+      const metricWMom = document.getElementById("metric-w-mom");
+      const metricWMomDetail = document.getElementById("metric-w-mom-detail");
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
       const DEFAULT_CATEGORY = "超优质";
@@ -374,6 +408,10 @@
       const HEALTH_SOURCES = [
         { url: "health/sleep_daily.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_daily.csv", label: "GitHub Raw" },
+      ];
+      const WEIGHT_SOURCES = [
+        { url: "health/weight_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/weight_daily.csv", label: "GitHub Raw" },
       ];
 
       let records = [];
@@ -872,6 +910,79 @@
         }
       };
 
+      const fetchWeightSource = async () => {
+        const errors = [];
+        for (const source of WEIGHT_SOURCES) {
+          try {
+            const response = await fetch(source.url, { cache: "no-store" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const text = await response.text();
+            return { text, sourceLabel: source.label };
+          } catch (error) {
+            errors.push(`${source.label}: ${error.message}`);
+          }
+        }
+        throw new Error(errors.join(" | "));
+      };
+
+      const parseWeight = (text) => {
+        const rows = parseCSV(text);
+        if (!rows.length) return [];
+        const headers = rows[0].map((h) => h.trim().toLowerCase());
+        const idxDate = headers.indexOf("date");
+        const idxW = headers.indexOf("weight_kg");
+        if (idxDate === -1 || idxW === -1) return [];
+        return rows
+          .slice(1)
+          .map((cells) => {
+            const d = parseDate(cells[idxDate]);
+            const w = parseFloat(cells[idxW]);
+            if (!d || Number.isNaN(w)) return null;
+            return { date: d, value: w };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.date - b.date);
+      };
+
+      const loadWeight = async () => {
+        try {
+          const { text, sourceLabel } = await fetchWeightSource();
+          const items = parseWeight(text);
+          if (!items.length) {
+            metricWAvg7.textContent = "--";
+            metricWAvg7Detail.textContent = "体重数据为空";
+            return;
+          }
+          const rolling = computeRolling(
+            items.map((i) => ({ date: i.date, hours: i.value })), // 复用计算函数
+            7
+          );
+          const lastDate = items[items.length - 1].date;
+          const last7 = avgWindow(rolling, 7, 0);
+          const prev7 = avgWindow(rolling, 7, 7);
+          const last30 = avgWindow(rolling, 30, 0);
+          const prev30 = avgWindow(rolling, 30, 30);
+
+          const fmtKg = (val) => (val === null ? "--" : `${val.toFixed(2)} kg`);
+          metricWAvg7.textContent = fmtKg(last7);
+          const wow = formatDelta(last7, prev7);
+          metricWWow.textContent = wow.text === "—" ? "--" : wow.text;
+          metricWWowDetail.textContent = prev7 === null ? "样本不足" : "相较前7天";
+          metricWWowDetail.className = `metric-delta ${wow.cls}`;
+
+          const mom = formatDelta(last30, prev30);
+          metricWMom.textContent = mom.text === "—" ? "--" : mom.text;
+          metricWMomDetail.textContent = prev30 === null ? "样本不足" : "相较前30天";
+          metricWMomDetail.className = `metric-delta ${mom.cls}`;
+
+          metricWAvg7Detail.textContent = last7 === null ? "样本不足" : `截至 ${formatUpdateTime(lastDate).trim()} · 来源：${sourceLabel}`;
+        } catch (error) {
+          console.error(error);
+          metricWAvg7.textContent = "--";
+          metricWAvg7Detail.textContent = "体重数据加载失败";
+        }
+      };
+
       const fetchCSVSource = async () => {
         const errors = [];
         for (const source of CSV_SOURCES) {
@@ -925,6 +1036,7 @@
       renderHeader();
       renderBody([]);
       loadHealth();
+      loadWeight();
       loadCSV();
     </script>
   </body>

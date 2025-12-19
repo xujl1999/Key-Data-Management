@@ -35,6 +35,13 @@ def render_series(
 
     min_y = values.min()
     max_y = values.max()
+    if guide_lines:
+        for gl in guide_lines:
+            if gl.get("value") is None:
+                continue
+            val = gl["value"]
+            min_y = min(min_y, val)
+            max_y = max(max_y, val)
     pad = max((max_y - min_y) * 0.1, 0.2)
     lower = min_y - pad
     upper = max_y + pad

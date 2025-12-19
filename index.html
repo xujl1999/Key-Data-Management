@@ -205,6 +205,31 @@
       .metric-delta.negative {
         color: #f87171;
       }
+      .plan-block {
+        margin: 12px 0 20px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        color: #e2e8f0;
+      }
+      .plan-title {
+        margin: 0 0 8px;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .plan-section {
+        margin: 6px 0;
+      }
+      .plan-section strong {
+        color: #a5b4fc;
+      }
+      .plan-list {
+        margin: 4px 0 0 14px;
+        color: #cbd5f5;
+        padding: 0;
+        list-style-type: disc;
+      }
       @media (max-width: 640px) {
         main {
           padding: 20px;
@@ -220,6 +245,30 @@
       <header style="margin-bottom: 16px;">
         <h1>Key-Data-Management</h1>
       </header>
+      <div class="plan-block">
+        <p class="plan-title">迭代计划（页面标注）</p>
+        <div class="plan-section">
+          <strong>知识库：</strong>
+          <ul class="plan-list">
+            <li>分析中：微信读书笔记接口</li>
+            <li>待规划：大模型理解并总结笔记、播客、优质视频</li>
+          </ul>
+        </div>
+        <div class="plan-section">
+          <strong>娱乐：</strong>
+          <ul class="plan-list">
+            <li>接入：王者荣耀自动化战绩分析</li>
+            <li>接入：原神自动化任务完成情况</li>
+          </ul>
+        </div>
+        <div class="plan-section">
+          <strong>健康：</strong>
+          <ul class="plan-list">
+            <li>待接入：苹果健康其他指标、分部位健身频率、运动状态数据、动态血糖仪数据</li>
+            <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
+          </ul>
+        </div>
+      </div>
       <div class="tab-bar">
         <button class="tab-button tab-button--active" data-tab="health">健康</button>
         <button class="tab-button" data-tab="entertainment">娱乐</button>

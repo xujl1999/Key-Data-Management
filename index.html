@@ -378,25 +378,91 @@
       const DEFAULT_CATEGORY = "超优质";
       const DEFAULT_LIMIT = 1;
       const MAX_LIMIT = 10;
-      const CSV_SOURCES = [
-        { url: "video/video_ls.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/video/video_ls.csv", label: "GitHub Raw" },
+      const CSV_SOURCES = [{ url: "video/video_ls.csv", label: "Local" }];
+      const HEALTH_SOURCES = [{ url: "health/sleep_daily.csv", label: "Local" }];
+      const WEIGHT_SOURCES = [{ url: "health/weight_daily.csv", label: "Local" }];
+      const STEPS_SOURCES = [{ url: "health/steps_daily.csv", label: "Local" }];
+      const ENERGY_SOURCES = [{ url: "health/energy_daily.csv", label: "Local" }];
+      const BODY_SOURCES = [
+        { url: "health/body_daily.csv", label: "Local" },
       ];
-      const HEALTH_SOURCES = [
-        { url: "health/sleep_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_daily.csv", label: "GitHub Raw" },
+      const DISTANCE_SOURCES = [
+        { url: "health/distance_daily.csv", label: "Local" },
       ];
-      const WEIGHT_SOURCES = [
-        { url: "health/weight_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/weight_daily.csv", label: "GitHub Raw" },
+      const EXERCISE_SOURCES = [
+        { url: "health/exercise_daily.csv", label: "Local" },
       ];
-      const STEPS_SOURCES = [
-        { url: "health/steps_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/steps_daily.csv", label: "GitHub Raw" },
+      const DAYLIGHT_SOURCES = [
+        { url: "health/daylight_daily.csv", label: "Local" },
       ];
-      const ENERGY_SOURCES = [
-        { url: "health/energy_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/energy_daily.csv", label: "GitHub Raw" },
+      const DIET_SOURCES = [
+        { url: "health/diet_daily.csv", label: "Local" },
+      ];
+      const HR_SOURCES = [
+        { url: "health/heart_rate_daily.csv", label: "Local" },
+      ];
+      const REST_HR_SOURCES = [
+        { url: "health/resting_hr_daily.csv", label: "Local" },
+      ];
+      const WALK_HR_SOURCES = [
+        { url: "health/walking_hr_daily.csv", label: "Local" },
+      ];
+      const HRV_SOURCES = [
+        { url: "health/hrv_daily.csv", label: "Local" },
+      ];
+      const RESP_SOURCES = [
+        { url: "health/respiratory_daily.csv", label: "Local" },
+      ];
+      const SPO2_SOURCES = [
+        { url: "health/spo2_daily.csv", label: "Local" },
+      ];
+      const VO2_SOURCES = [
+        { url: "health/vo2max_daily.csv", label: "Local" },
+      ];
+      const SLEEP_TEMP_SOURCES = [
+        { url: "health/sleep_temp_daily.csv", label: "Local" },
+      ];
+      const WALK_METRIC_SOURCES = [
+        { url: "health/walking_metrics_daily.csv", label: "Local" },
+      ];
+      const WALK_STEP_LEN_SOURCES = [
+        { url: "health/walking_step_length_daily.csv", label: "Local" },
+      ];
+      const WALK_DS_SOURCES = [
+        { url: "health/walking_double_support_daily.csv", label: "Local" },
+      ];
+      const WALK_ASYM_SOURCES = [
+        { url: "health/walking_asymmetry_daily.csv", label: "Local" },
+      ];
+      const WALK_STEADY_SOURCES = [
+        { url: "health/walking_steadiness_daily.csv", label: "Local" },
+      ];
+      const RUN_SPEED_SOURCES = [
+        { url: "health/running_speed_daily.csv", label: "Local" },
+      ];
+      const RUN_POWER_SOURCES = [
+        { url: "health/running_power_daily.csv", label: "Local" },
+      ];
+      const RUN_VERT_SOURCES = [
+        { url: "health/running_vertical_osc_daily.csv", label: "Local" },
+      ];
+      const RUN_GC_SOURCES = [
+        { url: "health/running_ground_contact_daily.csv", label: "Local" },
+      ];
+      const RUN_STRIDE_SOURCES = [
+        { url: "health/running_stride_length_daily.csv", label: "Local" },
+      ];
+      const STAIR_ASC_SOURCES = [
+        { url: "health/stair_ascent_speed_daily.csv", label: "Local" },
+      ];
+      const STAIR_DESC_SOURCES = [
+        { url: "health/stair_descent_speed_daily.csv", label: "Local" },
+      ];
+      const AUDIO_ENV_SOURCES = [
+        { url: "health/audio_exposure_daily.csv", label: "Local" },
+      ];
+      const AUDIO_HEAD_SOURCES = [
+        { url: "health/headphone_audio_daily.csv", label: "Local" },
       ];
       const EXERCISE_SOURCES = [
         { url: "health/exercise_daily.csv", label: "Local" },

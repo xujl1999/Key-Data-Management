@@ -19,7 +19,16 @@ plt.rcParams["font.family"] = ["Microsoft YaHei", "SimHei", "sans-serif"]
 plt.rcParams["axes.unicode_minus"] = False
 
 
-def render_series(dates, values, title, outfile, color_line, color_fill, ylabel):
+def render_series(
+    dates,
+    values,
+    title,
+    outfile,
+    color_line,
+    color_fill,
+    ylabel,
+    guide_lines=None,
+):
     fig, ax = plt.subplots(figsize=(10, 4.2))
     fig.patch.set_facecolor("#0f172a")
     ax.set_facecolor("#0f172a")
@@ -40,6 +49,20 @@ def render_series(dates, values, title, outfile, color_line, color_fill, ylabel)
     )
     ax.fill_between(dates, values, lower, color=color_fill, alpha=0.16)
     ax.set_ylim(lower, upper)
+
+    if guide_lines:
+        for gl in guide_lines:
+            val = gl.get("value")
+            if val is None:
+                continue
+            ax.axhline(
+                y=val,
+                color=gl.get("color", "#94a3b8"),
+                linestyle=gl.get("linestyle", "--"),
+                linewidth=1.2,
+                alpha=0.8,
+                label=gl.get("label"),
+            )
 
     ax.set_title(title, color="#e2e8f0", pad=12)
     ax.set_xlabel("")
@@ -106,6 +129,10 @@ def plot_sleep():
         "#22c55e",
         "#22c55e",
         "睡眠时长（小时）",
+        guide_lines=[
+            {"value": 8, "color": "#22d3ee", "label": "目标线 8h"},
+            {"value": 6, "color": "#f97316", "label": "预警线 6h"},
+        ],
     )
 
 
@@ -128,6 +155,10 @@ def plot_weight():
         "#fbbf24",
         "#fbbf24",
         "体重（kg）",
+        guide_lines=[
+            {"value": 70, "color": "#22d3ee", "label": "目标线 70kg"},
+            {"value": 80, "color": "#f97316", "label": "预警线 80kg"},
+        ],
     )
 
 

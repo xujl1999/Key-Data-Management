@@ -125,13 +125,15 @@ def plot_sleep():
     daily["sleep_ma7"] = daily["sleep_hours"].rolling(window=7, min_periods=1).mean()
 
     last_date = daily["date"].max()
-    cutoff_90 = last_date - pd.Timedelta(days=90)
-    recent_90 = daily[daily["date"] >= cutoff_90]
+    cutoff_365 = last_date - pd.Timedelta(days=365)
+    recent_365 = daily[daily["date"] >= cutoff_365]
+    if recent_365.empty:
+        recent_365 = daily
 
     render_series(
-        recent_90["date"],
-        recent_90["sleep_ma7"],
-        "近三个月睡眠时长（滑动7日均值）",
+        recent_365["date"],
+        recent_365["sleep_ma7"],
+        "近一年睡眠时长（滑动7日均值）",
         OUT_SLEEP_WEEKLY,
         "#22c55e",
         "#22c55e",
@@ -150,14 +152,14 @@ def plot_weight():
     df.sort_values("date", inplace=True)
     df["weight_ma7"] = df["weight_kg"].rolling(window=7, min_periods=1).mean()
     last_date = df["date"].max()
-    cutoff = last_date - pd.Timedelta(days=180)
+    cutoff = last_date - pd.Timedelta(days=365)
     recent = df[df["date"] >= cutoff]
     if recent.empty:
-        return
+        recent = df
     render_series(
         recent["date"],
         recent["weight_ma7"],
-        "体重（滑动7日均值）",
+        "近一年体重（滑动7日均值）",
         OUT_WEIGHT,
         "#fbbf24",
         "#fbbf24",

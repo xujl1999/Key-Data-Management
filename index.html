@@ -164,31 +164,39 @@
         display: block;
       }
       .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
         margin: 12px 0 6px;
       }
       .metric-card {
         background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(16, 185, 129, 0.12));
         border: 1px solid rgba(148, 163, 184, 0.25);
         border-radius: 12px;
-        padding: 12px 14px;
+        padding: 14px 16px;
         color: #e2e8f0;
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.45);
       }
       .metric-label {
-        font-size: 0.9rem;
+        font-size: 1rem;
         color: #cbd5f5;
-        margin-bottom: 4px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .metric-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
+        gap: 10px;
+      }
+      .metric-row:last-child {
+        border-bottom: none;
       }
       .metric-value {
-        font-size: 1.35rem;
+        font-size: 1.25rem;
         font-weight: 700;
       }
       .metric-delta {
-        margin-top: 4px;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: #a5b4fc;
       }
       .metric-delta.positive {
@@ -221,19 +229,29 @@
         <div id="health-status" class="status">正在加载健康数据...</div>
         <div class="metric-grid">
           <div class="metric-card">
-            <div class="metric-label">近7天均时长</div>
-            <div class="metric-value" id="metric-avg7">--</div>
-            <div class="metric-delta" id="metric-avg7-detail">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">周环比</div>
-            <div class="metric-value" id="metric-wow">--</div>
-            <div class="metric-delta" id="metric-wow-detail">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">月环比</div>
-            <div class="metric-value" id="metric-mom">--</div>
-            <div class="metric-delta" id="metric-mom-detail">—</div>
+            <div class="metric-label">睡眠概览（7日滚动）</div>
+            <div class="metric-row">
+              <span>近7天均时长</span>
+              <span class="metric-value" id="metric-avg7">--</span>
+            </div>
+            <div class="metric-row">
+              <span>周环比</span>
+              <span class="metric-value">
+                <span id="metric-wow">--</span>
+                <span class="metric-delta" id="metric-wow-detail" style="margin-left: 8px;">—</span>
+              </span>
+            </div>
+            <div class="metric-row">
+              <span>月环比</span>
+              <span class="metric-value">
+                <span id="metric-mom">--</span>
+                <span class="metric-delta" id="metric-mom-detail" style="margin-left: 8px;">—</span>
+              </span>
+            </div>
+            <div class="metric-row" style="padding-top: 2px;">
+              <span>说明</span>
+              <span class="metric-delta" id="metric-avg7-detail">—</span>
+            </div>
           </div>
         </div>
         <div class="scroll-wrap" style="margin-top: 12px;">

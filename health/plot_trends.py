@@ -71,6 +71,7 @@ def plot_sleep():
             color=color_line,
             linewidth=2.6,
             solid_capstyle="round",
+            label="7日滚动均值",
         )
         ax.fill_between(dates, values, lower, color=color_fill, alpha=0.16)
         ax.set_ylim(lower, upper)
@@ -80,6 +81,15 @@ def plot_sleep():
         ax.set_ylabel("睡眠时长（7日均值，小时）", color="#cbd5f5")
         ax.tick_params(colors="#cbd5f5", labelsize=9)
         ax.grid(True, color="#94a3b8", alpha=0.18, linewidth=0.8, linestyle="--")
+        legend = ax.legend(
+            loc="upper left",
+            frameon=True,
+            facecolor="#0f172a",
+            edgecolor="#1f2937",
+            labelcolor="#cbd5f5",
+        )
+        if legend:
+            legend.get_frame().set_alpha(0.6)
         for spine in ax.spines.values():
             spine.set_color("#1f2937")
         fig.tight_layout()
@@ -89,7 +99,7 @@ def plot_sleep():
     render_series(
         recent_90["date"],
         recent_90["sleep_ma7"],
-        "近三个月睡眠时长（7日均值）",
+        "近三个月睡眠时长（滑动7日均值）",
         OUT_SLEEP_WEEKLY,
         "#22c55e",
         "#22c55e",

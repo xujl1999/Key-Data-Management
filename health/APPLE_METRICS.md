@@ -52,6 +52,12 @@
 - `audio_exposure_daily.csv`: 环境噪声均值/极值
 - `headphone_audio_daily.csv`: 耳机音量暴露均值/极值
 
+## 最近7天统计（自动生成）
+- 已生成汇总表：`health/_last7_summary.md`  
+  - 表头：`文件 | 指标 | 取值/单位 | 最近7天区间 | 最近7天日均值`  
+  - 覆盖上述所有指标文件，每个指标一行，基于每个文件最新日期向前 7 天（含当日）。
+- 若需更新，运行：`python health/summarize_last7.py`
+
 ## 可视化使用的派生文件
 - `sleep_weekly.png`：睡眠 7 日滚动均值趋势（近一年），含目标/预警线。
 - `weight_trend.png`：体重 7 日滚动均值趋势（近一年），含目标/预警线。

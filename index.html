@@ -962,7 +962,7 @@
           .sort((a, b) => a.date - b.date);
       };
 
-      const avgWindow = (series, days, offsetDays = 0) => {
+      const avgWindowByDate = (series, days, offsetDays = 0) => {
         if (!series.length) return null;
         const lastDate = series[series.length - 1].date;
         const end = new Date(lastDate);
@@ -1017,30 +1017,35 @@
         try {
           const rows = [];
           for (const def of METRIC_DEFS) {
-            const { text } = await fetchFromSources(def.sources);
-            const series = parseMetricSeries(text, def.valueKey);
-            if (!series.length) {
-              rows.push({ label: def.label, weekAvg: "--", wow: "—", mom: "—", yoy: "—" });
-              continue;
-            }
-            const avg7 = avgWindow(series, 7, 0);
-            const prev7 = avgWindow(series, 7, 7);
-            const avg30 = avgWindow(series, 30, 0);
-            const prev30 = avgWindow(series, 30, 30);
-            const avg365 = avgWindow(series, 365, 0);
-            const prev365 = avgWindow(series, 365, 365);
+            try {
+              const { text } = await fetchFromSources(def.sources);
+              const series = parseMetricSeries(text, def.valueKey);
+              if (!series.length) {
+                rows.push({ label: def.label, weekAvg: "--", wow: "—", mom: "—", yoy: "—" });
+                continue;
+              }
+              const avg7 = avgWindowByDate(series, 7, 0);
+              const prev7 = avgWindowByDate(series, 7, 7);
+              const avg30 = avgWindowByDate(series, 30, 0);
+              const prev30 = avgWindowByDate(series, 30, 30);
+              const avg365 = avgWindowByDate(series, 365, 0);
+              const prev365 = avgWindowByDate(series, 365, 365);
 
-            rows.push({
-              label: def.label,
-              weekAvg: formatValueWithUnit(avg7, def.unit),
-              wow: formatDeltaColored(avg7, prev7),
-              mom: formatDeltaColored(avg30, prev30),
-              yoy: formatDeltaColored(avg365, prev365),
-            });
+              rows.push({
+                label: def.label,
+                weekAvg: formatValueWithUnit(avg7, def.unit),
+                wow: formatDeltaColored(avg7, prev7),
+                mom: formatDeltaColored(avg30, prev30),
+                yoy: formatDeltaColored(avg365, prev365),
+              });
+            } catch (error) {
+              console.error(`加载指标 ${def.label} 失败:`, error);
+              rows.push({ label: def.label, weekAvg: "加载失败", wow: "—", mom: "—", yoy: "—" });
+            }
           }
           renderMetricTable(rows);
         } catch (error) {
-          console.error(error);
+          console.error("加载指标表格失败:", error);
           renderMetricTable([]);
         }
       };

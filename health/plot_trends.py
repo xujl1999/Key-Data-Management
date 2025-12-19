@@ -12,6 +12,9 @@ OUT_ENERGY = ROOT / "energy_trend.png"
 OUT_SLEEP_WEEKLY = ROOT / "sleep_weekly.png"
 OUT_SLEEP_MONTHLY = ROOT / "sleep_monthly.png"
 
+# 统一中文字体与减号显示
+plt.rcParams["font.family"] = ["Microsoft YaHei", "SimHei", "sans-serif"]
+plt.rcParams["axes.unicode_minus"] = False
 
 def plot_steps():
     df = pd.read_csv(STEPS_CSV, parse_dates=["date"])
@@ -56,26 +59,37 @@ def plot_sleep():
     recent_365 = daily[daily["date"] >= cutoff_365].set_index("date")
     monthly = recent_365["sleep_ma7"].resample("ME").mean().reset_index()
 
-    # 方案：线条+渐变，使用 7 日均值，视觉贴合深色主题，不强制零基线
+    # 方案1：深色背景 + 霓虹线条 + 柔和渐变，突出波动，不强制零基线
     def render_series(dates, values, title, outfile, color_line, color_fill):
-        fig, ax = plt.subplots(figsize=(10, 4))
+        fig, ax = plt.subplots(figsize=(10, 4.2))
         fig.patch.set_facecolor("#0f172a")
         ax.set_facecolor("#0f172a")
 
-        ax.plot(dates, values, color=color_line, linewidth=2.2)
         min_y = values.min()
         max_y = values.max()
         pad = max((max_y - min_y) * 0.1, 0.2)
-        ax.fill_between(dates, values, min_y - pad, color=color_fill, alpha=0.2)
-        ax.set_ylim(min_y - pad, max_y + pad)
-        ax.set_title(title, color="#e2e8f0")
+        lower = min_y - pad
+        upper = max_y + pad
+
+        ax.plot(
+            dates,
+            values,
+            color=color_line,
+            linewidth=2.6,
+            solid_capstyle="round",
+        )
+        ax.fill_between(dates, values, lower, color=color_fill, alpha=0.16)
+        ax.set_ylim(lower, upper)
+
+        ax.set_title(title, color="#e2e8f0", pad=12)
         ax.set_xlabel("")
-        ax.set_ylabel("小时 (7日均值)", color="#cbd5f5")
-        ax.tick_params(colors="#cbd5f5")
+        ax.set_ylabel("睡眠时长（7日均值，小时）", color="#cbd5f5")
+        ax.tick_params(colors="#cbd5f5", labelsize=9)
+        ax.grid(True, color="#94a3b8", alpha=0.18, linewidth=0.8, linestyle="--")
         for spine in ax.spines.values():
-            spine.set_color("#1e293b")
+            spine.set_color("#1f2937")
         fig.tight_layout()
-        fig.savefig(outfile, dpi=150, facecolor=fig.get_facecolor())
+        fig.savefig(outfile, dpi=180, facecolor=fig.get_facecolor())
         plt.close(fig)
 
     render_series(

@@ -32,3 +32,8 @@
 - 不得跳过规范化步骤；确保上传前日期格式已统一且排序正确。
 - 提交信息尽量清晰，便于追溯（如 `data: normalize publish dates`）。
 - 本项目仅供学习研究，严禁用于商业或违规用途。
+
+## Local workflow agreements (appendix)
+- 本地预览默认使用 `python -m http.server 8000 --bind 127.0.0.1`，每次改完代码启动/重启以便验证。
+- 修改后先本地验证，再推送到 `main`，完成后通知验收。
+- Apple Health 原始导出（导出.zip）不上传，仅提交聚合 CSV/PNG。

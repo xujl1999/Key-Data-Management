@@ -233,6 +233,14 @@
         padding: 0;
         list-style-type: disc;
       }
+      .delta-pos {
+        color: #34d399;
+        font-weight: 600;
+      }
+      .delta-neg {
+        color: #f87171;
+        font-weight: 600;
+      }
       @media (max-width: 640px) {
         main {
           padding: 20px;
@@ -318,6 +326,22 @@
               <span class="metric-delta" id="metric-w-avg7-detail">—</span>
             </div>
           </div>
+        </div>
+        <div class="scroll-wrap" style="margin-top: 10px;">
+          <table>
+            <thead>
+              <tr>
+                <th>指标名</th>
+                <th>周日均</th>
+                <th>周环比</th>
+                <th>月环比</th>
+                <th>年同比</th>
+              </tr>
+            </thead>
+            <tbody id="health-metric-body">
+              <tr><td colspan="5">正在计算...</td></tr>
+            </tbody>
+          </table>
         </div>
         <div class="scroll-wrap" style="margin-top: 12px;">
           <div id="health-charts" style="display: grid; gap: 18px;">
@@ -412,6 +436,7 @@
       const metricWWowDetail = document.getElementById("metric-w-wow-detail");
       const metricWMom = document.getElementById("metric-w-mom");
       const metricWMomDetail = document.getElementById("metric-w-mom-detail");
+      const metricTableBody = document.getElementById("health-metric-body");
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
       const DEFAULT_CATEGORY = "超优质";
@@ -428,6 +453,21 @@
       const WEIGHT_SOURCES = [
         { url: "health/weight_daily.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/weight_daily.csv", label: "GitHub Raw" },
+      ];
+      const STEPS_SOURCES = [
+        { url: "health/steps_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/steps_daily.csv", label: "GitHub Raw" },
+      ];
+      const ENERGY_SOURCES = [
+        { url: "health/energy_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/energy_daily.csv", label: "GitHub Raw" },
+      ];
+
+      const METRIC_DEFS = [
+        { label: "睡眠时长", valueKey: "sleep_hours", unit: "小时", sources: HEALTH_SOURCES },
+        { label: "体重", valueKey: "weight_kg", unit: "kg", sources: WEIGHT_SOURCES },
+        { label: "步数", valueKey: "steps", unit: "步", sources: STEPS_SOURCES },
+        { label: "主动能量", valueKey: "active_energy", unit: "kcal", sources: ENERGY_SOURCES },
       ];
 
       let records = [];
@@ -888,6 +928,123 @@
         return { text: `${sign}${delta.toFixed(1)}%`, cls };
       };
 
+      const fetchFromSources = async (sourceList) => {
+        const errors = [];
+        for (const source of sourceList) {
+          try {
+            const response = await fetch(source.url, { cache: "no-store" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const text = await response.text();
+            return { text, sourceLabel: source.label };
+          } catch (error) {
+            errors.push(`${source.label}: ${error.message}`);
+          }
+        }
+        throw new Error(errors.join(" | "));
+      };
+
+      const parseMetricSeries = (text, valueKey) => {
+        const rows = parseCSV(text);
+        if (!rows.length) return [];
+        const headers = rows[0].map((h) => h.trim().toLowerCase());
+        const idxDate = headers.indexOf("date");
+        const idxVal = headers.indexOf(valueKey.toLowerCase());
+        if (idxDate === -1 || idxVal === -1) return [];
+        return rows
+          .slice(1)
+          .map((cells) => {
+            const d = parseDate(cells[idxDate]);
+            const v = parseFloat(cells[idxVal]);
+            if (!d || Number.isNaN(v)) return null;
+            return { date: d, value: v };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.date - b.date);
+      };
+
+      const avgWindow = (series, days, offsetDays = 0) => {
+        if (!series.length) return null;
+        const lastDate = series[series.length - 1].date;
+        const end = new Date(lastDate);
+        end.setDate(end.getDate() - offsetDays);
+        const start = new Date(end);
+        start.setDate(start.getDate() - (days - 1));
+        const window = series.filter((item) => item.date >= start && item.date <= end);
+        if (!window.length) return null;
+        const total = window.reduce((acc, cur) => acc + cur.value, 0);
+        return total / window.length;
+      };
+
+      const formatValueWithUnit = (val, unit) => {
+        if (val === null || Number.isNaN(val)) return "--";
+        return `${Number(val).toPrecision(3)} ${unit}`;
+      };
+
+      const formatDeltaColored = (current, previous) => {
+        if (current === null || previous === null || previous === 0) return "—";
+        const delta = ((current - previous) / previous) * 100;
+        if (Math.abs(delta) < 5) return "—";
+        const cls = delta > 0 ? "delta-pos" : "delta-neg";
+        const sign = delta > 0 ? "+" : "";
+        return `<span class="${cls}">${sign}${delta.toFixed(1)}%</span>`;
+      };
+
+      const renderMetricTable = (rows) => {
+        metricTableBody.innerHTML = "";
+        if (!rows.length) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 5;
+          td.textContent = "暂无数据";
+          tr.appendChild(td);
+          metricTableBody.appendChild(tr);
+          return;
+        }
+        rows.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.label}</td>
+            <td>${row.weekAvg}</td>
+            <td>${row.wow}</td>
+            <td>${row.mom}</td>
+            <td>${row.yoy}</td>
+          `;
+          metricTableBody.appendChild(tr);
+        });
+      };
+
+      const loadMetricTable = async () => {
+        try {
+          const rows = [];
+          for (const def of METRIC_DEFS) {
+            const { text } = await fetchFromSources(def.sources);
+            const series = parseMetricSeries(text, def.valueKey);
+            if (!series.length) {
+              rows.push({ label: def.label, weekAvg: "--", wow: "—", mom: "—", yoy: "—" });
+              continue;
+            }
+            const avg7 = avgWindow(series, 7, 0);
+            const prev7 = avgWindow(series, 7, 7);
+            const avg30 = avgWindow(series, 30, 0);
+            const prev30 = avgWindow(series, 30, 30);
+            const avg365 = avgWindow(series, 365, 0);
+            const prev365 = avgWindow(series, 365, 365);
+
+            rows.push({
+              label: def.label,
+              weekAvg: formatValueWithUnit(avg7, def.unit),
+              wow: formatDeltaColored(avg7, prev7),
+              mom: formatDeltaColored(avg30, prev30),
+              yoy: formatDeltaColored(avg365, prev365),
+            });
+          }
+          renderMetricTable(rows);
+        } catch (error) {
+          console.error(error);
+          renderMetricTable([]);
+        }
+      };
+
       const loadHealth = async () => {
         healthStatus.textContent = "正在加载健康数据...";
         try {
@@ -1053,6 +1210,7 @@
       renderBody([]);
       loadHealth();
       loadWeight();
+      loadMetricTable();
       loadCSV();
     </script>
   </body>

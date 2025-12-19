@@ -7,20 +7,10 @@ ROOT = Path(__file__).resolve().parent
 STEPS_CSV = ROOT / "steps_daily.csv"
 ENERGY_CSV = ROOT / "energy_daily.csv"
 SLEEP_CSV = ROOT / "sleep_daily.csv"
-
 OUT_STEPS = ROOT / "steps_trend.png"
 OUT_ENERGY = ROOT / "energy_trend.png"
-
-SLEEP_WEEKLY_OPTS = [
-    ROOT / "sleep_weekly_opt1.png",
-    ROOT / "sleep_weekly_opt2.png",
-    ROOT / "sleep_weekly_opt3.png",
-]
-SLEEP_MONTHLY_OPTS = [
-    ROOT / "sleep_monthly_opt1.png",
-    ROOT / "sleep_monthly_opt2.png",
-    ROOT / "sleep_monthly_opt3.png",
-]
+OUT_SLEEP_WEEKLY = ROOT / "sleep_weekly.png"
+OUT_SLEEP_MONTHLY = ROOT / "sleep_monthly.png"
 
 
 def plot_steps():
@@ -66,78 +56,44 @@ def plot_sleep():
     recent_365 = daily[daily["date"] >= cutoff_365].set_index("date")
     monthly = recent_365["sleep_ma7"].resample("ME").mean().reset_index()
 
-    # 方案1：简洁线 + 渐变填充
-    plt.figure(figsize=(10, 4))
-    plt.plot(weekly["date"], weekly["sleep_ma7"], color="#22c55e", linewidth=2)
-    plt.fill_between(
-        weekly["date"], weekly["sleep_ma7"], color="#22c55e", alpha=0.15
+    # 方案：线条+渐变，使用 7 日均值，视觉贴合深色主题，不强制零基线
+    def render_series(dates, values, title, outfile, color_line, color_fill):
+        fig, ax = plt.subplots(figsize=(10, 4))
+        fig.patch.set_facecolor("#0f172a")
+        ax.set_facecolor("#0f172a")
+
+        ax.plot(dates, values, color=color_line, linewidth=2.2)
+        min_y = values.min()
+        max_y = values.max()
+        pad = max((max_y - min_y) * 0.1, 0.2)
+        ax.fill_between(dates, values, min_y - pad, color=color_fill, alpha=0.2)
+        ax.set_ylim(min_y - pad, max_y + pad)
+        ax.set_title(title, color="#e2e8f0")
+        ax.set_xlabel("")
+        ax.set_ylabel("小时 (7日均值)", color="#cbd5f5")
+        ax.tick_params(colors="#cbd5f5")
+        for spine in ax.spines.values():
+            spine.set_color("#1e293b")
+        fig.tight_layout()
+        fig.savefig(outfile, dpi=150, facecolor=fig.get_facecolor())
+        plt.close(fig)
+
+    render_series(
+        weekly["date"],
+        weekly["sleep_ma7"],
+        "近三个月睡眠时长（按周，7日均值）",
+        OUT_SLEEP_WEEKLY,
+        "#22c55e",
+        "#22c55e",
     )
-    plt.title("Sleep (Weekly Avg, Last 3 Months)")
-    plt.xlabel("Week (Mon)")
-    plt.ylabel("Hours (7d MA)")
-    plt.tight_layout()
-    plt.savefig(SLEEP_WEEKLY_OPTS[0], dpi=150)
-    plt.close()
-
-    plt.figure(figsize=(10, 4))
-    plt.plot(monthly["date"], monthly["sleep_ma7"], color="#6366f1", linewidth=2)
-    plt.fill_between(
-        monthly["date"], monthly["sleep_ma7"], color="#6366f1", alpha=0.15
+    render_series(
+        monthly["date"],
+        monthly["sleep_ma7"],
+        "近一年睡眠时长（按月，7日均值）",
+        OUT_SLEEP_MONTHLY,
+        "#6366f1",
+        "#6366f1",
     )
-    plt.title("Sleep (Monthly Avg, Last 12 Months)")
-    plt.xlabel("Month")
-    plt.ylabel("Hours (7d MA)")
-    plt.tight_layout()
-    plt.savefig(SLEEP_MONTHLY_OPTS[0], dpi=150)
-    plt.close()
-
-    # 方案2：面积图 + 标记
-    plt.figure(figsize=(10, 4))
-    plt.fill_between(
-        weekly["date"], weekly["sleep_ma7"], color="#0ea5e9", alpha=0.25
-    )
-    plt.plot(weekly["date"], weekly["sleep_ma7"], color="#0ea5e9", linewidth=2.5)
-    plt.scatter(weekly["date"], weekly["sleep_ma7"], color="#0ea5e9", s=18, alpha=0.9)
-    plt.title("Sleep (Weekly, Last 3 Months)")
-    plt.xlabel("Week (Mon)")
-    plt.ylabel("Hours (7d MA)")
-    plt.tight_layout()
-    plt.savefig(SLEEP_WEEKLY_OPTS[1], dpi=150)
-    plt.close()
-
-    plt.figure(figsize=(10, 4))
-    plt.fill_between(
-        monthly["date"], monthly["sleep_ma7"], color="#ec4899", alpha=0.25
-    )
-    plt.plot(monthly["date"], monthly["sleep_ma7"], color="#ec4899", linewidth=2.5)
-    plt.scatter(monthly["date"], monthly["sleep_ma7"], color="#ec4899", s=18, alpha=0.9)
-    plt.title("Sleep (Monthly, Last 12 Months)")
-    plt.xlabel("Month")
-    plt.ylabel("Hours (7d MA)")
-    plt.tight_layout()
-    plt.savefig(SLEEP_MONTHLY_OPTS[1], dpi=150)
-    plt.close()
-
-    # 方案3：柱状 + 线条叠加
-    plt.figure(figsize=(10, 4))
-    plt.bar(weekly["date"], weekly["sleep_ma7"], color="#f97316", alpha=0.7)
-    plt.plot(weekly["date"], weekly["sleep_ma7"], color="#1f2937", linewidth=1.8)
-    plt.title("Sleep (Weekly Bars, Last 3 Months)")
-    plt.xlabel("Week (Mon)")
-    plt.ylabel("Hours (7d MA)")
-    plt.tight_layout()
-    plt.savefig(SLEEP_WEEKLY_OPTS[2], dpi=150)
-    plt.close()
-
-    plt.figure(figsize=(10, 4))
-    plt.bar(monthly["date"], monthly["sleep_ma7"], color="#22c55e", alpha=0.7)
-    plt.plot(monthly["date"], monthly["sleep_ma7"], color="#1f2937", linewidth=1.8)
-    plt.title("Sleep (Monthly Bars, Last 12 Months)")
-    plt.xlabel("Month")
-    plt.ylabel("Hours (7d MA)")
-    plt.tight_layout()
-    plt.savefig(SLEEP_MONTHLY_OPTS[2], dpi=150)
-    plt.close()
 
 
 def main():

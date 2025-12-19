@@ -163,6 +163,40 @@
       .tab-panel--active {
         display: block;
       }
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin: 12px 0 6px;
+      }
+      .metric-card {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(16, 185, 129, 0.12));
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: #e2e8f0;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.45);
+      }
+      .metric-label {
+        font-size: 0.9rem;
+        color: #cbd5f5;
+        margin-bottom: 4px;
+      }
+      .metric-value {
+        font-size: 1.35rem;
+        font-weight: 700;
+      }
+      .metric-delta {
+        margin-top: 4px;
+        font-size: 0.9rem;
+        color: #a5b4fc;
+      }
+      .metric-delta.positive {
+        color: #34d399;
+      }
+      .metric-delta.negative {
+        color: #f87171;
+      }
       @media (max-width: 640px) {
         main {
           padding: 20px;
@@ -179,24 +213,39 @@
         <h1>Key-Data-Management</h1>
       </header>
       <div class="tab-bar">
-        <button class="tab-button" data-tab="health">健康</button>
-        <button class="tab-button tab-button--active" data-tab="entertainment">娱乐</button>
+        <button class="tab-button tab-button--active" data-tab="health">健康</button>
+        <button class="tab-button" data-tab="entertainment">娱乐</button>
         <button class="tab-button" data-tab="knowledge">知识库</button>
       </div>
-      <section class="tab-panel" id="tab-health">
+      <section class="tab-panel tab-panel--active" id="tab-health">
         <div id="health-status" class="status">正在加载健康数据...</div>
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">近7天均时长</div>
+            <div class="metric-value" id="metric-avg7">--</div>
+            <div class="metric-delta" id="metric-avg7-detail">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">周环比</div>
+            <div class="metric-value" id="metric-wow">--</div>
+            <div class="metric-delta" id="metric-wow-detail">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">月环比</div>
+            <div class="metric-value" id="metric-mom">--</div>
+            <div class="metric-delta" id="metric-mom-detail">—</div>
+          </div>
+        </div>
         <div class="scroll-wrap" style="margin-top: 12px;">
-          <div id="health-charts" style="display: grid; gap: 24px;">
-            <div style="display: grid; gap: 12px;">
-              <h3 style="margin: 0;">近三个月睡眠时长（周）</h3>
-              <img src="health/sleep_weekly.png" alt="近三个月睡眠周趋势" style="max-width: 100%; border-radius: 12px;" />
-              <h3 style="margin: 0;">近一年睡眠时长（按月）</h3>
-              <img src="health/sleep_monthly.png" alt="近一年睡眠月趋势" style="max-width: 100%; border-radius: 12px;" />
+          <div id="health-charts" style="display: grid; gap: 18px;">
+            <div style="display: grid; gap: 10px;">
+              <h3 style="margin: 0;">近三个月睡眠时长（7日均值）</h3>
+              <img src="health/sleep_weekly.png" alt="近三个月睡眠趋势" style="max-width: 100%; border-radius: 12px;" />
             </div>
           </div>
         </div>
       </section>
-      <section class="tab-panel tab-panel--active" id="tab-entertainment">
+      <section class="tab-panel" id="tab-entertainment">
       <header>
         <p>更新时间：<span id="update-time" style="margin-left: 8px; font-size: 0.9rem;"></span></p>
         <div class="status" id="status">正在加载数据...</div>
@@ -234,6 +283,12 @@
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabPanels = document.querySelectorAll(".tab-panel");
       const healthStatus = document.getElementById("health-status");
+      const metricAvg7 = document.getElementById("metric-avg7");
+      const metricAvg7Detail = document.getElementById("metric-avg7-detail");
+      const metricWow = document.getElementById("metric-wow");
+      const metricWowDetail = document.getElementById("metric-wow-detail");
+      const metricMom = document.getElementById("metric-mom");
+      const metricMomDetail = document.getElementById("metric-mom-detail");
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
       const DEFAULT_CATEGORY = "超优质";
@@ -642,6 +697,108 @@
         return null;
       };
 
+      const fetchHealthSource = async () => {
+        const errors = [];
+        for (const source of HEALTH_SOURCES) {
+          try {
+            const response = await fetch(source.url, { cache: "no-store" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const text = await response.text();
+            return { text, sourceLabel: source.label };
+          } catch (error) {
+            errors.push(`${source.label}: ${error.message}`);
+          }
+        }
+        throw new Error(errors.join(" | "));
+      };
+
+      const parseHealth = (text) => {
+        const rows = parseCSV(text);
+        if (!rows.length) return [];
+        const headers = rows[0].map((h) => h.trim().toLowerCase());
+        const idxDate = headers.indexOf("date");
+        const idxHours = headers.indexOf("sleep_hours");
+        if (idxDate === -1 || idxHours === -1) return [];
+        return rows
+          .slice(1)
+          .map((cells) => {
+            const d = parseDate(cells[idxDate]);
+            const h = parseFloat(cells[idxHours]);
+            if (!d || Number.isNaN(h)) return null;
+            return { date: d, hours: h };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.date - b.date);
+      };
+
+      const computeRolling = (items, window = 7) => {
+        const result = [];
+        const queue = [];
+        let sum = 0;
+        items.forEach((item) => {
+          queue.push(item.hours);
+          sum += item.hours;
+          if (queue.length > window) {
+            sum -= queue.shift();
+          }
+          result.push({ date: item.date, ma: sum / queue.length });
+        });
+        return result;
+      };
+
+      const avgWindow = (series, count, offset = 0) => {
+        if (series.length < count + offset) return null;
+        const slice = series.slice(series.length - count - offset, series.length - offset);
+        const total = slice.reduce((acc, cur) => acc + cur.ma, 0);
+        return total / slice.length;
+      };
+
+      const formatDelta = (current, previous) => {
+        if (current === null || previous === null || previous === 0) return { text: "—", cls: "" };
+        const delta = ((current - previous) / previous) * 100;
+        const cls = delta > 0 ? "positive" : delta < 0 ? "negative" : "";
+        const sign = delta > 0 ? "+" : "";
+        return { text: `${sign}${delta.toFixed(1)}%`, cls };
+      };
+
+      const loadHealth = async () => {
+        healthStatus.textContent = "正在加载健康数据...";
+        try {
+          const { text, sourceLabel } = await fetchHealthSource();
+          const items = parseHealth(text);
+          if (!items.length) {
+            healthStatus.textContent = "健康数据为空";
+            return;
+          }
+          const rolling = computeRolling(items, 7);
+          const lastDate = items[items.length - 1].date;
+          const last7 = avgWindow(rolling, 7, 0);
+          const prev7 = avgWindow(rolling, 7, 7);
+          const last30 = avgWindow(rolling, 30, 0);
+          const prev30 = avgWindow(rolling, 30, 30);
+
+          const fmtHours = (val) => (val === null ? "--" : `${val.toFixed(2)} 小时`);
+          metricAvg7.textContent = fmtHours(last7);
+          const wow = formatDelta(last7, prev7);
+          metricWow.textContent = wow.text === "—" ? "--" : wow.text;
+          metricWowDetail.textContent = prev7 === null ? "样本不足" : "相较前7天";
+          metricWowDetail.className = `metric-delta ${wow.cls}`;
+
+          const mom = formatDelta(last30, prev30);
+          metricMom.textContent = mom.text === "—" ? "--" : mom.text;
+          metricMomDetail.textContent = prev30 === null ? "样本不足" : "相较前30天";
+          metricMomDetail.className = `metric-delta ${mom.cls}`;
+
+          metricAvg7Detail.textContent = last7 === null ? "样本不足" : `截止 ${formatUpdateTime(lastDate).trim()}`;
+
+          const totalDays = items.length;
+          healthStatus.textContent = `数据截止 ${formatUpdateTime(lastDate).trim()} · 共 ${totalDays} 天 · 来源：${sourceLabel}`;
+        } catch (error) {
+          console.error(error);
+          healthStatus.textContent = "健康数据加载失败";
+        }
+      };
+
       const fetchCSVSource = async () => {
         const errors = [];
         for (const source of CSV_SOURCES) {
@@ -694,6 +851,7 @@
       ensureLimitValue();
       renderHeader();
       renderBody([]);
+      loadHealth();
       loadCSV();
     </script>
   </body>

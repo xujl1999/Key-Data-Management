@@ -51,13 +51,7 @@ def plot_sleep():
 
     last_date = daily["date"].max()
     cutoff_90 = last_date - pd.Timedelta(days=90)
-    cutoff_365 = last_date - pd.Timedelta(days=365)
-
-    recent_90 = daily[daily["date"] >= cutoff_90].set_index("date")
-    weekly = recent_90["sleep_ma7"].resample("W-MON").mean().reset_index()
-
-    recent_365 = daily[daily["date"] >= cutoff_365].set_index("date")
-    monthly = recent_365["sleep_ma7"].resample("ME").mean().reset_index()
+    recent_90 = daily[daily["date"] >= cutoff_90]
 
     # 方案1：深色背景 + 霓虹线条 + 柔和渐变，突出波动，不强制零基线
     def render_series(dates, values, title, outfile, color_line, color_fill):
@@ -93,20 +87,12 @@ def plot_sleep():
         plt.close(fig)
 
     render_series(
-        weekly["date"],
-        weekly["sleep_ma7"],
-        "近三个月睡眠时长（按周，7日均值）",
+        recent_90["date"],
+        recent_90["sleep_ma7"],
+        "近三个月睡眠时长（7日均值）",
         OUT_SLEEP_WEEKLY,
         "#22c55e",
         "#22c55e",
-    )
-    render_series(
-        monthly["date"],
-        monthly["sleep_ma7"],
-        "近一年睡眠时长（按月，7日均值）",
-        OUT_SLEEP_MONTHLY,
-        "#6366f1",
-        "#6366f1",
     )
 
 

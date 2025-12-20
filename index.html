@@ -265,6 +265,9 @@
       .modal-chart {
         display: none;
         width: min(920px, 82vw);
+        height: 70vh;
+        max-height: 720px;
+        min-height: 360px;
       }
       .modal-content .modal-image {
         display: none;
@@ -1650,7 +1653,7 @@
         <button class="modal-close" id="modal-close" type="button">关闭</button>
         <div class="modal-title" id="modal-title"></div>
         <div class="modal-chart" id="modal-chart"></div>
-        <img class="modal-image" id="modal-image" src="" alt="" />
+        <img class="modal-image" id="modal-image" alt="" />
       </div>
     </div>
     <div class="modal" id="sleep-info-modal" aria-hidden="true">
@@ -1663,6 +1666,7 @@
         </div>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
     <script>
       (() => {
         const metricTableBody = document.getElementById("health-metric-body");
@@ -1685,6 +1689,36 @@
           [...baseDefs, ...extraDefs].map((def) => [def.label, def])
         );
 
+        const GUIDE_LINES = {
+          sleep_hours: [
+            { value: 8, label: "目标 8h", color: "#22d3ee" },
+            { value: 6, label: "预警 6h", color: "#f97316" },
+          ],
+          weight_kg: [
+            { value: 70, label: "目标 70kg", color: "#22d3ee" },
+            { value: 80, label: "预警 80kg", color: "#f97316" },
+          ],
+        };
+
+        const TIME_VALUE_KEYS = new Set(["bed_time", "wake_time"]);
+        const TIME_UNWRAP_KEYS = new Set(["bed_time"]);
+        const MAIN_CHART_COLOR = "#60a5fa";
+
+        let openToken = 0;
+        let currentChart = null;
+        let currentResizeHandler = null;
+
+        const disposeChart = () => {
+          if (currentResizeHandler) {
+            window.removeEventListener("resize", currentResizeHandler);
+            currentResizeHandler = null;
+          }
+          if (currentChart) {
+            currentChart.dispose();
+            currentChart = null;
+          }
+        };
+
         const openModalShell = () => {
           modal.classList.add("modal--open");
           modal.setAttribute("aria-hidden", "false");
@@ -1694,27 +1728,20 @@
           modal.classList.remove("modal--open");
           modal.setAttribute("aria-hidden", "true");
           modalTitle.textContent = "";
+          disposeChart();
           modalChart.innerHTML = "";
           modalChart.style.display = "none";
-          modalImg.src = "";
+          modalImg.removeAttribute("src");
           modalImg.alt = "";
           modalImg.style.display = "none";
         };
 
-        let openToken = 0;
-
         const showLoading = (text) => {
+          disposeChart();
           modalChart.style.display = "block";
           modalChart.textContent = text || "正在加载...";
           modalImg.style.display = "none";
-        };
-
-        const showImage = (src, alt) => {
-          modalImg.src = src;
-          modalImg.alt = alt || "";
-          modalImg.style.display = "block";
-          modalChart.style.display = "none";
-          modalChart.innerHTML = "";
+          modalImg.removeAttribute("src");
         };
 
         const formatYM = (d) => {
@@ -1723,6 +1750,44 @@
           const month = String(date.getMonth() + 1).padStart(2, "0");
           return `${date.getFullYear()}-${month}`;
         };
+
+        const formatMonthDay = (value) => {
+          const date = value instanceof Date ? value : new Date(value);
+          if (Number.isNaN(date.getTime())) return "";
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${month}-${day}`;
+        };
+
+        const formatYearMonth = (value) => {
+          const date = value instanceof Date ? value : new Date(value);
+          if (Number.isNaN(date.getTime())) return "";
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          return `${date.getFullYear()}-${month}`;
+        };
+
+        const formatFullDate = (value) => {
+          const date = value instanceof Date ? value : new Date(value);
+          if (Number.isNaN(date.getTime())) return "";
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${date.getFullYear()}-${month}-${day}`;
+        };
+
+        const formatChartNumber = (value) => {
+          if (value === null || value === undefined || Number.isNaN(value)) return "";
+          const abs = Math.abs(value);
+          if (abs >= 1000) return String(Math.round(value));
+          if (abs >= 100) return value.toFixed(1).replace(/\.0$/, "");
+          if (abs >= 10) return value.toFixed(1).replace(/\.0$/, "");
+          return value
+            .toFixed(2)
+            .replace(/\.00$/, "")
+            .replace(/(\.\d)0$/, "$1");
+        };
+
+        const formatChartValue = (value, isTime) =>
+          isTime ? formatClock(value, true) : formatChartNumber(value);
 
         const normalizeChartValue = (value, unit) => {
           if (value === null || Number.isNaN(value)) return null;
@@ -1738,6 +1803,100 @@
             const total = slice.reduce((acc, cur) => acc + cur, 0);
             return total / slice.length;
           });
+
+        const computeRollingAvg = (series, window = 7) => {
+          const out = [];
+          const queue = [];
+          let sum = 0;
+          series.forEach((point) => {
+            queue.push(point.value);
+            sum += point.value;
+            if (queue.length > window) {
+              sum -= queue.shift();
+            }
+            out.push({ date: point.date, value: sum / queue.length });
+          });
+          return out;
+        };
+
+        const computeTimeUnwrapPivot = (values) => {
+          if (!values.length) return 720;
+          const sorted = values.slice().sort((a, b) => a - b);
+          if (sorted.length === 1) return (sorted[0] + 720) % 1440;
+          let maxGap = -1;
+          let pivot = 720;
+          for (let i = 0; i < sorted.length; i += 1) {
+            const current = sorted[i];
+            const next = sorted[(i + 1) % sorted.length];
+            const gap = (next - current + 1440) % 1440;
+            if (gap > maxGap) {
+              maxGap = gap;
+              pivot = (current + gap / 2) % 1440;
+            }
+          }
+          return pivot;
+        };
+
+        const unwrapTimeValue = (value, pivot) => (value < pivot ? value + 1440 : value);
+
+        const buildSeries = (def, text) => {
+          const isTime = TIME_VALUE_KEYS.has(def.valueKey);
+          const baseSeries = isTime
+            ? parseScheduleSeries(text, def.valueKey)
+            : parseMetricSeries(text, def.valueKey);
+          if (!baseSeries.length) return { series: [], isTime };
+          const normalized = baseSeries
+            .map((item) => ({
+              date: item.date,
+              value: isTime ? item.value : normalizeChartValue(item.value, def.unit),
+            }))
+            .filter((item) => item.value !== null);
+          if (!normalized.length) return { series: [], isTime };
+          if (isTime && TIME_UNWRAP_KEYS.has(def.valueKey)) {
+            const pivot = computeTimeUnwrapPivot(normalized.map((item) => item.value));
+            normalized.forEach((item) => {
+              item.value = unwrapTimeValue(item.value, pivot);
+            });
+          }
+          normalized.sort((a, b) => a.date - b.date);
+          return { series: normalized, isTime };
+        };
+
+        const calcExtent = (series, guideLines, isTime) => {
+          if (!series.length) return { min: 0, max: 1 };
+          let minVal = Math.min(...series.map((item) => item.value));
+          let maxVal = Math.max(...series.map((item) => item.value));
+          (guideLines || []).forEach((line) => {
+            if (typeof line.value !== "number") return;
+            minVal = Math.min(minVal, line.value);
+            maxVal = Math.max(maxVal, line.value);
+          });
+          if (minVal === maxVal) {
+            minVal -= 1;
+            maxVal += 1;
+          }
+          const pad = isTime
+            ? Math.max((maxVal - minVal) * 0.1, 30)
+            : Math.max((maxVal - minVal) * 0.1, 0.2);
+          return { min: minVal - pad, max: maxVal + pad };
+        };
+
+        const buildMarkLine = (guideLines) => {
+          if (!guideLines || !guideLines.length) return null;
+          return {
+            symbol: "none",
+            silent: true,
+            data: guideLines.map((line) => ({
+              yAxis: line.value,
+              lineStyle: { color: line.color, type: "dashed", width: 1 },
+              label: {
+                formatter: line.label,
+                color: line.color,
+                position: "end",
+              },
+            })),
+          };
+        };
 
         const renderFallbackChart = async (def, token) => {
           showLoading("正在加载数据...");
@@ -1766,7 +1925,202 @@
 
           if (token !== openToken) return;
           modalChart.style.display = "block";
-          renderLineChart(modalChart, chartData, { color: "#60a5fa" });
+          renderLineChart(modalChart, chartData, { color: MAIN_CHART_COLOR });
+        };
+
+        const renderEchartsChart = async (def, token) => {
+          showLoading("正在加载数据...");
+          const { text } = await fetchFromSources(def.sources);
+          const built = buildSeries(def, text);
+          if (!built.series.length) {
+            modalChart.textContent = "暂无数据";
+            return;
+          }
+
+          const { series, isTime } = built;
+          const lastDate = series[series.length - 1].date;
+          const monthStart = new Date(lastDate.getTime() - 29 * 86400000);
+          const yearStart = new Date(lastDate.getTime() - 364 * 86400000);
+          const topSeries = series.filter((point) => point.date >= monthStart);
+          const yearSeries = series.filter((point) => point.date >= yearStart);
+          const bottomSeries = computeRollingAvg(yearSeries, 7);
+
+          if (!topSeries.length || !bottomSeries.length) {
+            modalChart.textContent = "暂无数据";
+            return;
+          }
+
+          if (token !== openToken) return;
+          modalChart.style.display = "block";
+          modalChart.textContent = "";
+          modalImg.style.display = "none";
+
+          if (!window.echarts) {
+            modalChart.textContent = "ECharts 未加载";
+            return;
+          }
+
+          requestAnimationFrame(() => {
+            if (token !== openToken) return;
+            disposeChart();
+            const chart = window.echarts.init(modalChart);
+            currentChart = chart;
+
+            const rect = modalChart.getBoundingClientRect();
+            const chartHeight = rect.height || 720;
+            const gridTop = 70;
+            const gridGap = Math.max(36, Math.round(chartHeight * 0.07));
+            const gridBottomMargin = 40;
+            const gridHeight = Math.max(
+              180,
+              Math.floor((chartHeight - gridTop - gridBottomMargin - gridGap) / 2)
+            );
+            const gridBottomTop = gridTop + gridHeight + gridGap;
+
+            const guideLines = GUIDE_LINES[def.valueKey] || [];
+            const topExtent = calcExtent(topSeries, guideLines, isTime);
+            const bottomExtent = calcExtent(bottomSeries, guideLines, isTime);
+            const markLine = buildMarkLine(guideLines);
+
+            const topData = topSeries.map((point) => ({
+              value: [point.date.getTime(), point.value],
+            }));
+            const bottomData = bottomSeries.map((point) => ({
+              value: [point.date.getTime(), point.value],
+            }));
+
+            const option = {
+              backgroundColor: "#0f172a",
+              textStyle: { color: "#cbd5f5" },
+              title: [
+                {
+                  text: "本月分天指标明细",
+                  left: 60,
+                  top: Math.max(32, gridTop - 26),
+                  textStyle: { color: "#e2e8f0", fontSize: 13, fontWeight: 600 },
+                },
+                {
+                  text: "本年核心指标趋势（滑动7日窗口平均）",
+                  left: 60,
+                  top: Math.max(32, gridBottomTop - 26),
+                  textStyle: { color: "#e2e8f0", fontSize: 13, fontWeight: 600 },
+                },
+              ],
+              grid: [
+                { left: 60, right: 30, top: gridTop, height: gridHeight, containLabel: true },
+                { left: 60, right: 30, top: gridBottomTop, height: gridHeight, containLabel: true },
+              ],
+              tooltip: {
+                trigger: "axis",
+                axisPointer: { type: "line" },
+                backgroundColor: "rgba(15,23,42,0.95)",
+                borderColor: "rgba(148,163,184,0.4)",
+                textStyle: { color: "#e2e8f0" },
+                formatter: (params) => {
+                  const items = Array.isArray(params) ? params : [params];
+                  if (!items.length) return "";
+                  const dateLabel = formatFullDate(items[0].value[0]);
+                  const lines = items.map(
+                    (item) =>
+                      `${item.marker}${item.seriesName}：${formatChartValue(item.value[1], isTime)}`
+                  );
+                  return [dateLabel, ...lines].join("<br/>");
+                },
+              },
+              xAxis: [
+                {
+                  type: "time",
+                  gridIndex: 0,
+                  axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+                  axisTick: { show: true },
+                  axisLabel: { color: "#cbd5f5", formatter: (value) => formatMonthDay(value) },
+                  splitLine: { show: false },
+                },
+                {
+                  type: "time",
+                  gridIndex: 1,
+                  axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+                  axisTick: { show: true },
+                  axisLabel: { color: "#cbd5f5", formatter: (value) => formatYearMonth(value) },
+                  splitLine: { show: false },
+                },
+              ],
+              yAxis: [
+                {
+                  type: "value",
+                  gridIndex: 0,
+                  min: topExtent.min,
+                  max: topExtent.max,
+                  splitNumber: 5,
+                  axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+                  axisLabel: {
+                    color: "#cbd5f5",
+                    formatter: (value) => formatChartValue(value, isTime),
+                  },
+                  splitLine: { lineStyle: { color: "rgba(148,163,184,0.18)" } },
+                },
+                {
+                  type: "value",
+                  gridIndex: 1,
+                  min: bottomExtent.min,
+                  max: bottomExtent.max,
+                  splitNumber: 5,
+                  axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+                  axisLabel: {
+                    color: "#cbd5f5",
+                    formatter: (value) => formatChartValue(value, isTime),
+                  },
+                  splitLine: { lineStyle: { color: "rgba(148,163,184,0.18)" } },
+                },
+              ],
+              series: [
+                {
+                  name: "本月分天指标明细",
+                  type: "line",
+                  xAxisIndex: 0,
+                  yAxisIndex: 0,
+                  data: topData,
+                  smooth: true,
+                  symbol: "circle",
+                  symbolSize: 6,
+                  lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
+                  itemStyle: { color: MAIN_CHART_COLOR },
+                  label: {
+                    show: true,
+                    color: "#e2e8f0",
+                    fontSize: 10,
+                    formatter: (params) => formatChartValue(params.value[1], isTime),
+                  },
+                  markLine: markLine || undefined,
+                },
+                {
+                  name: "本年核心指标趋势（滑动7日窗口平均）",
+                  type: "line",
+                  xAxisIndex: 1,
+                  yAxisIndex: 1,
+                  data: bottomData,
+                  smooth: true,
+                  symbol: "none",
+                  lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
+                  itemStyle: { color: MAIN_CHART_COLOR },
+                  areaStyle: {
+                    color: new window.echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                      { offset: 0, color: "rgba(96,165,250,0.35)" },
+                      { offset: 1, color: "rgba(96,165,250,0.05)" },
+                    ]),
+                  },
+                  markLine: markLine || undefined,
+                },
+              ],
+            };
+
+            chart.setOption(option, true);
+            currentResizeHandler = () => {
+              if (!currentChart || currentChart.isDisposed()) return;
+              currentChart.resize();
+            };
+            window.addEventListener("resize", currentResizeHandler);
+          });
         };
 
         const openMetric = (label) => {
@@ -1776,33 +2130,14 @@
           openToken += 1;
           const token = openToken;
 
-          modalTitle.textContent = `${label} 趋势图`;
+          modalTitle.textContent = label + " 趋势图";
           openModalShell();
 
-          const src = resolveChartsImage(def);
-          if (!src) {
-            renderFallbackChart(def, token).catch((error) => {
-              console.error(error);
-              if (token !== openToken) return;
-              modalChart.textContent = "加载失败";
-            });
-            return;
-          }
-
-          showLoading("正在加载趋势图...");
-          const probe = new Image();
-          probe.onload = () => {
+          renderEchartsChart(def, token).catch((error) => {
+            console.error(error);
             if (token !== openToken) return;
-            showImage(src, `${label} 趋势图`);
-          };
-          probe.onerror = () => {
-            renderFallbackChart(def, token).catch((error) => {
-              console.error(error);
-              if (token !== openToken) return;
-              modalChart.textContent = "加载失败";
-            });
-          };
-          probe.src = src;
+            modalChart.textContent = "加载失败";
+          });
         };
 
         metricTableBody.addEventListener("click", (e) => {

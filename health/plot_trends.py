@@ -92,30 +92,47 @@ def render_series(
     plt.close(fig)
 
 def plot_steps():
+    if not STEPS_CSV.exists():
+        return
     df = pd.read_csv(STEPS_CSV, parse_dates=["date"])
     df.sort_values("date", inplace=True)
-    plt.figure(figsize=(10, 4))
-    plt.plot(df["date"], df["steps"], label="Steps", color="#60a5fa")
-    plt.title("Daily Steps")
-    plt.xlabel("Date")
-    plt.ylabel("Steps")
-    plt.tight_layout()
-    OUT_STEPS.parent.mkdir(exist_ok=True)
-    plt.savefig(OUT_STEPS, dpi=150)
-    plt.close()
+    df["steps_ma7"] = df["steps"].rolling(window=7, min_periods=1).mean()
+    last_date = df["date"].max()
+    cutoff = last_date - pd.Timedelta(days=365)
+    recent = df[df["date"] >= cutoff]
+    if recent.empty:
+        recent = df
+    render_series(
+        recent["date"],
+        recent["steps_ma7"],
+        "近一年步数（7日均值）",
+        OUT_STEPS,
+        "#60a5fa",
+        "#60a5fa",
+        "步数",
+    )
 
 
 def plot_energy():
+    if not ENERGY_CSV.exists():
+        return
     df = pd.read_csv(ENERGY_CSV, parse_dates=["date"])
     df.sort_values("date", inplace=True)
-    plt.figure(figsize=(10, 4))
-    plt.plot(df["date"], df["active_energy"], label="Active Energy", color="#f97316")
-    plt.title("Daily Active Energy")
-    plt.xlabel("Date")
-    plt.ylabel("Active Energy (kcal)")
-    plt.tight_layout()
-    plt.savefig(OUT_ENERGY, dpi=150)
-    plt.close()
+    df["energy_ma7"] = df["active_energy"].rolling(window=7, min_periods=1).mean()
+    last_date = df["date"].max()
+    cutoff = last_date - pd.Timedelta(days=365)
+    recent = df[df["date"] >= cutoff]
+    if recent.empty:
+        recent = df
+    render_series(
+        recent["date"],
+        recent["energy_ma7"],
+        "近一年主动能量（7日均值）",
+        OUT_ENERGY,
+        "#f97316",
+        "#f97316",
+        "主动能量（kcal）",
+    )
 
 
 def plot_sleep():

@@ -32,6 +32,8 @@
 - 不得跳过规范化步骤；确保上传前日期格式已统一且排序正确。
 - 提交信息尽量清晰，便于追溯（如 `data: normalize publish dates`）。
 - 本项目仅供学习研究，严禁用于商业或违规用途。
+- GitHub Pages 必须与本地页面一致：`index.html` 新增依赖（图片/CSV/JS/CSS/`health/charts` 等）一律加入 Git 并推送同步。
+- 若新增依赖或删除依赖，请确认 `video_update.bat` 的提交流程能同步（建议保持 `git add -A`/`git add .` 覆盖新增与删除）。
 
 ## Local workflow agreements (appendix)
 - 本地预览默认使用 `python -m http.server 8000 --bind 127.0.0.1`，每次改完代码启动/重启以便验证。

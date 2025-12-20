@@ -1407,6 +1407,9 @@
           .sort((a, b) => a.date - b.date);
       };
 
+      const normalizeBedtimeForAverage = (minutes) =>
+        minutes < 12 * 60 ? minutes + 24 * 60 : minutes;
+
       const setHighlightValue = (el, value) => {
         if (!el) return;
         el.textContent = value;
@@ -1479,7 +1482,7 @@
           const wakeSeries = parseScheduleSeries(text, "wake_time");
           const bedSeries = bedRaw.map((item) => ({
             ...item,
-            value: item.value < 12 * 60 ? item.value + 24 * 60 : item.value,
+            value: normalizeBedtimeForAverage(item.value),
           }));
 
           const bedAvg = calcAvg(bedSeries);

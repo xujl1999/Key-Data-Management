@@ -2036,6 +2036,7 @@
               if (!isCompact || typeof index !== "number") return formatter(value);
               return index % compactStep === 0 ? formatter(value) : "";
             };
+            const pointLabelStep = isUltraCompact ? 5 : isCompact ? 3 : 1;
 
             const guideLines = GUIDE_LINES[def.valueKey] || [];
             const topExtent = calcExtent(topSeries, guideLines, isTime);
@@ -2048,6 +2049,11 @@
             const bottomData = bottomSeries.map((point) => ({
               value: [point.date.getTime(), point.value],
             }));
+            const showPointLabel = (index) =>
+              !isCompact ||
+              index === 0 ||
+              index === topData.length - 1 ||
+              index % pointLabelStep === 0;
 
             const option = {
               backgroundColor: "#0f172a",
@@ -2156,15 +2162,19 @@
                   data: topData,
                   smooth: true,
                   symbol: "circle",
-                  symbolSize: 6,
+                  symbolSize: isCompact ? 4 : 6,
                   lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
                   itemStyle: { color: MAIN_CHART_COLOR },
                   label: {
                     show: true,
                     color: "#e2e8f0",
                     fontSize: 10,
-                    formatter: (params) => formatChartValue(params.value[1], isTime),
+                    formatter: (params) =>
+                      showPointLabel(params.dataIndex)
+                        ? formatChartValue(params.value[1], isTime)
+                        : "",
                   },
+                  labelLayout: { hideOverlap: true },
                   markLine: markLine || undefined,
                 },
                 {
@@ -2177,6 +2187,7 @@
                   symbol: "none",
                   lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
                   itemStyle: { color: MAIN_CHART_COLOR },
+                  sampling: "lttb",
                   areaStyle: {
                     color: new window.echarts.graphic.LinearGradient(0, 0, 0, 1, [
                       { offset: 0, color: "rgba(96,165,250,0.35)" },

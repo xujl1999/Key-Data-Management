@@ -328,6 +328,16 @@
             </ul>
           </div>
         </div>
+        <div class="plan-block" id="health-highlight">
+          <p class="plan-title" style="margin: 0 0 6px;">健康 · Highlight</p>
+          <div class="plan-section">
+            <ul class="plan-list">
+              <li>近7天体重为<span id="hl-weight">--</span>（环比<span id="hl-weight-wow">—</span>）、BMI <span id="hl-bmi">--</span>（环比<span id="hl-bmi-wow">—</span>）、体脂率<span id="hl-bodyfat">--</span>（环比<span id="hl-bodyfat-wow">—</span>）。希望你还记得你要减肥</li>
+              <li>近7日睡眠时间为<span id="hl-sleep">--</span>（环比<span id="hl-sleep-wow">—</span>）、入睡时间<span id="hl-bedtime">--</span>（环比<span id="hl-bedtime-wow">—</span>）、起床时间<span id="hl-wake">--</span>（环比<span id="hl-wake-wow">—</span>），希望你还记得你要早睡早起</li>
+              <li>近7天HRV为<span id="hl-hrv">--</span>（环比<span id="hl-hrv-wow">—</span>），记得开心～～</li>
+            </ul>
+          </div>
+        </div>
         <div class="filters" style="margin-top: 10px;">
           <div class="filter-field">
             <span>指标分类</span>
@@ -440,6 +450,22 @@
       const healthStatus = document.getElementById("health-status");
       const metricTableBody = document.getElementById("health-metric-body");
       const healthCategoryGroup = document.getElementById("health-category-group");
+      const highlightEls = {
+        weight: document.getElementById("hl-weight"),
+        weightWow: document.getElementById("hl-weight-wow"),
+        bmi: document.getElementById("hl-bmi"),
+        bmiWow: document.getElementById("hl-bmi-wow"),
+        bodyFat: document.getElementById("hl-bodyfat"),
+        bodyFatWow: document.getElementById("hl-bodyfat-wow"),
+        sleep: document.getElementById("hl-sleep"),
+        sleepWow: document.getElementById("hl-sleep-wow"),
+        bedTime: document.getElementById("hl-bedtime"),
+        bedTimeWow: document.getElementById("hl-bedtime-wow"),
+        wakeTime: document.getElementById("hl-wake"),
+        wakeTimeWow: document.getElementById("hl-wake-wow"),
+        hrv: document.getElementById("hl-hrv"),
+        hrvWow: document.getElementById("hl-hrv-wow"),
+      };
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
       const DEFAULT_CATEGORY = "超优质";
@@ -617,6 +643,10 @@
       const SLEEP_TEMP_SOURCES = [
         { url: "health/sleep_temp_daily.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_temp_daily.csv", label: "GitHub Raw" },
+      ];
+      const SLEEP_SCHEDULE_SOURCES = [
+        { url: "health/sleep_schedule_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_schedule_daily.csv", label: "GitHub Raw" },
       ];
       const DISTANCE_CYCLING_SOURCES = [
         { url: "health/distance_daily.csv", label: "Local" },
@@ -1291,6 +1321,133 @@
         return `<span class="${cls}">${sign}${delta.toFixed(1)}%</span>`;
       };
 
+      const formatClock = (minutes, wrapOverMidnight = false) => {
+        if (minutes === null || Number.isNaN(minutes)) return "--";
+        let mins = minutes;
+        if (wrapOverMidnight && mins >= 24 * 60) {
+          mins -= 24 * 60;
+        }
+        mins = Math.round(mins);
+        const hh = String(Math.floor(mins / 60) % 24).padStart(2, "0");
+        const mm = String(mins % 60).padStart(2, "0");
+        return `${hh}:${mm}`;
+      };
+
+      const parseClockToMinutes = (text) => {
+        if (!text) return null;
+        const cleaned = text.trim();
+        if (!cleaned) return null;
+        if (cleaned.includes(":")) {
+          const parts = cleaned.split(":");
+          const hh = parseInt(parts[0], 10);
+          const mm = parseInt(parts[1], 10);
+          if (Number.isNaN(hh) || Number.isNaN(mm)) return null;
+          return hh * 60 + mm;
+        }
+        const num = parseFloat(cleaned);
+        return Number.isNaN(num) ? null : num;
+      };
+
+      const parseScheduleSeries = (text, valueKey) => {
+        const rows = parseCSV(text);
+        if (!rows.length) return [];
+        const headers = rows[0].map((h) => h.trim().toLowerCase());
+        const idxDate = headers.indexOf("date");
+        const idxVal = headers.indexOf(valueKey.toLowerCase());
+        if (idxDate === -1 || idxVal === -1) return [];
+        return rows
+          .slice(1)
+          .map((cells) => {
+            const d = parseDate(cells[idxDate]);
+            const v = parseClockToMinutes(cells[idxVal]);
+            if (!d || v === null) return null;
+            return { date: d, value: v };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.date - b.date);
+      };
+
+      const setHighlightValue = (el, value) => {
+        if (!el) return;
+        el.textContent = value;
+      };
+
+      const setHighlightDelta = (el, current, previous) => {
+        if (!el) return;
+        el.innerHTML = formatDeltaColored(current, previous);
+      };
+
+      const loadHealthHighlight = async () => {
+        if (!highlightEls.weight) return;
+
+        try {
+          const { text } = await fetchFromSources(BODY_SOURCES);
+          const weightSeries = parseMetricSeries(text, "weight_kg");
+          const bmiSeries = parseMetricSeries(text, "bmi");
+          const fatSeries = parseMetricSeries(text, "body_fat_pct");
+
+          const weightAvg = avgWindowByDate(weightSeries, 7, 0);
+          const weightPrev = avgWindowByDate(weightSeries, 7, 7);
+          const bmiAvg = avgWindowByDate(bmiSeries, 7, 0);
+          const bmiPrev = avgWindowByDate(bmiSeries, 7, 7);
+          const fatAvg = avgWindowByDate(fatSeries, 7, 0);
+          const fatPrev = avgWindowByDate(fatSeries, 7, 7);
+
+          setHighlightValue(highlightEls.weight, formatValueWithUnit(weightAvg, "kg"));
+          setHighlightDelta(highlightEls.weightWow, weightAvg, weightPrev);
+          setHighlightValue(highlightEls.bmi, formatValueWithUnit(bmiAvg, ""));
+          setHighlightDelta(highlightEls.bmiWow, bmiAvg, bmiPrev);
+          setHighlightValue(highlightEls.bodyFat, formatValueWithUnit(fatAvg, "%"));
+          setHighlightDelta(highlightEls.bodyFatWow, fatAvg, fatPrev);
+        } catch (error) {
+          console.error("加载体重高亮失败:", error);
+        }
+
+        try {
+          const { text } = await fetchFromSources(HEALTH_SOURCES);
+          const sleepSeries = parseMetricSeries(text, "sleep_hours");
+          const sleepAvg = avgWindowByDate(sleepSeries, 7, 0);
+          const sleepPrev = avgWindowByDate(sleepSeries, 7, 7);
+          setHighlightValue(highlightEls.sleep, formatValueWithUnit(sleepAvg, "小时"));
+          setHighlightDelta(highlightEls.sleepWow, sleepAvg, sleepPrev);
+        } catch (error) {
+          console.error("加载睡眠高亮失败:", error);
+        }
+
+        try {
+          const { text } = await fetchFromSources(SLEEP_SCHEDULE_SOURCES);
+          const bedRaw = parseScheduleSeries(text, "bed_time");
+          const wakeSeries = parseScheduleSeries(text, "wake_time");
+          const bedSeries = bedRaw.map((item) => ({
+            ...item,
+            value: item.value < 12 * 60 ? item.value + 24 * 60 : item.value,
+          }));
+
+          const bedAvg = avgWindowByDate(bedSeries, 7, 0);
+          const bedPrev = avgWindowByDate(bedSeries, 7, 7);
+          const wakeAvg = avgWindowByDate(wakeSeries, 7, 0);
+          const wakePrev = avgWindowByDate(wakeSeries, 7, 7);
+
+          setHighlightValue(highlightEls.bedTime, formatClock(bedAvg, true));
+          setHighlightDelta(highlightEls.bedTimeWow, bedAvg, bedPrev);
+          setHighlightValue(highlightEls.wakeTime, formatClock(wakeAvg, false));
+          setHighlightDelta(highlightEls.wakeTimeWow, wakeAvg, wakePrev);
+        } catch (error) {
+          console.error("加载睡眠作息高亮失败:", error);
+        }
+
+        try {
+          const { text } = await fetchFromSources(HRV_SOURCES);
+          const hrvSeries = parseMetricSeries(text, "sdnn_avg");
+          const hrvAvg = avgWindowByDate(hrvSeries, 7, 0);
+          const hrvPrev = avgWindowByDate(hrvSeries, 7, 7);
+          setHighlightValue(highlightEls.hrv, formatValueWithUnit(hrvAvg, "ms"));
+          setHighlightDelta(highlightEls.hrvWow, hrvAvg, hrvPrev);
+        } catch (error) {
+          console.error("加载 HRV 高亮失败:", error);
+        }
+      };
+
       const renderMetricTable = (rows) => {
         metricTableBody.innerHTML = "";
         if (!rows.length) {
@@ -1488,6 +1645,7 @@
       renderHeader();
       renderBody([]);
       initHealthMetricTable();
+      loadHealthHighlight();
       loadCSV();
     </script>
     <div class="modal" id="chart-modal" aria-hidden="true">

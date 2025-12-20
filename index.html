@@ -224,15 +224,19 @@
         text-decoration: underline;
       }
       .highlight-label {
-        position: relative;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      #health-highlight .plan-list li {
+        line-height: 1.7;
       }
       .info-badge {
-        position: absolute;
-        top: -6px;
-        right: -12px;
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-left: 2px;
         width: 16px;
         height: 16px;
         border-radius: 50%;
@@ -248,21 +252,6 @@
       .info-badge:hover {
         border-color: #93c5fd;
         color: #e2e8f0;
-      }
-      .metric-thumb-cell {
-        min-width: 110px;
-        text-align: center;
-      }
-      .metric-thumb {
-        width: 92px;
-        height: 54px;
-        border-radius: 8px;
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        object-fit: cover;
-        background: rgba(15, 23, 42, 0.35);
-      }
-      .metric-thumb-cell.metric-thumb--clickable {
-        cursor: pointer;
       }
       .metric-thumb-empty {
         color: #94a3b8;
@@ -382,11 +371,11 @@
                 <th>周环比</th>
                 <th>月环比</th>
                 <th>年同比</th>
-                <th>趋势图</th>
+                
               </tr>
             </thead>
             <tbody id="health-metric-body">
-              <tr><td colspan="6">正在计算...</td></tr>
+              <tr><td colspan="5">正在计算...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1524,33 +1513,6 @@
           yoyCell.innerHTML = row.yoy;
           tr.appendChild(yoyCell);
 
-          const thumbCell = document.createElement("td");
-          thumbCell.className = "metric-thumb-cell";
-          if (row.thumbSrc) {
-            const img = document.createElement("img");
-            img.className = "metric-thumb";
-            img.src = row.thumbSrc;
-            img.alt = `${row.label} 趋势图`;
-            img.loading = "lazy";
-            thumbCell.dataset.metricLabel = row.label;
-            thumbCell.classList.add("metric-thumb--clickable");
-            img.addEventListener("error", () => {
-              thumbCell.innerHTML = "";
-              thumbCell.classList.remove("metric-thumb--clickable");
-              thumbCell.removeAttribute("data-metric-label");
-              const placeholder = document.createElement("span");
-              placeholder.className = "metric-thumb-empty";
-              placeholder.textContent = "—";
-              thumbCell.appendChild(placeholder);
-            });
-            thumbCell.appendChild(img);
-          } else {
-            const placeholder = document.createElement("span");
-            placeholder.className = "metric-thumb-empty";
-            placeholder.textContent = "—";
-            thumbCell.appendChild(placeholder);
-          }
-          tr.appendChild(thumbCell);
 
           metricTableBody.appendChild(tr);
         });
@@ -1565,7 +1527,6 @@
           for (const def of healthMetricDefs) {
             if (def.enabled === false) continue;
             const category = def.category || "未分类";
-            const thumbSrc = resolveChartsImage(def);
             try {
               const { text } = await fetchFromSources(def.sources);
               const series = parseMetricSeries(text, def.valueKey);
@@ -1577,7 +1538,6 @@
                   wow: "—",
                   mom: "—",
                   yoy: "—",
-                  thumbSrc,
                 });
                 continue;
               }
@@ -1595,7 +1555,6 @@
                 wow: formatDeltaColored(avg7, prev7),
                 mom: formatDeltaColored(avg7, prev30),
                 yoy: formatDeltaColored(avg7, avg365),
-                thumbSrc,
               });
             } catch (error) {
               console.error(`加载指标 ${def.label} 失败:`, error);
@@ -1606,7 +1565,6 @@
                 wow: "—",
                 mom: "—",
                 yoy: "—",
-                thumbSrc,
               });
             }
           }

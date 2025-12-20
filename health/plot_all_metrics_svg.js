@@ -33,16 +33,7 @@ const PANEL_GAP = 40;
 const PANEL_TITLE_HEIGHT = 20;
 const X_LABEL_HEIGHT = 24;
 
-const COLORS = [
-  "#60a5fa",
-  "#f97316",
-  "#22c55e",
-  "#a855f7",
-  "#38bdf8",
-  "#facc15",
-  "#fb7185",
-  "#34d399",
-];
+const MAIN_COLOR = "#60a5fa";
 
 const escapeXml = (text) =>
   String(text)
@@ -146,13 +137,7 @@ const readCsv = (filePath) => {
   };
 };
 
-const pickColor = (key) => {
-  let hash = 0;
-  for (let i = 0; i < key.length; i += 1) {
-    hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
-  }
-  return COLORS[hash % COLORS.length];
-};
+const pickColor = () => MAIN_COLOR;
 
 const buildChartMap = () => {
   const map = new Map();

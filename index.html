@@ -2019,6 +2019,7 @@
             currentChart = chart;
 
             const rect = modalChart.getBoundingClientRect();
+            const chartWidth = rect.width || 920;
             const chartHeight = rect.height || 720;
             const gridTop = 70;
             const gridGap = Math.max(36, Math.round(chartHeight * 0.07));
@@ -2028,6 +2029,13 @@
               Math.floor((chartHeight - gridTop - gridBottomMargin - gridGap) / 2)
             );
             const gridBottomTop = gridTop + gridHeight + gridGap;
+            const isCompact = chartWidth < 560;
+            const isUltraCompact = chartWidth < 420;
+            const compactStep = isUltraCompact ? 3 : 2;
+            const compactLabel = (value, index, formatter) => {
+              if (!isCompact || typeof index !== "number") return formatter(value);
+              return index % compactStep === 0 ? formatter(value) : "";
+            };
 
             const guideLines = GUIDE_LINES[def.valueKey] || [];
             const topExtent = calcExtent(topSeries, guideLines, isTime);
@@ -2085,7 +2093,14 @@
                   gridIndex: 0,
                   axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
                   axisTick: { show: true },
-                  axisLabel: { color: "#cbd5f5", formatter: (value) => formatMonthDay(value) },
+                  axisLabel: {
+                    color: "#cbd5f5",
+                    hideOverlap: true,
+                    showMinLabel: true,
+                    showMaxLabel: true,
+                    rotate: isCompact ? 30 : 0,
+                    formatter: (value, index) => compactLabel(value, index, formatMonthDay),
+                  },
                   splitLine: { show: false },
                 },
                 {
@@ -2093,7 +2108,14 @@
                   gridIndex: 1,
                   axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
                   axisTick: { show: true },
-                  axisLabel: { color: "#cbd5f5", formatter: (value) => formatYearMonth(value) },
+                  axisLabel: {
+                    color: "#cbd5f5",
+                    hideOverlap: true,
+                    showMinLabel: true,
+                    showMaxLabel: true,
+                    rotate: isCompact ? 30 : 0,
+                    formatter: (value, index) => compactLabel(value, index, formatYearMonth),
+                  },
                   splitLine: { show: false },
                 },
               ],

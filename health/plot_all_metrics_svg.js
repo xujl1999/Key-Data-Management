@@ -22,6 +22,7 @@ const GUIDE_LINES = {
 };
 
 const TIME_VALUE_KEYS = new Set(["bed_time", "wake_time"]);
+const TIME_UNWRAP_KEYS = new Set(["bed_time"]);
 
 const WIDTH = 960;
 const HEIGHT = 720;
@@ -89,6 +90,26 @@ const formatMinutes = (mins) => {
   const mm = pad2(total % 60);
   return `${hh}:${mm}`;
 };
+
+const computeTimeUnwrapPivot = (values) => {
+  if (!values.length) return 720;
+  const sorted = values.slice().sort((a, b) => a - b);
+  if (sorted.length === 1) return (sorted[0] + 720) % 1440;
+  let maxGap = -1;
+  let pivot = 720;
+  for (let i = 0; i < sorted.length; i += 1) {
+    const current = sorted[i];
+    const next = sorted[(i + 1) % sorted.length];
+    const gap = (next - current + 1440) % 1440;
+    if (gap > maxGap) {
+      maxGap = gap;
+      pivot = (current + gap / 2) % 1440;
+    }
+  }
+  return pivot;
+};
+
+const unwrapTimeValue = (value, pivot) => (value < pivot ? value + 1440 : value);
 
 const formatNumber = (value) => {
   if (value === null || value === undefined || Number.isNaN(value)) return "";
@@ -410,6 +431,7 @@ const buildSeries = ({ headers, rows, valueKey, isTime }) => {
   const idxVal = headersLower.indexOf(valueKey.toLowerCase());
   if (idxDate === -1 || idxVal === -1) return [];
   const series = [];
+  const timeValues = [];
   rows.forEach((row) => {
     const date = parseDate(row[idxDate]);
     if (!date) return;
@@ -417,9 +439,16 @@ const buildSeries = ({ headers, rows, valueKey, isTime }) => {
     if (raw === undefined || raw === null || raw === "") return;
     const value = isTime ? parseClockToMinutes(raw) : Number(raw);
     if (value === null || Number.isNaN(value)) return;
+    if (isTime) timeValues.push(value);
     const display = isTime ? formatMinutes(value) : formatNumber(value);
     series.push({ date, value, display });
   });
+  if (isTime && TIME_UNWRAP_KEYS.has(valueKey) && timeValues.length > 1) {
+    const pivot = computeTimeUnwrapPivot(timeValues);
+    series.forEach((point) => {
+      point.value = unwrapTimeValue(point.value, pivot);
+    });
+  }
   series.sort((a, b) => a.date - b.date);
   return series;
 };

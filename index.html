@@ -351,9 +351,9 @@
         <div class="plan-block" id="health-highlight">
           <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
           <div class="plan-section">
-            <ul class="plan-list">
-              <li>近7天<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="BMI">BMI</span> <span id="hl-bmi">--</span>（<span id="hl-bmi-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。希望你还记得你要减肥</li>
-              <li>近7日<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>），希望你还记得你要早睡早起</li>
+                        <ul class="plan-list">
+              <li>近7天<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。记得你要减肥到70kg</li>
+              <li>近7日<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>）。记得你要早睡早起睡够8小时</li>
               <li>近7天<span class="metric-link" data-metric-label="HRV-SDNN均值">HRV</span>为<span id="hl-hrv">--</span>（<span id="hl-hrv-wow">—</span>），记得开心～～</li>
             </ul>
           </div>
@@ -485,8 +485,6 @@
       const highlightEls = {
         weight: document.getElementById("hl-weight"),
         weightWow: document.getElementById("hl-weight-wow"),
-        bmi: document.getElementById("hl-bmi"),
-        bmiWow: document.getElementById("hl-bmi-wow"),
         bodyFat: document.getElementById("hl-bodyfat"),
         bodyFatWow: document.getElementById("hl-bodyfat-wow"),
         sleep: document.getElementById("hl-sleep"),
@@ -1429,20 +1427,15 @@
         try {
           const { text } = await fetchFromSources(BODY_SOURCES);
           const weightSeries = parseMetricSeries(text, "weight_kg");
-          const bmiSeries = parseMetricSeries(text, "bmi");
           const fatSeries = parseMetricSeries(text, "body_fat_pct");
 
           const weightAvg = calcAvg(weightSeries);
           const weightPrev = calcPrev(weightSeries);
-          const bmiAvg = calcAvg(bmiSeries);
-          const bmiPrev = calcPrev(bmiSeries);
           const fatAvg = calcAvg(fatSeries);
           const fatPrev = calcPrev(fatSeries);
 
           setHighlightValue(highlightEls.weight, formatValueWithUnit(weightAvg, "kg"));
           setHighlightDelta(highlightEls.weightWow, weightAvg, weightPrev);
-          setHighlightValue(highlightEls.bmi, formatValueWithUnit(bmiAvg, ""));
-          setHighlightDelta(highlightEls.bmiWow, bmiAvg, bmiPrev);
           setHighlightValue(highlightEls.bodyFat, formatValueWithUnit(fatAvg, "%"));
           setHighlightDelta(highlightEls.bodyFatWow, fatAvg, fatPrev);
         } catch (error) {

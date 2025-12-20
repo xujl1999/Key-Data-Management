@@ -1,10 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" width="960" height="640">
-  <rect width="960" height="640" fill="#0f172a" />
-  <line x1="40" y1="40.00" x2="920.00" y2="40.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="128.00" x2="920.00" y2="128.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="216.00" x2="920.00" y2="216.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="304.00" x2="920.00" y2="304.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
-  <line x1="40" y1="336.00" x2="920.00" y2="336.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="424.00" x2="920.00" y2="424.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="512.00" x2="920.00" y2="512.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="600.00" x2="920.00" y2="600.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
-  <line x1="40" y1="320.00" x2="920.00" y2="320.00" stroke="#1f2937" stroke-width="1" />
-  <polyline points="40.00,304.00 920.00,40.00" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-  <polyline points="40.00,600.00 920.00,336.00" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-  
-  
-  </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" width="960" height="720">
+<rect width="960" height="720" fill="#0f172a" />
+<text x="480" y="28" fill="#e2e8f0" font-size="16" font-weight="700" text-anchor="middle">跑步步幅均值趋势图</text>
+<text x="70" y="70" fill="#e2e8f0" font-size="13" font-weight="600">本月分天指标明细</text>
+<line x1="70" y1="323.00" x2="930" y2="323.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="327.00" fill="#cbd5f5" font-size="10" text-anchor="end">0.72</text>
+<line x1="70" y1="260.75" x2="930" y2="260.75" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="264.75" fill="#cbd5f5" font-size="10" text-anchor="end">0.82</text>
+<line x1="70" y1="198.50" x2="930" y2="198.50" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="202.50" fill="#cbd5f5" font-size="10" text-anchor="end">0.92</text>
+<line x1="70" y1="136.25" x2="930" y2="136.25" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="140.25" fill="#cbd5f5" font-size="10" text-anchor="end">1.02</text>
+<line x1="70" y1="74.00" x2="930" y2="74.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="78.00" fill="#cbd5f5" font-size="10" text-anchor="end">1.12</text>
+<line x1="70.00" y1="323" x2="70.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="70.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-02</text>
+<line x1="242.00" y1="323" x2="242.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="242.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-03</text>
+<line x1="414.00" y1="323" x2="414.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="414.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-04</text>
+<line x1="586.00" y1="323" x2="586.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="586.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-05</text>
+<line x1="758.00" y1="323" x2="758.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="758.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-06</text>
+<line x1="930.00" y1="323" x2="930.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="930.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-08</text>
+<line x1="70" y1="74" x2="70" y2="323" stroke="#94a3b8" stroke-width="1" />
+<line x1="70" y1="323" x2="930" y2="323" stroke="#94a3b8" stroke-width="1" />
+<path d="M70.00,198.71 L930.00,198.29" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" />
+<circle cx="70.00" cy="198.71" r="3" fill="#22c55e" stroke="#0f172a" stroke-width="1" />
+<text x="70.00" y="188.71" fill="#e2e8f0" font-size="9" text-anchor="middle">0.92</text>
+<circle cx="930.00" cy="198.29" r="3" fill="#22c55e" stroke="#0f172a" stroke-width="1" />
+<text x="930.00" y="178.29" fill="#e2e8f0" font-size="9" text-anchor="middle">0.92</text>
+<text x="70" y="403" fill="#e2e8f0" font-size="13" font-weight="600">本年核心指标趋势（滑动7日窗口平均）</text>
+<line x1="70" y1="656.00" x2="930" y2="656.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="660.00" fill="#cbd5f5" font-size="10" text-anchor="end">0.72</text>
+<line x1="70" y1="593.75" x2="930" y2="593.75" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="597.75" fill="#cbd5f5" font-size="10" text-anchor="end">0.82</text>
+<line x1="70" y1="531.50" x2="930" y2="531.50" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="535.50" fill="#cbd5f5" font-size="10" text-anchor="end">0.92</text>
+<line x1="70" y1="469.25" x2="930" y2="469.25" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="473.25" fill="#cbd5f5" font-size="10" text-anchor="end">1.02</text>
+<line x1="70" y1="407.00" x2="930" y2="407.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="411.00" fill="#cbd5f5" font-size="10" text-anchor="end">1.12</text>
+<line x1="70.00" y1="656" x2="70.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="70.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-11</text>
+<line x1="242.00" y1="656" x2="242.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="242.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-11</text>
+<line x1="414.00" y1="656" x2="414.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="414.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-11</text>
+<line x1="586.00" y1="656" x2="586.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="586.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-11</text>
+<line x1="758.00" y1="656" x2="758.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="758.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-11</text>
+<line x1="930.00" y1="656" x2="930.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="930.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-11</text>
+<line x1="70" y1="407" x2="70" y2="656" stroke="#94a3b8" stroke-width="1" />
+<line x1="70" y1="656" x2="930" y2="656" stroke="#94a3b8" stroke-width="1" />
+<path d="M70.00,656.00 L70.00,531.60 L930.00,531.40 L930.00,656.00 Z" fill="#22c55e" fill-opacity="0.16" stroke="none" />
+<path d="M70.00,531.60 L930.00,531.40" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" />
+</svg>

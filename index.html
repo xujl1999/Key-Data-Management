@@ -20,6 +20,9 @@
         justify-content: center;
         background: radial-gradient(circle at top, rgba(37, 99, 235, 0.15), transparent 60%) #020617;
       }
+      body.modal-open {
+        overflow: hidden;
+      }
       main {
         width: min(960px, 100%);
         background: #0f172a;
@@ -292,6 +295,9 @@
         padding: 12px;
         max-width: 90vw;
         max-height: 90vh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
       }
       .modal-text {
@@ -1773,11 +1779,13 @@
         const openModalShell = () => {
           modal.classList.add("modal--open");
           modal.setAttribute("aria-hidden", "false");
+          document.body.classList.add("modal-open");
         };
 
         const closeModal = () => {
           modal.classList.remove("modal--open");
           modal.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("modal-open");
           modalTitle.textContent = "";
           disposeChart();
           modalChart.innerHTML = "";
@@ -2031,13 +2039,12 @@
             const rect = modalChart.getBoundingClientRect();
             const chartWidth = rect.width || 920;
             const chartHeight = rect.height || 720;
-            const gridTop = 70;
-            const gridGap = Math.max(36, Math.round(chartHeight * 0.07));
-            const gridBottomMargin = 40;
-            const gridHeight = Math.max(
-              180,
-              Math.floor((chartHeight - gridTop - gridBottomMargin - gridGap) / 2)
-            );
+            const isShort = chartHeight < 520;
+            const gridTop = isShort ? 54 : 70;
+            const gridGap = Math.max(isShort ? 20 : 36, Math.round(chartHeight * (isShort ? 0.04 : 0.07)));
+            const gridBottomMargin = isShort ? 30 : 40;
+            const availableHeight = Math.max(0, chartHeight - gridTop - gridBottomMargin - gridGap);
+            const gridHeight = Math.floor(availableHeight / 2);
             const gridBottomTop = gridTop + gridHeight + gridGap;
             const isCompact = chartWidth < 560;
             const isUltraCompact = chartWidth < 420;

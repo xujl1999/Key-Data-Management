@@ -201,6 +201,21 @@
         color: #93c5fd;
         font-weight: 600;
       }
+      .metric-link:hover {
+        text-decoration: underline;
+      }
+      .modal-title {
+        margin: 2px 0 12px;
+        font-weight: 700;
+        color: #e2e8f0;
+      }
+      .modal-chart {
+        display: none;
+        width: min(920px, 82vw);
+      }
+      .modal-content .modal-image {
+        display: none;
+      }
       .modal {
         position: fixed;
         inset: 0;
@@ -1223,44 +1238,188 @@
       loadMetricTable();
       loadCSV();
     </script>
-    <div class="modal" id="chart-modal">
+    <div class="modal" id="chart-modal" aria-hidden="true">
       <div class="modal-content">
-        <button class="modal-close" id="modal-close">关闭</button>
-        <img id="modal-image" src="" alt="趋势图" />
+        <button class="modal-close" id="modal-close" type="button">关闭</button>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-chart" id="modal-chart"></div>
+        <img class="modal-image" id="modal-image" src="" alt="" />
       </div>
     </div>
     <script>
       (() => {
         const metricTableBody = document.getElementById("health-metric-body");
         const modal = document.getElementById("chart-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalChart = document.getElementById("modal-chart");
         const modalImg = document.getElementById("modal-image");
         const modalClose = document.getElementById("modal-close");
-        if (!metricTableBody || !modal || !modalImg || !modalClose) return;
+        if (!metricTableBody || !modal || !modalTitle || !modalChart || !modalImg || !modalClose) return;
 
-        const metricImageMap = {
-          "睡眠时长": "health/sleep_weekly.png",
+        const metricDefMap =
+          typeof METRIC_DEFS === "undefined"
+            ? new Map()
+            : new Map(METRIC_DEFS.map((def) => [def.label, def]));
+
+        const PREFERRED_IMAGES_BY_VALUEKEY = {
+          sleep_hours: "health/sleep_weekly.png",
+          weight_kg: "health/weight_trend.png",
+          steps: "health/steps_trend.png",
+          active_energy: "health/energy_trend.png",
         };
 
-        const openModal = (src, alt) => {
-          modalImg.src = src;
-          modalImg.alt = alt || "趋势图";
+        const resolveChartsImage = (def) => {
+          if (!def) return null;
+          if (PREFERRED_IMAGES_BY_VALUEKEY[def.valueKey]) {
+            return PREFERRED_IMAGES_BY_VALUEKEY[def.valueKey];
+          }
+
+          const sources = Array.isArray(def.sources) ? def.sources : [];
+          const url =
+            sources
+              .map((source) => (source && typeof source.url === "string" ? source.url : ""))
+              .find((candidate) => candidate && /\.csv$/i.test(candidate.split("?")[0])) || "";
+          if (!url) return null;
+
+          const filename = url.split("?")[0].split("/").pop();
+          if (!filename || !/\.csv$/i.test(filename)) return null;
+
+          const stem = filename.replace(/\.csv$/i, "");
+          return `health/charts/${stem}__${def.valueKey}.png`;
+        };
+
+        const openModalShell = () => {
           modal.classList.add("modal--open");
+          modal.setAttribute("aria-hidden", "false");
         };
+
         const closeModal = () => {
           modal.classList.remove("modal--open");
+          modal.setAttribute("aria-hidden", "true");
+          modalTitle.textContent = "";
+          modalChart.innerHTML = "";
+          modalChart.style.display = "none";
           modalImg.src = "";
           modalImg.alt = "";
+          modalImg.style.display = "none";
+        };
+
+        let openToken = 0;
+
+        const showLoading = (text) => {
+          modalChart.style.display = "block";
+          modalChart.textContent = text || "正在加载...";
+          modalImg.style.display = "none";
+        };
+
+        const showImage = (src, alt) => {
+          modalImg.src = src;
+          modalImg.alt = alt || "";
+          modalImg.style.display = "block";
+          modalChart.style.display = "none";
+          modalChart.innerHTML = "";
+        };
+
+        const formatYM = (d) => {
+          const date = d instanceof Date ? d : new Date(d);
+          if (Number.isNaN(date.getTime())) return "";
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          return `${date.getFullYear()}-${month}`;
+        };
+
+        const normalizeChartValue = (value, unit) => {
+          if (value === null || Number.isNaN(value)) return null;
+          let num = Number(value);
+          if (unit === "%" && num < 1) num *= 100;
+          return num;
+        };
+
+        const movingAvg = (values, window = 7) =>
+          values.map((_, idx) => {
+            const start = Math.max(0, idx - window + 1);
+            const slice = values.slice(start, idx + 1);
+            const total = slice.reduce((acc, cur) => acc + cur, 0);
+            return total / slice.length;
+          });
+
+        const renderFallbackChart = async (def, token) => {
+          showLoading("正在加载数据...");
+          const { text } = await fetchFromSources(def.sources);
+          const series = parseMetricSeries(text, def.valueKey);
+          if (!series.length) {
+            modalChart.textContent = "暂无数据";
+            return;
+          }
+
+          const filtered = series
+            .map((item) => ({
+              date: item.date,
+              value: normalizeChartValue(item.value, def.unit),
+            }))
+            .filter((item) => item.value !== null);
+          if (!filtered.length) {
+            modalChart.textContent = "暂无数据";
+            return;
+          }
+
+          const ma = movingAvg(filtered.map((item) => item.value), 7);
+          const chartData = filtered
+            .map((item, idx) => ({ label: formatYM(item.date), value: ma[idx] }))
+            .slice(-365);
+
+          if (token !== openToken) return;
+          modalChart.style.display = "block";
+          renderLineChart(modalChart, chartData, { color: "#60a5fa" });
+        };
+
+        const openMetric = (label) => {
+          const def = metricDefMap.get(label);
+          if (!def) return;
+
+          openToken += 1;
+          const token = openToken;
+
+          modalTitle.textContent = `${label} 趋势图`;
+          openModalShell();
+
+          const src = resolveChartsImage(def);
+          if (!src) {
+            renderFallbackChart(def, token).catch((error) => {
+              console.error(error);
+              if (token !== openToken) return;
+              modalChart.textContent = "加载失败";
+            });
+            return;
+          }
+
+          showLoading("正在加载趋势图...");
+          const probe = new Image();
+          probe.onload = () => {
+            if (token !== openToken) return;
+            showImage(src, `${label} 趋势图`);
+          };
+          probe.onerror = () => {
+            renderFallbackChart(def, token).catch((error) => {
+              console.error(error);
+              if (token !== openToken) return;
+              modalChart.textContent = "加载失败";
+            });
+          };
+          probe.src = src;
         };
 
         const decorate = () => {
-          const rows = metricTableBody.querySelectorAll("tr");
-          rows.forEach((tr) => {
+          metricTableBody.querySelectorAll("tr").forEach((tr) => {
             const first = tr.querySelector("td");
             if (!first) return;
             const label = first.textContent.trim();
             first.dataset.metricLabel = label;
-            if (metricImageMap[label]) {
-              first.classList.add("metric-link");
+            const clickable = metricDefMap.has(label);
+            first.classList.toggle("metric-link", clickable);
+            if (clickable) {
+              first.title = "点击查看趋势图";
+            } else {
+              first.removeAttribute("title");
             }
           });
         };
@@ -1268,15 +1427,17 @@
         metricTableBody.addEventListener("click", (e) => {
           const cell = e.target.closest("td");
           if (!cell) return;
+          if (cell.cellIndex !== 0) return;
           const label = (cell.dataset.metricLabel || cell.textContent || "").trim();
-          const img = metricImageMap[label];
-          if (!img) return;
-          openModal(img, `${label}趋势图`);
+          openMetric(label);
         });
 
         modalClose.addEventListener("click", closeModal);
         modal.addEventListener("click", (e) => {
-          if (e.target === modal) {
+          if (e.target === modal) closeModal();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && modal.classList.contains("modal--open")) {
             closeModal();
           }
         });

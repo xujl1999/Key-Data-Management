@@ -204,6 +204,25 @@
       .metric-link:hover {
         text-decoration: underline;
       }
+      .metric-thumb-cell {
+        min-width: 110px;
+        text-align: center;
+      }
+      .metric-thumb {
+        width: 92px;
+        height: 54px;
+        border-radius: 8px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        object-fit: cover;
+        background: rgba(15, 23, 42, 0.35);
+      }
+      .metric-thumb-cell.metric-thumb--clickable {
+        cursor: pointer;
+      }
+      .metric-thumb-empty {
+        color: #94a3b8;
+        font-size: 0.85rem;
+      }
       .modal-title {
         margin: 2px 0 12px;
         font-weight: 700;
@@ -290,6 +309,12 @@
             </ul>
           </div>
         </div>
+        <div class="filters" style="margin-top: 10px;">
+          <div class="filter-field">
+            <span>指标分类</span>
+            <div class="chip-group" id="health-category-group"></div>
+          </div>
+        </div>
         <div class="scroll-wrap" style="margin-top: 10px;">
           <table>
             <thead>
@@ -299,22 +324,13 @@
                 <th>周环比</th>
                 <th>月环比</th>
                 <th>年同比</th>
+                <th>趋势图</th>
               </tr>
             </thead>
             <tbody id="health-metric-body">
-              <tr><td colspan="5">正在计算...</td></tr>
+              <tr><td colspan="6">正在计算...</td></tr>
             </tbody>
           </table>
-        </div>
-        <div class="scroll-wrap" style="margin-top: 12px;">
-          <div id="health-charts" style="display: grid; gap: 18px;">
-            <div style="display: grid; gap: 10px;">
-              <h3 style="margin: 0;">近一年睡眠时长（7日均值）</h3>
-              <img src="health/sleep_weekly.png" alt="近一年睡眠趋势" style="max-width: 100%; border-radius: 12px;" />
-              <h3 style="margin: 0;">近一年体重（滑动7日均值）</h3>
-              <img src="health/weight_trend.png" alt="体重趋势（7日均值）" style="max-width: 100%; border-radius: 12px;" />
-            </div>
-          </div>
         </div>
       </section>
       <section class="tab-panel" id="tab-entertainment">
@@ -388,6 +404,7 @@
       const tabPanels = document.querySelectorAll(".tab-panel");
       const healthStatus = document.getElementById("health-status");
       const metricTableBody = document.getElementById("health-metric-body");
+      const healthCategoryGroup = document.getElementById("health-category-group");
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
       const DEFAULT_CATEGORY = "超优质";
@@ -613,6 +630,16 @@
         { label: "耳机音量均值", valueKey: "headphone_audio_avg", unit: "dB", sources: HEADPHONE_AUDIO_SOURCES },
         { label: "睡眠手腕温度均值", valueKey: "temp_avg", unit: "°C", sources: SLEEP_TEMP_SOURCES },
       ];
+
+      const HEALTH_METRIC_CONFIG_SOURCES = [
+        { url: "health/metric_config.json", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/metric_config.json", label: "GitHub Raw" },
+      ];
+
+      let healthMetricDefs = METRIC_DEFS.slice();
+      let healthMetricCategories = ["全部"];
+      let activeHealthMetricCategory = "全部";
+      let metricRows = [];
 
       let records = [];
       let activeCategory = CATEGORY_OPTIONS.includes(DEFAULT_CATEGORY) ? DEFAULT_CATEGORY : CATEGORY_OPTIONS[0];
@@ -1039,6 +1066,110 @@
         throw new Error(errors.join(" | "));
       };
 
+      const fetchJsonFromSources = async (sourceList) => {
+        const { text, sourceLabel } = await fetchFromSources(sourceList);
+        try {
+          return JSON.parse(text);
+        } catch (error) {
+          throw new Error(`${sourceLabel}: JSON 解析失败`);
+        }
+      };
+
+      const uniqueList = (list) => Array.from(new Set(list.filter(Boolean)));
+
+      const applyHealthMetricConfig = (config) => {
+        const configMetrics = Array.isArray(config?.metrics) ? config.metrics : [];
+        const configMap = new Map();
+        configMetrics.forEach((item) => {
+          if (!item || !item.valueKey) return;
+          const key = String(item.valueKey).trim();
+          if (key) configMap.set(key, item);
+        });
+
+        const defs = METRIC_DEFS.map((def) => {
+          const item = configMap.get(def.valueKey);
+          return {
+            ...def,
+            category: item && item.category ? item.category : "未分类",
+            enabled: item ? item.enabled !== false : true,
+          };
+        });
+
+        const categories =
+          Array.isArray(config?.categories) && config.categories.length
+            ? config.categories.filter((item) => typeof item === "string" && item.trim())
+            : uniqueList(defs.map((def) => def.category));
+
+        return { defs, categories };
+      };
+
+      const renderHealthCategoryChips = () => {
+        if (!healthCategoryGroup) return;
+        healthCategoryGroup.innerHTML = "";
+        healthMetricCategories.forEach((label) => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = `chip${label === activeHealthMetricCategory ? " chip--active" : ""}`;
+          chip.textContent = label;
+          chip.addEventListener("click", () => {
+            if (activeHealthMetricCategory === label) return;
+            activeHealthMetricCategory = label;
+            renderHealthCategoryChips();
+            applyHealthMetricFilters();
+          });
+          healthCategoryGroup.appendChild(chip);
+        });
+      };
+
+      const loadHealthMetricConfig = async () => {
+        try {
+          const config = await fetchJsonFromSources(HEALTH_METRIC_CONFIG_SOURCES);
+          const applied = applyHealthMetricConfig(config);
+          healthMetricDefs = applied.defs;
+          healthMetricCategories = applied.categories.length
+            ? applied.categories
+            : uniqueList(applied.defs.map((def) => def.category));
+        } catch (error) {
+          console.error("加载健康指标配置失败:", error);
+          healthMetricDefs = METRIC_DEFS.map((def) => ({
+            ...def,
+            category: "未分类",
+            enabled: true,
+          }));
+          healthMetricCategories = uniqueList(healthMetricDefs.map((def) => def.category));
+        }
+
+        healthMetricCategories = uniqueList(["全部", ...healthMetricCategories]);
+        if (!healthMetricCategories.includes(activeHealthMetricCategory)) {
+          activeHealthMetricCategory = healthMetricCategories[0];
+        }
+        renderHealthCategoryChips();
+      };
+
+      const applyHealthMetricFilters = () => {
+        const rows =
+          activeHealthMetricCategory === "全部"
+            ? metricRows
+            : metricRows.filter((row) => row.category === activeHealthMetricCategory);
+        renderMetricTable(rows);
+      };
+
+      const resolveChartsImage = (def) => {
+        if (!def) return null;
+        const sources = Array.isArray(def.sources) ? def.sources : [];
+        const url =
+          sources
+            .map((source) => (source && typeof source.url === "string" ? source.url : ""))
+            .find((candidate) => candidate && /\.csv$/i.test(candidate.split("?")[0])) || "";
+        if (!url) return null;
+
+        const filename = url.split("?")[0].split("/").pop();
+        if (!filename || !/\.csv$/i.test(filename)) return null;
+
+        const stem = filename.replace(/\.csv$/i, "");
+        return `health/charts/${stem}__${def.valueKey}.png`;
+      };
+
       const parseMetricSeries = (text, valueKey) => {
         const rows = parseCSV(text);
         if (!rows.length) return [];
@@ -1124,7 +1255,7 @@
         if (!rows.length) {
           const tr = document.createElement("tr");
           const td = document.createElement("td");
-          td.colSpan = 5;
+          td.colSpan = 6;
           td.textContent = "暂无数据";
           tr.appendChild(td);
           metricTableBody.appendChild(tr);
@@ -1132,13 +1263,58 @@
         }
         rows.forEach((row) => {
           const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${row.label}</td>
-            <td>${row.weekAvg}</td>
-            <td>${row.wow}</td>
-            <td>${row.mom}</td>
-            <td>${row.yoy}</td>
-          `;
+
+          const nameCell = document.createElement("td");
+          nameCell.textContent = row.label;
+          nameCell.dataset.metricLabel = row.label;
+          nameCell.classList.add("metric-link");
+          nameCell.title = "点击查看趋势图";
+          tr.appendChild(nameCell);
+
+          const weekCell = document.createElement("td");
+          weekCell.textContent = row.weekAvg;
+          tr.appendChild(weekCell);
+
+          const wowCell = document.createElement("td");
+          wowCell.innerHTML = row.wow;
+          tr.appendChild(wowCell);
+
+          const momCell = document.createElement("td");
+          momCell.innerHTML = row.mom;
+          tr.appendChild(momCell);
+
+          const yoyCell = document.createElement("td");
+          yoyCell.innerHTML = row.yoy;
+          tr.appendChild(yoyCell);
+
+          const thumbCell = document.createElement("td");
+          thumbCell.className = "metric-thumb-cell";
+          if (row.thumbSrc) {
+            const img = document.createElement("img");
+            img.className = "metric-thumb";
+            img.src = row.thumbSrc;
+            img.alt = `${row.label} 趋势图`;
+            img.loading = "lazy";
+            thumbCell.dataset.metricLabel = row.label;
+            thumbCell.classList.add("metric-thumb--clickable");
+            img.addEventListener("error", () => {
+              thumbCell.innerHTML = "";
+              thumbCell.classList.remove("metric-thumb--clickable");
+              thumbCell.removeAttribute("data-metric-label");
+              const placeholder = document.createElement("span");
+              placeholder.className = "metric-thumb-empty";
+              placeholder.textContent = "—";
+              thumbCell.appendChild(placeholder);
+            });
+            thumbCell.appendChild(img);
+          } else {
+            const placeholder = document.createElement("span");
+            placeholder.className = "metric-thumb-empty";
+            placeholder.textContent = "—";
+            thumbCell.appendChild(placeholder);
+          }
+          tr.appendChild(thumbCell);
+
           metricTableBody.appendChild(tr);
         });
       };
@@ -1146,12 +1322,23 @@
       const loadMetricTable = async () => {
         try {
           const rows = [];
-          for (const def of METRIC_DEFS) {
+          for (const def of healthMetricDefs) {
+            if (def.enabled === false) continue;
+            const category = def.category || "未分类";
+            const thumbSrc = resolveChartsImage(def);
             try {
               const { text } = await fetchFromSources(def.sources);
               const series = parseMetricSeries(text, def.valueKey);
               if (!series.length) {
-                rows.push({ label: def.label, weekAvg: "--", wow: "—", mom: "—", yoy: "—" });
+                rows.push({
+                  label: def.label,
+                  category,
+                  weekAvg: "--",
+                  wow: "—",
+                  mom: "—",
+                  yoy: "—",
+                  thumbSrc,
+                });
                 continue;
               }
               
@@ -1165,21 +1352,38 @@
 
               rows.push({
                 label: def.label,
+                category,
                 weekAvg: formatValueWithUnit(avg7, def.unit),
                 wow: formatDeltaColored(avg7, prev7),
                 mom: formatDeltaColored(avg30, prev30),
                 yoy: formatDeltaColored(avg365, prev365),
+                thumbSrc,
               });
             } catch (error) {
               console.error(`加载指标 ${def.label} 失败:`, error);
-              rows.push({ label: def.label, weekAvg: "加载失败", wow: "—", mom: "—", yoy: "—" });
+              rows.push({
+                label: def.label,
+                category,
+                weekAvg: "加载失败",
+                wow: "—",
+                mom: "—",
+                yoy: "—",
+                thumbSrc,
+              });
             }
           }
-          renderMetricTable(rows);
+          metricRows = rows;
+          applyHealthMetricFilters();
         } catch (error) {
           console.error("加载指标表格失败:", error);
+          metricRows = [];
           renderMetricTable([]);
         }
+      };
+
+      const initHealthMetricTable = async () => {
+        await loadHealthMetricConfig();
+        await loadMetricTable();
       };
 
 
@@ -1235,7 +1439,7 @@
       ensureLimitValue();
       renderHeader();
       renderBody([]);
-      loadMetricTable();
+      initHealthMetricTable();
       loadCSV();
     </script>
     <div class="modal" id="chart-modal" aria-hidden="true">
@@ -1256,37 +1460,13 @@
         const modalClose = document.getElementById("modal-close");
         if (!metricTableBody || !modal || !modalTitle || !modalChart || !modalImg || !modalClose) return;
 
-        const metricDefMap =
-          typeof METRIC_DEFS === "undefined"
-            ? new Map()
-            : new Map(METRIC_DEFS.map((def) => [def.label, def]));
-
-        const PREFERRED_IMAGES_BY_VALUEKEY = {
-          sleep_hours: "health/sleep_weekly.png",
-          weight_kg: "health/weight_trend.png",
-          steps: "health/steps_trend.png",
-          active_energy: "health/energy_trend.png",
-        };
-
-        const resolveChartsImage = (def) => {
-          if (!def) return null;
-          if (PREFERRED_IMAGES_BY_VALUEKEY[def.valueKey]) {
-            return PREFERRED_IMAGES_BY_VALUEKEY[def.valueKey];
-          }
-
-          const sources = Array.isArray(def.sources) ? def.sources : [];
-          const url =
-            sources
-              .map((source) => (source && typeof source.url === "string" ? source.url : ""))
-              .find((candidate) => candidate && /\.csv$/i.test(candidate.split("?")[0])) || "";
-          if (!url) return null;
-
-          const filename = url.split("?")[0].split("/").pop();
-          if (!filename || !/\.csv$/i.test(filename)) return null;
-
-          const stem = filename.replace(/\.csv$/i, "");
-          return `health/charts/${stem}__${def.valueKey}.png`;
-        };
+        const baseDefs =
+          typeof healthMetricDefs === "undefined"
+            ? typeof METRIC_DEFS === "undefined"
+              ? []
+              : METRIC_DEFS
+            : healthMetricDefs;
+        const metricDefMap = new Map(baseDefs.map((def) => [def.label, def]));
 
         const openModalShell = () => {
           modal.classList.add("modal--open");
@@ -1408,27 +1588,11 @@
           probe.src = src;
         };
 
-        const decorate = () => {
-          metricTableBody.querySelectorAll("tr").forEach((tr) => {
-            const first = tr.querySelector("td");
-            if (!first) return;
-            const label = first.textContent.trim();
-            first.dataset.metricLabel = label;
-            const clickable = metricDefMap.has(label);
-            first.classList.toggle("metric-link", clickable);
-            if (clickable) {
-              first.title = "点击查看趋势图";
-            } else {
-              first.removeAttribute("title");
-            }
-          });
-        };
-
         metricTableBody.addEventListener("click", (e) => {
           const cell = e.target.closest("td");
           if (!cell) return;
-          if (cell.cellIndex !== 0) return;
-          const label = (cell.dataset.metricLabel || cell.textContent || "").trim();
+          const label = (cell.dataset.metricLabel || "").trim();
+          if (!label) return;
           openMetric(label);
         });
 
@@ -1442,9 +1606,6 @@
           }
         });
 
-        const observer = new MutationObserver(decorate);
-        observer.observe(metricTableBody, { childList: true });
-        decorate();
       })();
     </script>
   </body>

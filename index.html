@@ -340,13 +340,15 @@
       </div>
       <section class="tab-panel tab-panel--active" id="tab-health">
         <div id="health-status" class="status">正在加载健康数据...</div>
+        <p>更新时间：<span id="update-time" style="margin-left: 8px; font-size: 0.9rem;"></span></p>
         <div class="plan-block" id="health-highlight">
           <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
           <div class="plan-section">
-                        <ul class="plan-list">
-              <li>近7天<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。记得你要减肥到70kg</li>
-              <li>近7日<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>）。记得你要早睡早起睡够8小时</li>
-              <li>近7天<span class="metric-link" data-metric-label="HRV-SDNN均值">HRV</span>为<span id="hl-hrv">--</span>（<span id="hl-hrv-wow">—</span>），记得开心～～</li>
+            <ul class="plan-list">
+              <li>本周<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。记得你要减肥到70kg</li>
+              <li>本周<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>）。记得你要早睡早起睡够8小时</li>
+              <li>本周<span class="metric-link" data-metric-label="HRV-SDNN均值">HRV</span>为<span id="hl-hrv">--</span>（<span id="hl-hrv-wow">—</span>），记得开心～～</li>
+              <li>本周<span class="metric-link" data-metric-label="本周运动天数">运动天数</span><span id="hl-ex-week">--</span>天，本月<span class="metric-link" data-metric-label="本月运动天数">运动天数</span><span id="hl-ex-month">--</span>天，<span id="hl-ex-msg">--</span></li>
             </ul>
           </div>
           <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
@@ -400,7 +402,6 @@
         </div>
       </div>
       <header>
-        <p>更新时间：<span id="update-time" style="margin-left: 8px; font-size: 0.9rem;"></span></p>
         <div class="status" id="status">正在加载数据...</div>
         <div class="filters">
           <div class="filter-field">
@@ -487,6 +488,9 @@
         wakeTimeWow: document.getElementById("hl-wake-wow"),
         hrv: document.getElementById("hl-hrv"),
         hrvWow: document.getElementById("hl-hrv-wow"),
+        exerciseWeek: document.getElementById("hl-ex-week"),
+        exerciseMonth: document.getElementById("hl-ex-month"),
+        exerciseMsg: document.getElementById("hl-ex-msg"),
       };
 
       const CATEGORY_OPTIONS = ["全部", "超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
@@ -721,7 +725,11 @@
       const HIGHLIGHT_EXTRA_DEFS = [
         { label: "入睡时间", valueKey: "bed_time", unit: "", sources: SLEEP_SCHEDULE_SOURCES },
         { label: "起床时间", valueKey: "wake_time", unit: "", sources: SLEEP_SCHEDULE_SOURCES },
+        { label: "本周运动天数", valueKey: "exercise_days", unit: "天", sources: EXERCISE_SOURCES },
+        { label: "本月运动天数", valueKey: "exercise_days", unit: "天", sources: EXERCISE_SOURCES },
       ];
+
+      const EXERCISE_DAY_THRESHOLD_MIN = 30;
 
       const HEALTH_METRIC_CONFIG_SOURCES = [
         { url: "health/metric_config.json", label: "Local" },
@@ -1415,6 +1423,26 @@
         const highlightOffset = 7;
         const calcAvg = (series) => avgWindowByDate(series, highlightWindow, 0);
         const calcPrev = (series) => avgWindowByDate(series, highlightWindow, highlightOffset);
+        const countWindowByDate = (series, days, offsetDays = 0) => {
+          if (!series.length) return null;
+          const lastDate = series[series.length - 1].date;
+          const end = new Date(lastDate);
+          end.setHours(23, 59, 59, 999);
+          end.setDate(end.getDate() - offsetDays);
+          const start = new Date(end);
+          start.setDate(start.getDate() - (days - 1));
+          start.setHours(0, 0, 0, 0);
+          const window = series.filter((item) => {
+            const itemDate = new Date(item.date);
+            itemDate.setHours(0, 0, 0, 0);
+            return itemDate >= start && itemDate <= end;
+          });
+          if (!window.length) return null;
+          return window.reduce(
+            (acc, cur) => acc + (cur.value >= EXERCISE_DAY_THRESHOLD_MIN ? 1 : 0),
+            0
+          );
+        };
 
         try {
           const { text } = await fetchFromSources(BODY_SOURCES);
@@ -1476,6 +1504,19 @@
           setHighlightDelta(highlightEls.hrvWow, hrvAvg, hrvPrev);
         } catch (error) {
           console.error("加载 HRV 高亮失败:", error);
+        }
+
+        try {
+          const { text } = await fetchFromSources(EXERCISE_SOURCES);
+          const exerciseSeries = parseMetricSeries(text, "exercise_time_min");
+          const weekCount = countWindowByDate(exerciseSeries, 7, 0);
+          const monthCount = countWindowByDate(exerciseSeries, 30, 0);
+          setHighlightValue(highlightEls.exerciseWeek, weekCount === null ? "--" : weekCount);
+          setHighlightValue(highlightEls.exerciseMonth, monthCount === null ? "--" : monthCount);
+          const canRest = (weekCount || 0) >= 5 || (monthCount || 0) >= 21;
+          setHighlightValue(highlightEls.exerciseMsg, canRest ? "今天可以休息～" : "今天要继续加油");
+        } catch (error) {
+          console.error("加载运动天数高亮失败:", error);
         }
       };
 
@@ -1840,6 +1881,17 @@
         const unwrapTimeValue = (value, pivot) => (value < pivot ? value + 1440 : value);
 
         const buildSeries = (def, text) => {
+          if (def.valueKey === "exercise_days") {
+            const baseSeries = parseMetricSeries(text, "exercise_time_min");
+            const normalized = baseSeries
+              .map((item) => ({
+                date: item.date,
+                value: item.value >= EXERCISE_DAY_THRESHOLD_MIN ? 1 : 0,
+              }))
+              .filter((item) => item.value !== null);
+            normalized.sort((a, b) => a.date - b.date);
+            return { series: normalized, isTime: false };
+          }
           const isTime = TIME_VALUE_KEYS.has(def.valueKey);
           const baseSeries = isTime
             ? parseScheduleSeries(text, def.valueKey)

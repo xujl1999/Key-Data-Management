@@ -191,6 +191,17 @@
         padding: 0;
         list-style-type: disc;
       }
+      .note-heading {
+        margin: 0 0 6px;
+        font-weight: 600;
+        color: #cbd5f5;
+      }
+      .note-divider {
+        border: 0;
+        height: 1px;
+        margin: 12px 0;
+        background: rgba(148, 163, 184, 0.35);
+      }
       .table-note {
         margin: 6px 0 12px;
         color: #94a3b8;
@@ -388,9 +399,15 @@
         <div class="plan-block">
           <p class="plan-title" style="margin: 0 0 6px;">知识库 · 笔记</p>
           <div class="plan-section">
+            <p class="note-heading">读《道德经》有感：</p>
             <ul class="plan-list">
-              <li>读道德经有感：天下万物生于有，有生于无。-—》这个站点的意义就在于用最少的精力获得最重要的信息，让脑子恢复到无，再生万物！</li>
-              <li>看minimax闫俊杰访谈有感：合作不顺很大程度上是组织不顺；-—〉ai agent的组织形式是影响效率的核心原因；公司的组织不一定是按照岗位划分，也可以是按照画像划分；-—》如果给不同的ai赋予工程师、架构师、产品经理的身份并划定职责容易有幻觉和遗忘，是否应该尝试赋予agent不同的性格画像？比如：较真的ai、善于发现问题的ai、善于管理ai的ai、善于向人类汇报的ai、善于总结沉淀的ai、善于运用第一性原理拆解分析问题的ai；</li>
+              <li><strong>“天下万物生于有，有生于无。”</strong><br />—&gt; 这个站点的意义在于，<strong>用最少的精力获得最重要的信息</strong>，让思维恢复到<strong>“无”</strong>的状态，从而让万物重新生长。</li>
+            </ul>
+            <hr class="note-divider" />
+            <p class="note-heading">看 罗永浩对 Minimax 闫俊杰访谈有感：</p>
+            <ul class="plan-list">
+              <li><strong>“合作不顺的根本上是组织不顺。”</strong> —&gt; <strong>AI Agent 的组织形式</strong>是影响效率的核心原因。</li>
+              <li><strong>“公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。”</strong><br />—&gt; 如果把不同的 AI 赋予“工程师”、“架构师”、“产品经理”的身份并划定职责，容易产生<strong>幻觉与遗忘</strong>。<br />是否应该尝试<strong>赋予 AI 不同的性格画像</strong>？比如：<strong>较真的 AI</strong>；<strong>善于发现问题的 AI</strong>；<strong>善于管理的 AI</strong>；<strong>善于向人类汇报的 AI</strong>；<strong>善于总结沉淀的 AI</strong>；<strong>善于运用第一性原理拆解分析问题的 AI</strong></li>
             </ul>
           </div>
         </div>
@@ -1177,6 +1194,9 @@
 
       const resolveChartsImage = (def) => {
         if (!def) return null;
+        if (def.valueKey === "flights_climbed") {
+          return "health/charts/flights_daily__flights_climbed.svg";
+        }
         const sources = Array.isArray(def.sources) ? def.sources : [];
         const url =
           sources
@@ -1342,6 +1362,9 @@
 
       const loadMetricTable = async () => {
         try {
+          if (healthStatus) {
+            healthStatus.textContent = "正在加载健康数据...";
+          }
           const rows = [];
           for (const def of healthMetricDefs) {
             if (def.enabled === false) continue;
@@ -1393,10 +1416,16 @@
           }
           metricRows = rows;
           applyHealthMetricFilters();
+          if (healthStatus) {
+            healthStatus.textContent = "健康数据已加载";
+          }
         } catch (error) {
           console.error("加载指标表格失败:", error);
           metricRows = [];
           renderMetricTable([]);
+          if (healthStatus) {
+            healthStatus.textContent = "健康数据加载失败";
+          }
         }
       };
 

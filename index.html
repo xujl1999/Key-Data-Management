@@ -1388,6 +1388,12 @@
         return Number.isNaN(num) ? null : num;
       };
 
+      const isDirtySleepTime = (valueKey, minutes) => {
+        if (minutes === null || Number.isNaN(minutes)) return true;
+        if (valueKey !== "bed_time" && valueKey !== "wake_time") return false;
+        return minutes >= 12 * 60 && minutes < 18 * 60;
+      };
+
       const parseScheduleSeries = (text, valueKey) => {
         const rows = parseCSV(text);
         if (!rows.length) return [];
@@ -1401,6 +1407,7 @@
             const d = parseDate(cells[idxDate]);
             const v = parseClockToMinutes(cells[idxVal]);
             if (!d || v === null) return null;
+            if (isDirtySleepTime(valueKey, v)) return null;
             return { date: d, value: v };
           })
           .filter(Boolean)

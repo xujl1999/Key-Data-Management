@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" width="960" height="640">
+  <rect width="960" height="640" fill="#0f172a" />
+  <line x1="40" y1="40.00" x2="920.00" y2="40.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="128.00" x2="920.00" y2="128.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="216.00" x2="920.00" y2="216.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="304.00" x2="920.00" y2="304.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+  <line x1="40" y1="336.00" x2="920.00" y2="336.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="424.00" x2="920.00" y2="424.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="512.00" x2="920.00" y2="512.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" /><line x1="40" y1="600.00" x2="920.00" y2="600.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+  <line x1="40" y1="320.00" x2="920.00" y2="320.00" stroke="#1f2937" stroke-width="1" />
+  <polyline points="40.00,40.00 920.00,304.00" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="40.00,336.00 920.00,600.00" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  
+  
+  </svg>

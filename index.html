@@ -348,24 +348,22 @@
       </div>
       <section class="tab-panel tab-panel--active" id="tab-health">
         <div id="health-status" class="status">正在加载健康数据...</div>
-        <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">健康 · 迭代计划</p>
+        <div class="plan-block" id="health-highlight">
+          <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
+          <div class="plan-section">
+            <ul class="plan-list">
+              <li>近7天<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="BMI">BMI</span> <span id="hl-bmi">--</span>（<span id="hl-bmi-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。希望你还记得你要减肥</li>
+              <li>近7日<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>），希望你还记得你要早睡早起</li>
+              <li>近7天<span class="metric-link" data-metric-label="HRV-SDNN均值">HRV</span>为<span id="hl-hrv">--</span>（<span id="hl-hrv-wow">—</span>），记得开心～～</li>
+            </ul>
+          </div>
+          <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
           <div class="plan-section">
             <ul class="plan-list">
               <li>待破解：例行化获取苹果健康方法</li>
               <li>待接入：苹果健康其他指标、分部位健身频率、运动状态数据、动态血糖仪数据</li>
               <li>每日饮食成分分析</li>
               <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
-            </ul>
-          </div>
-        </div>
-        <div class="plan-block" id="health-highlight">
-          <p class="plan-title" style="margin: 0 0 6px;">健康 · Highlight</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>近7天<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="BMI">BMI</span> <span id="hl-bmi">--</span>（<span id="hl-bmi-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。希望你还记得你要减肥</li>
-              <li>近7日<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>），希望你还记得你要早睡早起</li>
-              <li>近7天<span class="metric-link" data-metric-label="HRV-SDNN均值">HRV</span>为<span id="hl-hrv">--</span>（<span id="hl-hrv-wow">—</span>），记得开心～～</li>
             </ul>
           </div>
         </div>
@@ -395,10 +393,16 @@
       </section>
       <section class="tab-panel" id="tab-entertainment">
       <div class="plan-block">
-        <p class="plan-title" style="margin: 0 0 6px;">娱乐 · 迭代计划</p>
+        <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
         <div class="plan-section">
           <ul class="plan-list">
-            <li>接入：王者荣耀自动化战绩分析</li>
+            <li>每日自动拉取优质博主的更新，避开推荐流对精力的消耗。</li>
+          </ul>
+        </div>
+        <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>接入：王者荣耀自动化战绩分析，每日英雄梯度分析，强势英雄推荐</li>
             <li>接入：原神自动化任务完成情况</li>
           </ul>
         </div>
@@ -417,7 +421,6 @@
           </label>
         </div>
       </header>
-      <p class="table-note">每日自动拉取优质博主的更新，避开推荐流对精力的消耗。</p>
       <div class="scroll-wrap">
         <table>
           <thead>
@@ -429,7 +432,20 @@
       </section>
       <section class="tab-panel" id="tab-knowledge">
         <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">知识库 · 迭代计划</p>
+          <p class="plan-title" style="margin: 0 0 6px;">笔记</p>
+          <div class="plan-section">
+            <p class="note-heading">读《道德经》有感：</p>
+            <ul class="plan-list">
+              <li>“天下万物生于有，有生于无。”<br />—&gt; 这个站点的意义在于，用最少的精力获得最重要的信息，让思维恢复到“无”的状态，恢复灵感。</li>
+            </ul>
+            <hr class="note-divider" />
+            <p class="note-heading">看 罗永浩对 Minimax 闫俊杰访谈有感：</p>
+            <ul class="plan-list">
+              <li>“合作不顺的根本上是组织不顺。” —&gt; AI Agent 的组织形式是影响效率的核心原因。</li>
+              <li>“公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。”<br />—&gt; 如果把不同的 AI 赋予“工程师”、“架构师”、“产品经理”的身份并划定职责，容易产生幻觉与遗忘。<br />是否应该尝试赋予 AI 不同的性格画像？比如：较真的 AI；善于发现问题的 AI；善于管理的 AI；善于向人类汇报的 AI；善于总结沉淀的 AI；善于运用第一性原理拆解分析问题的 AI</li>
+            </ul>
+          </div>
+          <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
           <div class="plan-section">
             <ul class="plan-list">
               <li>分析中：微信读书笔记接口</li>
@@ -437,26 +453,11 @@
             </ul>
           </div>
         </div>
-        <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">知识库 · 笔记</p>
-          <div class="plan-section">
-            <p class="note-heading">读《道德经》有感：</p>
-            <ul class="plan-list">
-              <li><strong>“天下万物生于有，有生于无。”</strong><br />—&gt; 这个站点的意义在于，<strong>用最少的精力获得最重要的信息</strong>，让思维恢复到<strong>“无”</strong>的状态，从而让万物重新生长。</li>
-            </ul>
-            <hr class="note-divider" />
-            <p class="note-heading">看 罗永浩对 Minimax 闫俊杰访谈有感：</p>
-            <ul class="plan-list">
-              <li><strong>“合作不顺的根本上是组织不顺。”</strong> —&gt; <strong>AI Agent 的组织形式</strong>是影响效率的核心原因。</li>
-              <li><strong>“公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。”</strong><br />—&gt; 如果把不同的 AI 赋予“工程师”、“架构师”、“产品经理”的身份并划定职责，容易产生<strong>幻觉与遗忘</strong>。<br />是否应该尝试<strong>赋予 AI 不同的性格画像</strong>？比如：<strong>较真的 AI</strong>；<strong>善于发现问题的 AI</strong>；<strong>善于管理的 AI</strong>；<strong>善于向人类汇报的 AI</strong>；<strong>善于总结沉淀的 AI</strong>；<strong>善于运用第一性原理拆解分析问题的 AI</strong></li>
-            </ul>
-          </div>
-        </div>
         <p>知识库敬请期待。</p>
       </section>
       <section class="tab-panel" id="tab-wealth">
         <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">财富 · 规划</p>
+          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
           <div class="plan-section">
             <ul class="plan-list">
               <li>当前财产配置</li>

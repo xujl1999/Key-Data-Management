@@ -1379,6 +1379,10 @@
 
       const loadHealthHighlight = async () => {
         if (!highlightEls.weight) return;
+        const highlightWindow = 7;
+        const highlightOffset = 7;
+        const calcAvg = (series) => avgWindowByDate(series, highlightWindow, 0);
+        const calcPrev = (series) => avgWindowByDate(series, highlightWindow, highlightOffset);
 
         try {
           const { text } = await fetchFromSources(BODY_SOURCES);
@@ -1386,12 +1390,12 @@
           const bmiSeries = parseMetricSeries(text, "bmi");
           const fatSeries = parseMetricSeries(text, "body_fat_pct");
 
-          const weightAvg = avgWindowByDate(weightSeries, 7, 0);
-          const weightPrev = avgWindowByDate(weightSeries, 7, 7);
-          const bmiAvg = avgWindowByDate(bmiSeries, 7, 0);
-          const bmiPrev = avgWindowByDate(bmiSeries, 7, 7);
-          const fatAvg = avgWindowByDate(fatSeries, 7, 0);
-          const fatPrev = avgWindowByDate(fatSeries, 7, 7);
+          const weightAvg = calcAvg(weightSeries);
+          const weightPrev = calcPrev(weightSeries);
+          const bmiAvg = calcAvg(bmiSeries);
+          const bmiPrev = calcPrev(bmiSeries);
+          const fatAvg = calcAvg(fatSeries);
+          const fatPrev = calcPrev(fatSeries);
 
           setHighlightValue(highlightEls.weight, formatValueWithUnit(weightAvg, "kg"));
           setHighlightDelta(highlightEls.weightWow, weightAvg, weightPrev);
@@ -1406,8 +1410,8 @@
         try {
           const { text } = await fetchFromSources(HEALTH_SOURCES);
           const sleepSeries = parseMetricSeries(text, "sleep_hours");
-          const sleepAvg = avgWindowByDate(sleepSeries, 7, 0);
-          const sleepPrev = avgWindowByDate(sleepSeries, 7, 7);
+          const sleepAvg = calcAvg(sleepSeries);
+          const sleepPrev = calcPrev(sleepSeries);
           setHighlightValue(highlightEls.sleep, formatValueWithUnit(sleepAvg, "小时"));
           setHighlightDelta(highlightEls.sleepWow, sleepAvg, sleepPrev);
         } catch (error) {
@@ -1423,10 +1427,10 @@
             value: item.value < 12 * 60 ? item.value + 24 * 60 : item.value,
           }));
 
-          const bedAvg = avgWindowByDate(bedSeries, 7, 0);
-          const bedPrev = avgWindowByDate(bedSeries, 7, 7);
-          const wakeAvg = avgWindowByDate(wakeSeries, 7, 0);
-          const wakePrev = avgWindowByDate(wakeSeries, 7, 7);
+          const bedAvg = calcAvg(bedSeries);
+          const bedPrev = calcPrev(bedSeries);
+          const wakeAvg = calcAvg(wakeSeries);
+          const wakePrev = calcPrev(wakeSeries);
 
           setHighlightValue(highlightEls.bedTime, formatClock(bedAvg, true));
           setHighlightDelta(highlightEls.bedTimeWow, bedAvg, bedPrev);
@@ -1439,8 +1443,8 @@
         try {
           const { text } = await fetchFromSources(HRV_SOURCES);
           const hrvSeries = parseMetricSeries(text, "sdnn_avg");
-          const hrvAvg = avgWindowByDate(hrvSeries, 7, 0);
-          const hrvPrev = avgWindowByDate(hrvSeries, 7, 7);
+          const hrvAvg = calcAvg(hrvSeries);
+          const hrvPrev = calcPrev(hrvSeries);
           setHighlightValue(highlightEls.hrv, formatValueWithUnit(hrvAvg, "ms"));
           setHighlightDelta(highlightEls.hrvWow, hrvAvg, hrvPrev);
         } catch (error) {

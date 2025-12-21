@@ -72,7 +72,8 @@ set "S=%~1"
 if "%S%"=="" set "S=5"
 >nul 2>&1 timeout /t %S% /nobreak
 if %errorlevel%==0 exit /b 0
->nul 2>&1 ping 127.0.0.1 -n %S% >nul
+set "PING_EXE=%SystemRoot%\System32\ping.exe"
+if exist "%PING_EXE%" "%PING_EXE%" 127.0.0.1 -n %S% >nul
 exit /b 0
 
 :end

@@ -109,4 +109,6 @@
 | walking_step_length_daily.csv | step_length_min | 步长最小值 | m | 2025-12-15 至 2025-12-21 | 38.571 |
 | walking_step_length_daily.csv | step_length_max | 步长最大值 | m | 2025-12-15 至 2025-12-21 | 87.000 |
 | walking_step_length_daily.csv | count | 样本数 | (原始单位) | 2025-12-15 至 2025-12-21 | 45.143 |
-| weight_daily.csv | weight_kg | 体重 | kg | 2025-12-12 至 2025-12-18 | 78.200 |
+| weight_daily.csv | weight_kg | 体重 | kg | 2025-12-15 至 2025-12-21 | 78.000 |
+| workouts_daily.csv | duration_min | duration_min | (原始单位) | 2025-12-14 至 2025-12-20 | 36.600 |
+| workouts_daily.csv | energy_kcal | energy_kcal | (原始单位) | 2025-12-14 至 2025-12-20 | 0.000 |

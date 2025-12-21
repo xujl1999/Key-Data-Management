@@ -14,6 +14,19 @@ DEFAULT_SOURCE_DIR = Path(r"C:\Users\23711\OneDrive\DATA")
 DEFAULT_PATTERN = "导出*.zip"
 DEST_ZIP = HEALTH_DIR / "导出.zip"
 PARSE_SCRIPT = SCRIPT_DIR / "parse_export.py"
+PARSE_CWD = HEALTH_DIR
+
+try:
+    import parse_export as _parse_export  # type: ignore
+except Exception:
+    _parse_export = None
+
+EXPORT_ZIP_OVERRIDE = None
+if _parse_export is not None:
+    try:
+        EXPORT_ZIP_OVERRIDE = Path(_parse_export.EXPORT_ZIP)
+    except Exception:
+        EXPORT_ZIP_OVERRIDE = None
 
 
 def pick_latest_zip(source_dir: Path, pattern: str) -> Path | None:
@@ -59,7 +72,7 @@ def copy_zip(source: Path, dest: Path) -> None:
 
 
 def run_parse(script: Path) -> None:
-    subprocess.run([sys.executable, str(script)], check=True, cwd=ROOT)
+    subprocess.run([sys.executable, str(script)], check=True, cwd=PARSE_CWD)
 
 
 def main() -> int:
@@ -126,6 +139,10 @@ def main() -> int:
 
     copy_zip(latest, DEST_ZIP)
     print(f"Copied to: {DEST_ZIP}")
+
+    if EXPORT_ZIP_OVERRIDE and EXPORT_ZIP_OVERRIDE != DEST_ZIP:
+        copy_zip(latest, EXPORT_ZIP_OVERRIDE)
+        print(f"Copied to: {EXPORT_ZIP_OVERRIDE}")
 
     if args.delete_source:
         try:

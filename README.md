@@ -23,7 +23,7 @@
    - 浏览器打开 `http://127.0.0.1:8000/index.html` 查看列表。
 
 4) 一键流程与提交  
-   - 可运行 `video_update.bat`：依次激活环境、抓取数据、在根目录 `git add/commit/push` 到 `main` 分支（默认仓库远端为 `origin`）。
+   - 可运行 `video_update.bat`：依次激活环境、抓取数据、在根目录 `git add/commit/push` 到 `main` 分支（默认远端为 `origin`）。
 
 ## 免责声明
 - 本项目仅供学习研究，切勿用于商业或其他违规场景。  

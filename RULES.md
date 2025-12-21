@@ -10,16 +10,16 @@
 ## 目录结构
 ```
 repo/
-├── config/                    # 人类配置文件（高频修改）
-│   ├── bilibili_authors.json  # B站关注UP主列表
-│   ├── health_goals.json      # 健康指标目标值和预警值
-│   └── health_metrics.json    # 健康指标分类和启用配置
-├── health/
-│   ├── data/                  # 健康数据CSV文件
-│   ├── scripts/               # 数据处理脚本
-│   └── 导出.zip               # Apple Health原始导出（不上传）
-├── video/                     # 视频数据
-└── index.html                 # 主页面
+|-- config/                    # 人员配置文件（高频修改）
+|   |-- bilibili_authors.json  # B站关注UP主列表
+|   |-- health_goals.json      # 健康指标目标值和预警值
+|   `-- health_metrics.json    # 健康指标分类和启用配置
+|-- health/
+|   |-- data/                  # 健康数据CSV文件
+|   |-- scripts/               # 数据处理脚本
+|   `-- 导出.zip               # Apple Health原始导出（不上传）
+|-- video/                     # 视频数据
+`-- index.html                 # 主页面
 ```
 
 ## 操作步骤
@@ -50,7 +50,7 @@ repo/
 
 ## 原则
 - 不得跳过规范化步骤；确保上传前日期格式已统一且排序正确。
-- 提交信息尽量清晰，便于追溯（如 `data: normalize publish dates`）。
+- 提交信息尽量清楚，便于追溯（如 `data: normalize publish dates`）。
 - 本项目仅供学习研究，严禁用于商业或违规用途。
 - GitHub Pages 必须与本地页面一致：`index.html` 新增依赖（图片/CSV/JS/CSS/`health/charts` 等）一律加入 Git 并推送同步。
 - 若新增依赖或删除依赖，请确认 `video_update.bat` 的提交流程能同步（建议保持 `git add -A`/`git add .` 覆盖新增与删除）。

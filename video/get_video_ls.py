@@ -56,9 +56,38 @@ def build_driver(edge_options: List[str], headless: bool) -> webdriver.Edge:
     return driver
 
 
+def normalize_authors(data) -> List[Dict]:
+    authors: List[Dict] = []
+    if isinstance(data, list):
+        for item in data:
+            if isinstance(item, dict):
+                authors.append(item)
+            elif isinstance(item, str):
+                authors.append({"author_id": item})
+        return authors
+
+    if isinstance(data, dict):
+        for category, items in data.items():
+            if isinstance(category, str) and category.startswith("_"):
+                continue
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if isinstance(item, dict):
+                    entry = dict(item)
+                    entry.setdefault("category", category)
+                    authors.append(entry)
+                elif isinstance(item, str):
+                    authors.append({"author_id": item, "category": category})
+        return authors
+
+    raise ValueError("Unsupported authors format")
+
+
 def load_authors(authors_path: Path) -> List[Dict]:
     with authors_path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    return normalize_authors(data)
 
 
 def collect_for_author(

@@ -6,7 +6,7 @@
 - `apple_health_export/workout-routes/*.gpx`：共 90 个 GPX 轨迹文件，对应锻炼路线。
 - `apple_health_export/electrocardiograms/*.csv`：共 11 个心电（ECG）导出 CSV，文件名按日期。
 - `apple_health_export/export_cda.xml`：CDA 格式的健康档案。
-- `apple_health_export/蟽禄鈺澫兠р晳.xml`：文件名编码异常，推测是主导出的 `export.xml`（包含大量记录数据）；解压后可手动改名查看。
+- `apple_health_export/<乱码文件名>.xml`：文件名编码异常，推测是主导出的 `export.xml`（包含大量记录数据）；解压后可手动改名查看。
 
 总计 103 个文件（90 GPX + 11 CSV + 2 XML）。
 
@@ -66,8 +66,8 @@ with zipfile.ZipFile(zip_path) as zf:
     # 读取一个 GPX 内容
     gpx_bytes = zf.read("apple_health_export/workout-routes/route_2025-02-19_8.31pm.gpx")
 
-    # 读取一个 ECG CSV（需按行拆键值）
+    # 读取一个 ECG CSV（需按行拆键值对）
     with zf.open("apple_health_export/electrocardiograms/ecg_2025-02-24.csv") as f:
         lines = [line.decode("utf-8").strip() for line in f]
-        # lines 内包含“姓名”、“出生日期”、“记录日期”、“分类”、“症状”、“软件版本”等键值行
+        # lines 内包含"姓名"、"出生日期"、"记录日期"、"分类"、"症状"、"软件版本"等键值行
 ```

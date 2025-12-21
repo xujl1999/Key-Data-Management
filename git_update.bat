@@ -28,10 +28,23 @@ if %errorlevel%==0 (
   if errorlevel 1 exit /b %errorlevel%
 )
 
-"%GIT_EXE%" pull --rebase origin main
-if errorlevel 1 exit /b %errorlevel%
-
 set RETRIES=5
+set WAIT_SECONDS=5
+
+set COUNT=0
+:pull_retry
+set /a COUNT+=1
+"%GIT_EXE%" pull --rebase origin main
+if %errorlevel%==0 goto pull_done
+if exist ".git\\rebase-merge" goto pull_fail
+if exist ".git\\rebase-apply" goto pull_fail
+if %COUNT% GEQ %RETRIES% goto pull_fail
+echo Pull failed, retrying (%COUNT%/%RETRIES%)...
+timeout /t %WAIT_SECONDS% /nobreak >nul
+goto pull_retry
+
+:pull_done
+
 set COUNT=0
 :push_retry
 set /a COUNT+=1
@@ -39,7 +52,7 @@ set /a COUNT+=1
 if %errorlevel%==0 goto push_done
 if %COUNT% GEQ %RETRIES% goto push_fail
 echo Push failed, retrying (%COUNT%/%RETRIES%)...
-timeout /t 5 /nobreak >nul
+timeout /t %WAIT_SECONDS% /nobreak >nul
 goto push_retry
 
 :push_done
@@ -48,6 +61,10 @@ goto end
 
 :push_fail
 echo Push failed after %RETRIES% attempts.
+exit /b 1
+
+:pull_fail
+echo Pull failed after %RETRIES% attempts.
 exit /b 1
 
 :end

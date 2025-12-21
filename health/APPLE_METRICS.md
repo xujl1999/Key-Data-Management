@@ -15,6 +15,7 @@
 
 ### 睡眠
 - `sleep_daily.csv`: `sleep_hours`
+- `sleep_sessions.csv`: 原始睡眠片段（start/end/duration_hours/value/source）
 - `sleep_temp_daily.csv`: 手腕温度均值/极值（睡眠相关）
 - `sleep_weekly.png`: 睡眠 7 日滚动均值趋势（近一年，含目标/预警线）
 

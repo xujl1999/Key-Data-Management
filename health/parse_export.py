@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import datetime as dt
 import xml.etree.ElementTree as ET
 import zipfile
@@ -65,6 +66,7 @@ def parse_export():
     basal_energy = defaultdict(float)
     physical_effort = defaultdict(float)
     sleep_daily = defaultdict(float)
+    sleep_sessions = []
     weight_daily = defaultdict(list)
     bmi_daily = defaultdict(list)
     bodyfat_daily = defaultdict(list)
@@ -150,6 +152,15 @@ def parse_export():
                 elif record_type == "HKCategoryTypeIdentifierSleepAnalysis" and start_dt and end_dt:
                     duration_hours = (end_dt - start_dt).total_seconds() / 3600
                     sleep_daily[start_dt.date()] += duration_hours
+                    sleep_sessions.append(
+                        (
+                            start_dt,
+                            end_dt,
+                            duration_hours,
+                            value,
+                            elem.attrib.get("sourceName", ""),
+                        )
+                    )
 
                 elif record_type == "HKQuantityTypeIdentifierBodyMass" and val is not None:
                     weight_daily[start_dt.date()].append(val)
@@ -317,6 +328,21 @@ def parse_export():
         df_energy.to_csv(ROOT / "energy_daily.csv", index=False, encoding="utf-8")
 
     write_sum_dict(ROOT / "sleep_daily.csv", sleep_daily, ("date", "sleep_hours"))
+    if sleep_sessions:
+        sleep_sessions.sort(key=lambda x: x[0])
+        with (ROOT / "sleep_sessions.csv").open("w", encoding="utf-8", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["start", "end", "duration_hours", "value", "source"])
+            for start_dt, end_dt, duration_hours, value, source in sleep_sessions:
+                writer.writerow(
+                    [
+                        start_dt.isoformat(),
+                        end_dt.isoformat(),
+                        f"{duration_hours:.3f}",
+                        value,
+                        source,
+                    ]
+                )
 
     if weight_daily or bmi_daily or bodyfat_daily or leanmass_daily or height_daily:
         rows = []

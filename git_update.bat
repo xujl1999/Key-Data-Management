@@ -40,7 +40,7 @@ if exist ".git\\rebase-merge" goto pull_fail
 if exist ".git\\rebase-apply" goto pull_fail
 if %COUNT% GEQ %RETRIES% goto pull_fail
 echo Pull failed, retrying (%COUNT%/%RETRIES%)...
-timeout /t %WAIT_SECONDS% /nobreak >nul
+call :sleep %WAIT_SECONDS%
 goto pull_retry
 
 :pull_done
@@ -52,7 +52,7 @@ set /a COUNT+=1
 if %errorlevel%==0 goto push_done
 if %COUNT% GEQ %RETRIES% goto push_fail
 echo Push failed, retrying (%COUNT%/%RETRIES%)...
-timeout /t %WAIT_SECONDS% /nobreak >nul
+call :sleep %WAIT_SECONDS%
 goto push_retry
 
 :push_done
@@ -66,6 +66,14 @@ exit /b 1
 :pull_fail
 echo Pull failed after %RETRIES% attempts.
 exit /b 1
+
+:sleep
+set "S=%~1"
+if "%S%"=="" set "S=5"
+>nul 2>&1 timeout /t %S% /nobreak
+if %errorlevel%==0 exit /b 0
+>nul 2>&1 ping 127.0.0.1 -n %S% >nul
+exit /b 0
 
 :end
 endlocal

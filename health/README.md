@@ -16,7 +16,6 @@
   - `health/steps_daily.csv`：按日汇总步数（共 724 天，范围 2023-12-26 ~ 2025-12-18）
   - `health/energy_daily.csv`：按日汇总主动能量（kcal，716 天，同日期范围）
   - `health/sleep_daily.csv`：睡眠时长按日汇总（小时），供前端趋势图使用
-  - 趋势图：`health/steps_trend.png`、`health/energy_trend.png`、`health/sleep_trend.png`（由 `plot_trends.py` 生成）
 
 ### 解析规则简述
 - 主 XML：自动选择压缩包中非 `cda` 的 XML（编码异常的主导出文件也会被识别），逐条流式解析 `<Record>`。
@@ -28,13 +27,15 @@
 ```bash
 python health/parse_export.py
 # 生成 health/steps_daily.csv, energy_daily.csv, sleep_daily.csv
-# 生成趋势图（如需）：python health/plot_trends.py
+# 生成趋势图：
 ```
 
-## 趋势图预览
-- 步数趋势：`health/steps_trend.png`
-- 主动能量趋势：`health/energy_trend.png`
-- 睡眠时长趋势：`health/sleep_trend.png`
+## 一键更新（OneDrive）
+```bash
+python health/update_from_onedrive.py
+# 可选：--delete-source（复制后删除 OneDrive 源文件）
+# 可选：--source-dir 指定 OneDrive 目录，--pattern 指定匹配模式
+```
 
 ## 快速查看/解压
 ```bash

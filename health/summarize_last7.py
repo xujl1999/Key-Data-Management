@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import re
 import pandas as pd
 
 
@@ -99,6 +100,8 @@ def main():
         "headphone_audio_avg": "dB",
         "headphone_audio_min": "dB",
         "headphone_audio_max": "dB",
+        "bed_time": "HH:MM",
+        "wake_time": "HH:MM",
     }
 
     metric_names = {
@@ -189,8 +192,30 @@ def main():
         "headphone_audio_avg": "耳机音量均值",
         "headphone_audio_min": "耳机音量最小值",
         "headphone_audio_max": "耳机音量最大值",
+        "bed_time": "入睡时间",
+        "wake_time": "起床时间",
         "count": "样本数",
     }
+
+    time_re = re.compile(r"^\\s*(\\d{1,2}):(\\d{2})\\s*$")
+
+    def time_to_minutes(val):
+        if val is None or (isinstance(val, float) and pd.isna(val)):
+            return None
+        if isinstance(val, str):
+            match = time_re.match(val)
+            if not match:
+                return None
+            hours = int(match.group(1))
+            mins = int(match.group(2))
+            return hours * 60 + mins
+        return None
+
+    def minutes_to_time(minutes):
+        if minutes is None or pd.isna(minutes):
+            return "--"
+        total = int(round(minutes)) % (24 * 60)
+        return f"{total // 60:02d}:{total % 60:02d}"
 
     lines = []
     for p in sorted(files):
@@ -203,7 +228,16 @@ def main():
         recent = df[df["date"] >= cutoff]
         cols = [c for c in df.columns if c != "date"]
         for col in cols:
-            val = recent[col].mean()
+            numeric_series = pd.to_numeric(recent[col], errors="coerce")
+            if numeric_series.notna().any():
+                val = numeric_series.mean()
+                value_str = f"{val:.3f}" if pd.notna(val) else "--"
+            else:
+                time_series = recent[col].apply(time_to_minutes).dropna()
+                if time_series.empty:
+                    continue
+                val = time_series.mean()
+                value_str = minutes_to_time(val)
             lines.append(
                 (
                     p.name,
@@ -211,7 +245,7 @@ def main():
                     metric_names.get(col, col),
                     units.get(col, "(原始单位)"),
                     f"{cutoff.date()} 至 {last_date.date()}",
-                    f"{val:.3f}" if pd.notna(val) else "--",
+                    value_str,
                 )
             )
 

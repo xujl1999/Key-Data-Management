@@ -160,24 +160,13 @@ const readCsv = (filePath) => {
 
 const pickColor = () => MAIN_COLOR;
 
-const buildChartMap = () => {
-  const map = new Map();
-  if (!fs.existsSync(CHARTS_DIR)) return map;
-  const files = fs.readdirSync(CHARTS_DIR);
-  files.forEach((file) => {
-    const ext = path.extname(file).toLowerCase();
-    if (ext !== ".svg" && ext !== ".png") return;
-    const base = file.slice(0, -ext.length);
-    const idx = base.lastIndexOf("__");
-    if (idx === -1) return;
-    const stem = base.slice(0, idx);
-    const valueKey = base.slice(idx + 2);
-    const existing = map.get(valueKey);
-    if (!existing || (ext === ".svg" && existing.ext !== ".svg")) {
-      map.set(valueKey, { stem, ext });
-    }
-  });
-  return map;
+const listCsvFiles = () => {
+  const files = fs.readdirSync(ROOT).filter((file) => file.toLowerCase().endsWith(".csv"));
+  return files.map((file) => ({
+    file,
+    stem: file.slice(0, -4),
+    full: path.join(ROOT, file),
+  }));
 };
 
 const computeRollingAvg = (series, window) => {
@@ -457,42 +446,43 @@ const run = () => {
   fs.mkdirSync(CHARTS_DIR, { recursive: true });
   const metricConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
   const metrics = [...metricConfig.metrics, ...EXTRA_METRICS];
-  const chartMap = buildChartMap();
+  const metricMap = new Map(metrics.map((metric) => [metric.valueKey, metric]));
+  const metricKeys = Array.from(metricMap.keys());
+  const csvFiles = listCsvFiles();
   let generated = 0;
 
-  metrics.forEach((metric) => {
-    const mapEntry = chartMap.get(metric.valueKey);
-    if (!mapEntry) return;
-    const csvPath = path.join(ROOT, `${mapEntry.stem}.csv`);
-    if (!fs.existsSync(csvPath)) return;
+  csvFiles.forEach(({ stem, full }) => {
+    const { headers, rows } = readCsv(full);
+    if (!headers.length || !rows.length) return;
+    metricKeys.forEach((valueKey) => {
+      const isTime = TIME_VALUE_KEYS.has(valueKey);
+      const series = buildSeries({ headers, rows, valueKey, isTime });
+      if (!series.length) return;
 
-    const { headers, rows } = readCsv(csvPath);
-    const isTime = TIME_VALUE_KEYS.has(metric.valueKey);
-    const series = buildSeries({ headers, rows, valueKey: metric.valueKey, isTime });
-    if (!series.length) return;
+      const metric = metricMap.get(valueKey) || { label: valueKey };
+      const lastDate = series[series.length - 1].date;
+      const monthStart = new Date(lastDate.getTime() - 29 * 86400000);
+      const yearStart = new Date(lastDate.getTime() - 364 * 86400000);
+      const topSeries = series.filter((p) => p.date >= monthStart);
+      const yearSeries = series.filter((p) => p.date >= yearStart);
+      const bottomSeries = computeRollingAvg(yearSeries, 7).map((p) => ({
+        ...p,
+        display: isTime ? formatMinutes(p.value) : formatNumber(p.value),
+      }));
 
-    const lastDate = series[series.length - 1].date;
-    const monthStart = new Date(lastDate.getTime() - 29 * 86400000);
-    const yearStart = new Date(lastDate.getTime() - 364 * 86400000);
-    const topSeries = series.filter((p) => p.date >= monthStart);
-    const yearSeries = series.filter((p) => p.date >= yearStart);
-    const bottomSeries = computeRollingAvg(yearSeries, 7).map((p) => ({
-      ...p,
-      display: isTime ? formatMinutes(p.value) : formatNumber(p.value),
-    }));
+      const svg = renderChart({
+        label: metric.label,
+        valueKey,
+        topSeries,
+        bottomSeries,
+        guideLines: GUIDE_LINES[valueKey] || [],
+        isTime,
+      });
 
-    const svg = renderChart({
-      label: metric.label,
-      valueKey: metric.valueKey,
-      topSeries,
-      bottomSeries,
-      guideLines: GUIDE_LINES[metric.valueKey] || [],
-      isTime,
+      const outPath = path.join(CHARTS_DIR, `${stem}__${valueKey}.svg`);
+      fs.writeFileSync(outPath, svg, "utf8");
+      generated += 1;
     });
-
-    const outPath = path.join(CHARTS_DIR, `${mapEntry.stem}__${metric.valueKey}.svg`);
-    fs.writeFileSync(outPath, svg, "utf8");
-    generated += 1;
   });
 
   console.log(`Generated ${generated} SVG charts.`);

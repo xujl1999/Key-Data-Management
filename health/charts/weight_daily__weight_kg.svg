@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" width="960" height="720">
+<rect width="960" height="720" fill="#0f172a" />
+<text x="480" y="28" fill="#e2e8f0" font-size="16" font-weight="700" text-anchor="middle">体重趋势图</text>
+<text x="70" y="70" fill="#e2e8f0" font-size="13" font-weight="600">本月分天指标明细</text>
+<line x1="70" y1="323.00" x2="930" y2="323.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="327.00" fill="#cbd5f5" font-size="10" text-anchor="end">69</text>
+<line x1="70" y1="260.75" x2="930" y2="260.75" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="264.75" fill="#cbd5f5" font-size="10" text-anchor="end">72</text>
+<line x1="70" y1="198.50" x2="930" y2="198.50" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="202.50" fill="#cbd5f5" font-size="10" text-anchor="end">75</text>
+<line x1="70" y1="136.25" x2="930" y2="136.25" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="140.25" fill="#cbd5f5" font-size="10" text-anchor="end">78</text>
+<line x1="70" y1="74.00" x2="930" y2="74.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="78.00" fill="#cbd5f5" font-size="10" text-anchor="end">81</text>
+<line x1="70.00" y1="323" x2="70.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="70.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-21</text>
+<line x1="242.00" y1="323" x2="242.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="242.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">11-26</text>
+<line x1="414.00" y1="323" x2="414.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="414.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">12-01</text>
+<line x1="586.00" y1="323" x2="586.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="586.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">12-07</text>
+<line x1="758.00" y1="323" x2="758.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="758.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">12-12</text>
+<line x1="930.00" y1="323" x2="930.00" y2="327" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="930.00" y="341" fill="#cbd5f5" font-size="10" text-anchor="middle">12-18</text>
+<line x1="70" y1="74" x2="70" y2="323" stroke="#94a3b8" stroke-width="1" />
+<line x1="70" y1="323" x2="930" y2="323" stroke="#94a3b8" stroke-width="1" />
+<line x1="70" y1="302.25" x2="930" y2="302.25" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.9" />
+<text x="926" y="296.25" fill="#22d3ee" font-size="10" text-anchor="end">目标 70kg</text>
+<line x1="70" y1="94.75" x2="930" y2="94.75" stroke="#f97316" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.9" />
+<text x="926" y="88.75" fill="#f97316" font-size="10" text-anchor="end">预警 80kg</text>
+<path d="M70.00,113.43 L133.70,136.25 L165.56,138.32 L197.41,126.91 L229.26,100.97 L261.11,118.61 L292.96,136.25 L420.37,115.50 L484.07,123.80 L515.93,130.03 L547.78,123.80 L579.63,141.44 L643.33,135.21 L675.19,120.69 L898.15,125.88 L930.00,138.32" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" />
+<circle cx="70.00" cy="113.43" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="70.00" y="103.43" fill="#e2e8f0" font-size="9" text-anchor="middle">79.1</text>
+<circle cx="133.70" cy="136.25" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="133.70" y="116.25" fill="#e2e8f0" font-size="9" text-anchor="middle">78</text>
+<circle cx="165.56" cy="138.32" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="165.56" y="128.32" fill="#e2e8f0" font-size="9" text-anchor="middle">77.9</text>
+<circle cx="197.41" cy="126.91" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="197.41" y="106.91" fill="#e2e8f0" font-size="9" text-anchor="middle">78.5</text>
+<circle cx="229.26" cy="100.97" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="229.26" y="90.97" fill="#e2e8f0" font-size="9" text-anchor="middle">79.7</text>
+<circle cx="261.11" cy="118.61" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="261.11" y="98.61" fill="#e2e8f0" font-size="9" text-anchor="middle">78.8</text>
+<circle cx="292.96" cy="136.25" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="292.96" y="126.25" fill="#e2e8f0" font-size="9" text-anchor="middle">78</text>
+<circle cx="420.37" cy="115.50" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="420.37" y="95.50" fill="#e2e8f0" font-size="9" text-anchor="middle">79</text>
+<circle cx="484.07" cy="123.80" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="484.07" y="113.80" fill="#e2e8f0" font-size="9" text-anchor="middle">78.6</text>
+<circle cx="515.93" cy="130.03" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="515.93" y="110.03" fill="#e2e8f0" font-size="9" text-anchor="middle">78.3</text>
+<circle cx="547.78" cy="123.80" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="547.78" y="113.80" fill="#e2e8f0" font-size="9" text-anchor="middle">78.6</text>
+<circle cx="579.63" cy="141.44" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="579.63" y="121.44" fill="#e2e8f0" font-size="9" text-anchor="middle">77.8</text>
+<circle cx="643.33" cy="135.21" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="643.33" y="125.21" fill="#e2e8f0" font-size="9" text-anchor="middle">78</text>
+<circle cx="675.19" cy="120.69" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="675.19" y="100.69" fill="#e2e8f0" font-size="9" text-anchor="middle">78.8</text>
+<circle cx="898.15" cy="125.88" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="898.15" y="115.88" fill="#e2e8f0" font-size="9" text-anchor="middle">78.5</text>
+<circle cx="930.00" cy="138.32" r="3" fill="#60a5fa" stroke="#0f172a" stroke-width="1" />
+<text x="930.00" y="118.32" fill="#e2e8f0" font-size="9" text-anchor="middle">77.9</text>
+<text x="70" y="403" fill="#e2e8f0" font-size="13" font-weight="600">本年核心指标趋势（滑动7日窗口平均）</text>
+<line x1="70" y1="656.00" x2="930" y2="656.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="660.00" fill="#cbd5f5" font-size="10" text-anchor="end">69</text>
+<line x1="70" y1="593.75" x2="930" y2="593.75" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="597.75" fill="#cbd5f5" font-size="10" text-anchor="end">72</text>
+<line x1="70" y1="531.50" x2="930" y2="531.50" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="535.50" fill="#cbd5f5" font-size="10" text-anchor="end">75.1</text>
+<line x1="70" y1="469.25" x2="930" y2="469.25" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="473.25" fill="#cbd5f5" font-size="10" text-anchor="end">78.2</text>
+<line x1="70" y1="407.00" x2="930" y2="407.00" stroke="#94a3b8" stroke-opacity="0.18" stroke-width="1" />
+<text x="62" y="411.00" fill="#cbd5f5" font-size="10" text-anchor="end">81.2</text>
+<line x1="70.00" y1="656" x2="70.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="70.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2024-12</text>
+<line x1="242.00" y1="656" x2="242.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="242.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-03</text>
+<line x1="414.00" y1="656" x2="414.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="414.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-05</text>
+<line x1="586.00" y1="656" x2="586.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="586.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-07</text>
+<line x1="758.00" y1="656" x2="758.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="758.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-10</text>
+<line x1="930.00" y1="656" x2="930.00" y2="660" stroke="#94a3b8" stroke-opacity="0.5" stroke-width="1" />
+<text x="930.00" y="674" fill="#cbd5f5" font-size="10" text-anchor="middle">2025-12</text>
+<line x1="70" y1="407" x2="70" y2="656" stroke="#94a3b8" stroke-width="1" />
+<line x1="70" y1="656" x2="930" y2="656" stroke="#94a3b8" stroke-width="1" />
+<line x1="70" y1="635.25" x2="930" y2="635.25" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.9" />
+<text x="926" y="629.25" fill="#22d3ee" font-size="10" text-anchor="end">目标 70kg</text>
+<line x1="70" y1="431.68" x2="930" y2="431.68" stroke="#f97316" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.9" />
+<text x="926" y="425.68" fill="#f97316" font-size="10" text-anchor="end">预警 80kg</text>
+<path d="M70.00,656.00 L70.00,463.23 L96.42,468.83 L108.44,465.27 L127.65,466.54 L146.87,460.79 L190.11,455.77 L199.72,450.72 L202.12,444.04 L216.54,437.49 L230.95,434.73 L233.35,427.75 L262.18,432.40 L264.58,436.18 L269.39,442.58 L274.19,450.51 L278.99,457.78 L281.40,465.19 L283.80,477.55 L286.20,481.62 L288.60,487.00 L291.01,492.09 L293.41,494.78 L298.21,493.18 L300.61,491.29 L303.02,489.26 L305.42,490.37 L307.82,492.85 L322.23,493.43 L324.64,495.75 L327.04,502.73 L329.44,509.42 L331.84,513.06 L334.25,511.22 L336.65,510.34 L339.05,512.67 L341.45,514.27 L343.85,515.00 L346.26,513.98 L348.66,512.96 L351.06,514.41 L353.46,513.25 L355.87,511.65 L358.27,511.51 L360.67,515.14 L365.47,511.22 L367.88,511.51 L370.28,512.67 L372.68,517.61 L375.08,521.98 L377.49,523.58 L389.50,521.98 L394.30,527.21 L401.51,526.48 L406.31,526.92 L415.92,522.99 L418.32,518.92 L423.13,517.18 L425.53,513.54 L444.75,512.31 L454.36,512.02 L463.97,511.58 L473.58,510.42 L502.40,512.45 L507.21,510.85 L512.01,514.78 L516.82,518.05 L521.62,517.18 L524.02,518.63 L533.63,519.65 L536.03,518.05 L538.44,519.79 L540.84,516.74 L543.24,514.71 L545.64,520.67 L550.45,523.58 L552.85,528.52 L555.25,531.14 L557.65,532.88 L562.46,533.24 L564.86,531.94 L572.07,531.06 L576.87,528.88 L584.08,524.08 L588.88,521.98 L593.69,520.67 L598.49,520.01 L603.30,518.70 L605.70,513.18 L610.50,512.74 L612.91,516.52 L622.51,512.81 L627.32,511.22 L632.12,510.78 L641.73,511.80 L660.95,511.07 L670.56,505.25 L672.96,498.13 L675.36,495.22 L682.57,494.49 L687.37,489.26 L689.78,485.04 L692.18,484.02 L694.58,485.19 L696.98,486.64 L713.80,488.24 L742.63,485.33 L764.25,479.08 L766.65,475.01 L769.05,468.46 L771.45,459.59 L773.85,452.18 L776.26,447.09 L778.66,444.62 L781.06,445.49 L785.87,445.05 L788.27,443.16 L790.67,443.02 L793.07,443.31 L797.88,443.89 L800.28,441.85 L805.08,441.13 L807.49,435.89 L812.29,436.47 L821.90,439.24 L826.70,439.38 L836.31,438.66 L841.12,434.29 L843.52,435.31 L845.92,439.24 L848.32,442.15 L855.53,441.27 L865.14,442.29 L869.94,445.93 L872.35,453.49 L874.75,456.83 L877.15,455.81 L879.55,456.40 L881.96,460.76 L891.56,461.05 L896.37,459.30 L898.77,458.14 L901.17,457.70 L903.58,463.38 L908.38,465.70 L910.78,463.52 L927.60,464.97 L930.00,467.01 L930.00,656.00 Z" fill="#60a5fa" fill-opacity="0.16" stroke="none" />
+<path d="M70.00,463.23 L96.42,468.83 L108.44,465.27 L127.65,466.54 L146.87,460.79 L190.11,455.77 L199.72,450.72 L202.12,444.04 L216.54,437.49 L230.95,434.73 L233.35,427.75 L262.18,432.40 L264.58,436.18 L269.39,442.58 L274.19,450.51 L278.99,457.78 L281.40,465.19 L283.80,477.55 L286.20,481.62 L288.60,487.00 L291.01,492.09 L293.41,494.78 L298.21,493.18 L300.61,491.29 L303.02,489.26 L305.42,490.37 L307.82,492.85 L322.23,493.43 L324.64,495.75 L327.04,502.73 L329.44,509.42 L331.84,513.06 L334.25,511.22 L336.65,510.34 L339.05,512.67 L341.45,514.27 L343.85,515.00 L346.26,513.98 L348.66,512.96 L351.06,514.41 L353.46,513.25 L355.87,511.65 L358.27,511.51 L360.67,515.14 L365.47,511.22 L367.88,511.51 L370.28,512.67 L372.68,517.61 L375.08,521.98 L377.49,523.58 L389.50,521.98 L394.30,527.21 L401.51,526.48 L406.31,526.92 L415.92,522.99 L418.32,518.92 L423.13,517.18 L425.53,513.54 L444.75,512.31 L454.36,512.02 L463.97,511.58 L473.58,510.42 L502.40,512.45 L507.21,510.85 L512.01,514.78 L516.82,518.05 L521.62,517.18 L524.02,518.63 L533.63,519.65 L536.03,518.05 L538.44,519.79 L540.84,516.74 L543.24,514.71 L545.64,520.67 L550.45,523.58 L552.85,528.52 L555.25,531.14 L557.65,532.88 L562.46,533.24 L564.86,531.94 L572.07,531.06 L576.87,528.88 L584.08,524.08 L588.88,521.98 L593.69,520.67 L598.49,520.01 L603.30,518.70 L605.70,513.18 L610.50,512.74 L612.91,516.52 L622.51,512.81 L627.32,511.22 L632.12,510.78 L641.73,511.80 L660.95,511.07 L670.56,505.25 L672.96,498.13 L675.36,495.22 L682.57,494.49 L687.37,489.26 L689.78,485.04 L692.18,484.02 L694.58,485.19 L696.98,486.64 L713.80,488.24 L742.63,485.33 L764.25,479.08 L766.65,475.01 L769.05,468.46 L771.45,459.59 L773.85,452.18 L776.26,447.09 L778.66,444.62 L781.06,445.49 L785.87,445.05 L788.27,443.16 L790.67,443.02 L793.07,443.31 L797.88,443.89 L800.28,441.85 L805.08,441.13 L807.49,435.89 L812.29,436.47 L821.90,439.24 L826.70,439.38 L836.31,438.66 L841.12,434.29 L843.52,435.31 L845.92,439.24 L848.32,442.15 L855.53,441.27 L865.14,442.29 L869.94,445.93 L872.35,453.49 L874.75,456.83 L877.15,455.81 L879.55,456.40 L881.96,460.76 L891.56,461.05 L896.37,459.30 L898.77,458.14 L901.17,457.70 L903.58,463.38 L908.38,465.70 L910.78,463.52 L927.60,464.97 L930.00,467.01" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" />
+</svg>

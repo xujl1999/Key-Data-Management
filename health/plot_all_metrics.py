@@ -38,6 +38,7 @@ DATASETS = {
         ("stand_hours", "站立小时数", "小时"),
     ],
     "daylight_daily.csv": [("time_in_daylight_min", "户外日照时长", "分钟")],
+    "flights_daily.csv": [("flights_climbed", "爬楼层数", "层")],
     "diet_daily.csv": [
         ("dietary_kcal", "摄入热量", "kcal"),
         ("dietary_fat_g", "脂肪摄入", "g"),

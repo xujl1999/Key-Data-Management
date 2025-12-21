@@ -22,5 +22,4 @@ echo.
 echo === Update failed with error ===
 
 :end
-pause
 endlocal

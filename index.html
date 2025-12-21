@@ -389,7 +389,7 @@
           <div id="exercise-advice-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
           
           <!-- 运动指标卡片 -->
-          <div id="exercise-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div id="exercise-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
             <div class="viz-card" data-metric="exercise_time_min" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
               <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">运动天数</div>
               <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-exercise">--</div>
@@ -474,7 +474,7 @@
           <div id="diet-advice-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
           
           <!-- 饮食指标卡片 -->
-          <div id="diet-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div id="diet-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
             <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155;">
               <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均摄入</div>
               <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-kcal">--</div>
@@ -548,7 +548,7 @@
           </div>
           
           <!-- 睡眠指标卡片 -->
-          <div id="sleep-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div id="sleep-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
             <div class="viz-card" data-metric="sleep_hours" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
               <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
               <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep2">--</div>

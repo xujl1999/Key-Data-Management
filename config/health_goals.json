@@ -1,0 +1,134 @@
+{
+  "_说明": "健康指标的目标值和预警值配置，用于趋势图中显示参考线",
+  "_颜色说明": {
+    "目标线": "#22d3ee (青色)",
+    "预警线": "#f97316 (橙色)"
+  },
+
+  "睡眠相关": {
+    "sleep_hours": {
+      "name": "睡眠时长",
+      "unit": "小时",
+      "target": 8,
+      "warning": 6,
+      "comment": "成人推荐7-9小时"
+    },
+    "bed_time": {
+      "name": "入睡时间",
+      "unit": "时:分",
+      "target": "23:00",
+      "warning": "24:00",
+      "comment": "早睡目标，值会转换为分钟数"
+    },
+    "wake_time": {
+      "name": "起床时间",
+      "unit": "时:分",
+      "target": "07:00",
+      "warning": "09:00",
+      "comment": "早起目标"
+    }
+  },
+
+  "体重体脂": {
+    "weight_kg": {
+      "name": "体重",
+      "unit": "kg",
+      "target": 70,
+      "warning": 80,
+      "comment": "减肥目标70kg"
+    },
+    "bmi": {
+      "name": "BMI",
+      "unit": "",
+      "target": 22,
+      "warning": 25,
+      "comment": "正常18.5-24，超重≥25"
+    },
+    "body_fat_pct": {
+      "name": "体脂率",
+      "unit": "%",
+      "target": 15,
+      "warning": 25,
+      "comment": "男性健康15-20%，肥胖≥25%"
+    }
+  },
+
+  "运动相关": {
+    "steps": {
+      "name": "步数",
+      "unit": "步",
+      "target": 10000,
+      "warning": 5000,
+      "comment": "日常活动量标准"
+    },
+    "active_energy": {
+      "name": "主动能量",
+      "unit": "kcal",
+      "target": 500,
+      "warning": 200,
+      "comment": "每日消耗目标"
+    },
+    "exercise_time_min": {
+      "name": "锻炼时长",
+      "unit": "分钟",
+      "target": 30,
+      "warning": 10,
+      "comment": "WHO推荐每日30分钟"
+    },
+    "stand_hours": {
+      "name": "站立小时数",
+      "unit": "小时",
+      "target": 12,
+      "warning": 8,
+      "comment": "Apple Watch圆环目标"
+    }
+  },
+
+  "心肺指标": {
+    "resting_hr_avg": {
+      "name": "静息心率",
+      "unit": "bpm",
+      "target": 60,
+      "warning": 80,
+      "comment": "越低越好，运动员可<50"
+    },
+    "sdnn_avg": {
+      "name": "HRV-SDNN",
+      "unit": "ms",
+      "target": 50,
+      "warning": 30,
+      "comment": "越高代表心脏适应性越好"
+    },
+    "spo2_avg": {
+      "name": "血氧",
+      "unit": "%",
+      "target": 98,
+      "warning": 95,
+      "comment": "正常≥95%，低于需关注"
+    },
+    "vo2max_avg": {
+      "name": "最大摄氧量",
+      "unit": "ml·kg⁻¹·min⁻¹",
+      "target": 45,
+      "warning": 35,
+      "comment": "心肺功能指标，越高越好"
+    }
+  },
+
+  "环境噪声": {
+    "env_audio_avg": {
+      "name": "环境噪声",
+      "unit": "dB",
+      "target": 50,
+      "warning": 70,
+      "comment": "长期>70dB损伤听力，目标是低于此值"
+    },
+    "headphone_audio_avg": {
+      "name": "耳机音量",
+      "unit": "dB",
+      "target": 60,
+      "warning": 80,
+      "comment": "WHO建议<60%音量"
+    }
+  }
+}

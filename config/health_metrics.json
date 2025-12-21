@@ -1,0 +1,58 @@
+{
+  "_说明": "健康指标配置，控制页面显示哪些指标、分类和是否启用",
+  
+  "categories": [
+    "基础体征",
+    "运动负荷", 
+    "心肺指标",
+    "步态跑步",
+    "环境与生活"
+  ],
+
+  "metrics": [
+    { "valueKey": "sleep_hours",              "label": "睡眠时长",         "category": "基础体征",   "enabled": true },
+    { "valueKey": "weight_kg",                "label": "体重",             "category": "基础体征",   "enabled": true },
+    { "valueKey": "bmi",                      "label": "BMI",              "category": "基础体征",   "enabled": true },
+    { "valueKey": "body_fat_pct",             "label": "体脂率",           "category": "基础体征",   "enabled": true },
+    { "valueKey": "lean_mass_kg",             "label": "去脂体重",         "category": "基础体征",   "enabled": true },
+    { "valueKey": "temp_avg",                 "label": "睡眠手腕温度均值", "category": "基础体征",   "enabled": true },
+
+    { "valueKey": "steps",                    "label": "步数",             "category": "运动负荷",   "enabled": true },
+    { "valueKey": "active_energy",            "label": "主动能量",         "category": "运动负荷",   "enabled": true },
+    { "valueKey": "basal_energy",             "label": "基础代谢",         "category": "运动负荷",   "enabled": true },
+    { "valueKey": "physical_effort",          "label": "身体负荷指数",     "category": "运动负荷",   "enabled": true },
+    { "valueKey": "exercise_time_min",        "label": "锻炼时长",         "category": "运动负荷",   "enabled": true },
+    { "valueKey": "stand_time_min",           "label": "站立时长",         "category": "运动负荷",   "enabled": true },
+    { "valueKey": "stand_hours",              "label": "站立小时数",       "category": "运动负荷",   "enabled": true },
+    { "valueKey": "distance_walk_run_km",     "label": "步行跑步距离",     "category": "运动负荷",   "enabled": true },
+    { "valueKey": "distance_cycling_km",      "label": "骑行距离",         "category": "运动负荷",   "enabled": true },
+    { "valueKey": "flights_climbed",          "label": "爬楼层数",         "category": "运动负荷",   "enabled": true },
+
+    { "valueKey": "resting_hr_avg",           "label": "静息心率",         "category": "心肺指标",   "enabled": true },
+    { "valueKey": "hr_avg",                   "label": "心率均值",         "category": "心肺指标",   "enabled": true },
+    { "valueKey": "hr_min",                   "label": "心率最小值",       "category": "心肺指标",   "enabled": true },
+    { "valueKey": "hr_max",                   "label": "心率最大值",       "category": "心肺指标",   "enabled": true },
+    { "valueKey": "walk_hr_avg",              "label": "步行心率均值",     "category": "心肺指标",   "enabled": true },
+    { "valueKey": "sdnn_avg",                 "label": "HRV-SDNN均值",     "category": "心肺指标",   "enabled": true },
+    { "valueKey": "resp_avg",                 "label": "呼吸频率均值",     "category": "心肺指标",   "enabled": true },
+    { "valueKey": "spo2_avg",                 "label": "血氧均值",         "category": "心肺指标",   "enabled": true },
+    { "valueKey": "vo2max_avg",               "label": "最大摄氧量均值",   "category": "心肺指标",   "enabled": true },
+
+    { "valueKey": "walking_speed_avg",        "label": "行走速度均值",     "category": "步态跑步",   "enabled": true },
+    { "valueKey": "step_length_avg",          "label": "步长均值",         "category": "步态跑步",   "enabled": true },
+    { "valueKey": "double_support_pct_avg",   "label": "双支撑占比均值",   "category": "步态跑步",   "enabled": true },
+    { "valueKey": "asymmetry_pct_avg",        "label": "步态不对称均值",   "category": "步态跑步",   "enabled": true },
+    { "valueKey": "steady_avg",               "label": "步态稳定度均值",   "category": "步态跑步",   "enabled": true },
+    { "valueKey": "running_speed_avg",        "label": "跑步速度均值",     "category": "步态跑步",   "enabled": true },
+    { "valueKey": "running_power_avg",        "label": "跑步功率均值",     "category": "步态跑步",   "enabled": true },
+    { "valueKey": "running_stride_len_avg",   "label": "跑步步幅均值",     "category": "步态跑步",   "enabled": true },
+    { "valueKey": "running_vertical_osc_avg", "label": "跑步垂直振幅均值", "category": "步态跑步",   "enabled": true },
+    { "valueKey": "ground_contact_ms_avg",    "label": "着地时间均值",     "category": "步态跑步",   "enabled": true },
+    { "valueKey": "stair_ascent_speed_avg",   "label": "上楼速度均值",     "category": "步态跑步",   "enabled": true },
+    { "valueKey": "stair_descent_speed_avg",  "label": "下楼速度均值",     "category": "步态跑步",   "enabled": true },
+
+    { "valueKey": "time_in_daylight_min",     "label": "户外日照时长",     "category": "环境与生活", "enabled": true },
+    { "valueKey": "env_audio_avg",            "label": "环境噪声均值",     "category": "环境与生活", "enabled": true },
+    { "valueKey": "headphone_audio_avg",      "label": "耳机音量均值",     "category": "环境与生活", "enabled": true }
+  ]
+}

@@ -2,6 +2,26 @@
 
 > 目标：每次更新数据/页面前，先在本地规范化数据并自查，再提交推送。避免出现未排序/未统一日期格式的文件。
 
+## 项目基本原则
+- **每次改完代码都要确认页面没有崩，并刷新浏览器验证**
+- 本地预览默认使用 `python -m http.server 8000`，端口 8000
+- 修改后先本地验证，再推送到 `main`
+
+## 目录结构
+```
+repo/
+├── config/                    # 人类配置文件（高频修改）
+│   ├── bilibili_authors.json  # B站关注UP主列表
+│   ├── health_goals.json      # 健康指标目标值和预警值
+│   └── health_metrics.json    # 健康指标分类和启用配置
+├── health/
+│   ├── data/                  # 健康数据CSV文件
+│   ├── scripts/               # 数据处理脚本
+│   └── 导出.zip               # Apple Health原始导出（不上传）
+├── video/                     # 视频数据
+└── index.html                 # 主页面
+```
+
 ## 操作步骤
 1) 环境准备  
    - 确保已激活 Python 环境（包含 `selenium`、`pandas`、`tqdm` 等依赖）。

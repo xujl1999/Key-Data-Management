@@ -1,19 +1,22 @@
 @echo off
 setlocal
 
-D:
-cd /d D:\dream_life\data-management
+rem Move to script directory.
+cd /d "%~dp0"
 
-git pull origin main
 git add -A
-for /f %%i in ('git status --porcelain') do set CHANGES=1
-if defined CHANGES (
-  git commit -m "update data"
-) else (
+git diff --cached --quiet
+if %errorlevel%==0 (
   echo No changes to commit.
+) else (
+  git commit -m "update data"
+  if errorlevel 1 exit /b %errorlevel%
 )
 
-set RETRIES=3
+git pull --rebase origin main
+if errorlevel 1 exit /b %errorlevel%
+
+set RETRIES=5
 set COUNT=0
 :push_retry
 set /a COUNT+=1

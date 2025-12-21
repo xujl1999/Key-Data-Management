@@ -1,5 +1,5 @@
 {
-  "authors_file": "bilibili_authors.json",
+  "authors_file": "../config/bilibili_authors.json",
   "headless": true,
   "edge_options": ["--edge-skip-compat-layer-relaunch"],
   "sleep_after_load_seconds": [5.5, 10.5],

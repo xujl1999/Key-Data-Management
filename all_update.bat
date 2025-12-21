@@ -1,12 +1,26 @@
 @echo off
 setlocal
 
-call D:\dream_life\data-management\health_update.bat
-if errorlevel 1 exit /b %errorlevel%
+rem Move to script directory.
+cd /d "%~dp0"
 
-call D:\dream_life\data-management\video_update.bat
-if errorlevel 1 exit /b %errorlevel%
+call "%~dp0health_update.bat"
+if errorlevel 1 goto error
 
-call D:\dream_life\data-management\git_update.bat
+call "%~dp0video_update.bat"
+if errorlevel 1 goto error
 
+call "%~dp0git_update.bat"
+if errorlevel 1 goto error
+
+echo.
+echo === All updates completed successfully ===
+goto end
+
+:error
+echo.
+echo === Update failed with error ===
+
+:end
+pause
 endlocal

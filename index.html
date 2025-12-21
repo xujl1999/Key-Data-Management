@@ -343,36 +343,280 @@
       <div class="tab-bar">
         <button class="tab-button tab-button--active" data-tab="health">健康</button>
         <button class="tab-button" data-tab="entertainment">娱乐</button>
+        <button class="tab-button" data-tab="wealth">财产</button>
+        <button class="tab-button" data-tab="ai-news">AI咨询</button>
         <button class="tab-button" data-tab="knowledge">知识库</button>
-        <button class="tab-button" data-tab="wealth">财富</button>
       </div>
       <section class="tab-panel tab-panel--active" id="tab-health">
-        <div id="health-status" class="status">正在加载健康数据...</div>
-        <p>更新时间：<span id="update-time" style="margin-left: 8px; font-size: 0.9rem;"></span></p>
-        <div class="plan-block" id="health-highlight">
-          <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>本周<span class="metric-link" data-metric-label="体重">体重</span>为<span id="hl-weight">--</span>（<span id="hl-weight-wow">—</span>）、<span class="metric-link" data-metric-label="体脂率">体脂率</span><span id="hl-bodyfat">--</span>（<span id="hl-bodyfat-wow">—</span>）。记得你要减肥到70kg</li>
-              <li>本周<span class="highlight-label"><span class="metric-link" data-metric-label="睡眠时长">睡眠时长</span><button class="info-badge" id="sleep-info-trigger" type="button" aria-label="睡眠时长说明">?</button></span>为<span id="hl-sleep">--</span>（<span id="hl-sleep-wow">—</span>）、<span class="metric-link" data-metric-label="入睡时间">入睡时间</span><span id="hl-bedtime">--</span>（<span id="hl-bedtime-wow">—</span>）、<span class="metric-link" data-metric-label="起床时间">起床时间</span><span id="hl-wake">--</span>（<span id="hl-wake-wow">—</span>）。记得你要早睡早起睡够8小时</li>
-              <li>本周<span class="metric-link" data-metric-label="HRV-SDNN均值">HRV</span>为<span id="hl-hrv">--</span>（<span id="hl-hrv-wow">—</span>），记得开心～～</li>
-              <li>本周<span class="metric-link" data-metric-label="本周运动天数">运动天数</span><span id="hl-ex-week">--</span>天，本月<span class="metric-link" data-metric-label="本月运动天数">运动天数</span><span id="hl-ex-month">--</span>天，<span id="hl-ex-msg">--</span></li>
-            </ul>
+        <!-- 数据更新时间和口径说明 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
+          <span style="font-size: 0.8rem; color: #64748b; background: rgba(100, 116, 139, 0.15); padding: 4px 10px; border-radius: 4px;">口径：周日均</span>
+          <span style="font-size: 0.85rem; color: #64748b;">数据更新：<span id="health-update-time">--</span></span>
+        </div>
+        
+        <!-- 运动模块 -->
+        <div class="plan-block" id="health-exercise-block" style="margin-bottom: 16px;">
+          <div id="viz1-advice" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border-left: 3px solid #22c55e;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 12px; color: #86efac; font-weight: 600;">今日运动建议</span>
+              <button class="info-badge" id="exercise-advice-trigger" type="button" aria-label="运动建议规则说明" style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
+            </div>
+            <div id="viz1-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
           </div>
-          <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>待破解：例行化获取苹果健康方法</li>
-              <li>待接入：苹果健康其他指标、分部位健身频率、运动状态数据、动态血糖仪数据</li>
-              <li>每日饮食成分分析</li>
-              <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
-            </ul>
+          <!-- 运动建议规则弹窗 -->
+          <div id="exercise-advice-popup" class="info-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-weight: 600; color: #f8fafc;">运动建议规则</span>
+              <button id="exercise-advice-close" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
+            </div>
+            <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
+              <p style="margin: 0 0 8px; font-weight: 600; color: #86efac;">阈值设定：</p>
+              <ul style="margin: 0 0 12px; padding-left: 16px;">
+                <li>周运动目标：4天/周</li>
+                <li>月运动目标：16天/月</li>
+                <li>睡眠达标：≥6小时（预警线）</li>
+                <li>HRV达标：≥30ms（预警线）</li>
+              </ul>
+              <p style="margin: 0 0 8px; font-weight: 600; color: #86efac;">判断逻辑：</p>
+              <ul style="margin: 0; padding-left: 16px;">
+                <li><span style="color: #22c55e;">可休息</span>：周+月都达标</li>
+                <li><span style="color: #3b82f6;">建议运动</span>：周达标但月未达标，且身体状态OK</li>
+                <li><span style="color: #f97316;">先休息</span>：运动未达标，但睡眠不足或HRV偏低</li>
+                <li><span style="color: #ef4444;">快运动</span>：周未达标，身体状态OK</li>
+              </ul>
+            </div>
+          </div>
+          <div id="exercise-advice-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+          
+          <!-- 运动指标卡片 -->
+          <div id="exercise-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+            <div class="viz-card" data-metric="exercise_time_min" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">运动天数</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-exercise">--</div>
+              <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;" id="viz1-exercise-sub">本月 --天</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-exercise-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标4天</span> · <span style="color: #f97316;">预警2天</span></div>
+            </div>
+            <div class="viz-card" data-metric="sleep_hours" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep">--</div>
+              <div style="font-size: 11px; margin-top: 4px;" id="viz1-sleep-delta">--</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-sleep-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标8h</span> · <span style="color: #f97316;">预警6h</span></div>
+            </div>
+            <div class="viz-card" data-metric="weight_kg" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">体重</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-weight">--</div>
+              <div style="font-size: 11px; margin-top: 4px;" id="viz1-weight-delta">--</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-weight-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #f97316); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标70kg</span> · <span style="color: #f97316;">预警80kg</span></div>
+            </div>
+          </div>
+          
+          <!-- 运动日历 - 默认隐藏 -->
+          <div id="exercise-calendar-toggle" style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; background: rgba(34, 197, 94, 0.08); border-radius: 8px; margin-bottom: 0;" onclick="toggleExerciseCalendar()">
+            <span style="font-size: 13px; color: #86efac;">📅 最近4周运动记录</span>
+            <span id="calendar-toggle-icon" style="font-size: 12px; color: #64748b; transition: transform 0.3s;">▼</span>
+          </div>
+          <div id="exercise-calendar-v1" style="display: none; background: #1e293b; border-radius: 0 0 12px 12px; padding: 16px; border: 1px solid #334155; border-top: none;">
+            <div id="cal-v1-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;"></div>
+            <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 10px; color: #64748b;">
+              <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+            </div>
+          </div>
+          <!-- 运动详情弹窗 -->
+          <div id="exercise-detail-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; min-width: 200px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span id="exercise-detail-date" style="font-weight: 600; color: #f8fafc;">--</span>
+              <button id="exercise-detail-close" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
+            </div>
+            <div id="exercise-detail-content" style="font-size: 13px; color: #cbd5f5; line-height: 1.8;"></div>
+          </div>
+          <div id="exercise-detail-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+        </div>
+
+        <!-- 饮食模块 -->
+        <div class="plan-block" id="health-diet-block" style="margin-bottom: 16px;">
+          <div id="diet-advice" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(251, 146, 60, 0.15); border-radius: 8px; border-left: 3px solid #fb923c;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 12px; color: #fdba74; font-weight: 600;">饮食建议</span>
+              <button class="info-badge" id="diet-advice-trigger" type="button" style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
+            </div>
+            <div id="diet-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 6px; font-style: italic;">饮食数据暂时不全</div>
+          </div>
+          <!-- 饮食建议规则弹窗 -->
+          <div id="diet-advice-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-weight: 600; color: #f8fafc;">饮食建议规则</span>
+              <button id="diet-advice-close" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
+            </div>
+            <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
+              <p style="margin: 0 0 8px; font-weight: 600; color: #fdba74;">热量差计算：</p>
+              <ul style="margin: 0 0 12px; padding-left: 16px;">
+                <li>热量差 = 摄入热量 - 消耗热量</li>
+                <li>消耗热量 = 基础代谢 + 主动能量</li>
+                <li>减脂建议：热量差 -300~-500kcal</li>
+                <li>维持体重：热量差 ±200kcal</li>
+              </ul>
+              <p style="margin: 0 0 8px; font-weight: 600; color: #fdba74;">体重目标：</p>
+              <ul style="margin: 0; padding-left: 16px;">
+                <li><span style="color: #22d3ee;">目标70kg</span> · <span style="color: #f97316;">预警80kg</span></li>
+              </ul>
+            </div>
+          </div>
+          <div id="diet-advice-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+          
+          <!-- 饮食指标卡片 -->
+          <div id="diet-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均摄入</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-kcal">--</div>
+              <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;" id="viz1-kcal-sub">--</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-kcal-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;">建议 1800-2200kcal</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均消耗</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-burn">--</div>
+              <div style="font-size: 11px; margin-top: 4px;" id="viz1-burn-detail">基础代谢 + 主动能量</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-burn-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;">热量差: <span id="viz1-calorie-diff" style="font-weight: 600;">--</span></div>
+            </div>
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; opacity: 0.6;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">血糖</div>
+              <div style="font-size: 24px; font-weight: 700; color: #64748b;">--</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 4px;">暂未接入</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div style="height: 100%; width: 0%; background: #334155;"></div>
+              </div>
+              <div style="font-size: 10px; color: #475569; margin-top: 4px;">目标 4.0-5.5 mmol/L</div>
+            </div>
+          </div>
+          
+          <!-- 营养成分扇形图 -->
+          <div style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">营养成分占比（周均值）</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div id="nutrition-pie" style="width: 100px; height: 100px; position: relative;">
+                <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#334155" stroke-width="3"></circle>
+                  <circle id="pie-protein" cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round"></circle>
+                  <circle id="pie-fat" cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round"></circle>
+                  <circle id="pie-carb" cx="18" cy="18" r="15.9" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round"></circle>
+                </svg>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 12px; color: #e2e8f0;">蛋白质</span>
+                  <span style="font-size: 12px; color: #94a3b8;" id="viz1-protein">--g</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 12px; color: #e2e8f0;">脂肪</span>
+                  <span style="font-size: 12px; color: #94a3b8;" id="viz1-fat">--g</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 12px; color: #e2e8f0;">碳水</span>
+                  <span style="font-size: 12px; color: #94a3b8;" id="viz1-carb">--g</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="filters" style="margin-top: 10px;">
-          <div class="filter-field">
-            <span>指标分类</span>
-            <div class="chip-group" id="health-category-group"></div>
+
+        <!-- 睡眠模块 -->
+        <div class="plan-block" id="health-sleep-block" style="margin-bottom: 16px;">
+          <div id="sleep-advice" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(139, 92, 246, 0.15); border-radius: 8px; border-left: 3px solid #8b5cf6;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 12px; color: #c4b5fd; font-weight: 600;">睡眠建议</span>
+              <button class="info-badge" id="sleep-info-trigger" type="button" style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
+            </div>
+            <div id="sleep-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
+          </div>
+          
+          <!-- 睡眠指标卡片 -->
+          <div id="sleep-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+            <div class="viz-card" data-metric="sleep_hours" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep2">--</div>
+              <div style="font-size: 11px; margin-top: 4px;" id="viz1-sleep2-delta">--</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-sleep2-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #8b5cf6); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标8h</span> · <span style="color: #f97316;">预警6h</span></div>
+            </div>
+            <div class="viz-card" data-metric="bed_time" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">入睡时间</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-bedtime">--</div>
+              <div style="font-size: 11px; margin-top: 4px;" id="viz1-bedtime-delta">--</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-bedtime-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #8b5cf6); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标23:00</span> · <span style="color: #f97316;">预警00:00</span></div>
+            </div>
+            <div class="viz-card" data-metric="wake_time" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">起床时间</div>
+              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-waketime">--</div>
+              <div style="font-size: 11px; margin-top: 4px;" id="viz1-waketime-delta">--</div>
+              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                <div id="viz1-waketime-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, #8b5cf6); transition: width 0.5s;"></div>
+              </div>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标07:00</span> · <span style="color: #f97316;">预警09:00</span></div>
+            </div>
+          </div>
+          
+          <!-- 睡眠趋势图 - 垂直时间轴样式 -->
+          <div id="sleep-trend-container" style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="font-size: 12px; color: #94a3b8;" id="sleep-trend-title">最近7天睡眠趋势</div>
+              <div style="display: flex; gap: 12px; font-size: 10px;">
+                <span style="color: #6366f1;">■ 深睡</span>
+                <span style="color: #60a5fa;">■ 浅睡</span>
+                <span style="color: #f97316;">■ 清醒</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <!-- 左侧时间轴 -->
+              <div style="display: flex; flex-direction: column; justify-content: space-between; padding: 0 8px 20px 0; font-size: 10px; color: #64748b; min-width: 40px; text-align: right;">
+                <span>21:00</span>
+                <span>23:00</span>
+                <span>01:00</span>
+                <span>03:00</span>
+                <span>05:00</span>
+                <span>07:00</span>
+                <span>09:00</span>
+                <span>11:00</span>
+              </div>
+              <!-- 睡眠柱状图区域 -->
+              <div id="sleep-trend-chart" style="flex: 1; display: flex; gap: 8px; position: relative; height: 200px;"></div>
+            </div>
+            <div id="sleep-trend-labels" style="display: flex; justify-content: space-around; margin-top: 8px; margin-left: 48px; font-size: 10px; color: #64748b;"></div>
+          </div>
+        </div>
+
+        <div id="health-status" class="status">正在加载健康数据...</div>
+        
+        <!-- 数据明细 -->
+        <div style="margin-top: 20px;">
+          <p style="margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #e2e8f0;">数据明细</p>
+          <div class="filters">
+            <div class="filter-field">
+              <span>指标分类</span>
+              <div class="chip-group" id="health-category-group"></div>
+            </div>
           </div>
         </div>
         <div class="scroll-wrap" style="margin-top: 10px;">
@@ -384,7 +628,6 @@
                 <th>周环比</th>
                 <th>月环比</th>
                 <th>年同比</th>
-                
               </tr>
             </thead>
             <tbody id="health-metric-body">
@@ -392,61 +635,102 @@
             </tbody>
           </table>
         </div>
+
+        <!-- 迭代方向 -->
+        <div class="plan-block" style="margin-top: 20px;">
+          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+          <div class="plan-section">
+            <ul class="plan-list">
+              <li>待破解：例行化获取苹果健康方法</li>
+              <li>待接入：苹果健康其他指标、分部位健身频率、运动状态数据、动态血糖仪数据</li>
+              <li>每日饮食成分分析</li>
+              <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
+            </ul>
+          </div>
+        </div>
+
       </section>
       <section class="tab-panel" id="tab-entertainment">
-      <div class="plan-block">
-        <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
-        <div class="plan-section">
-          <ul class="plan-list">
-            <li>每日自动拉取优质博主的更新，避开推荐流对精力的消耗。</li>
-          </ul>
-        </div>
-        <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
-        <div class="plan-section">
-          <ul class="plan-list">
-            <li>接入：王者荣耀自动化战绩分析，每日英雄梯度分析，强势英雄推荐</li>
-            <li>接入：原神自动化任务完成情况</li>
-          </ul>
-        </div>
-      </div>
-      <header>
-        <div class="status" id="status">正在加载数据...</div>
-        <div class="filters">
-          <div class="filter-field">
-            <span>视频类型</span>
-            <div class="chip-group" id="category-group"></div>
+        <!-- Highlight说明 -->
+        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">✨</span>
+            <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;">每日自动拉取优质博主的更新，避开推荐流对精力的消耗</span>
           </div>
-          <label class="filter-field">
-            <span>单作者视频条数</span>
-            <select id="limit-input"></select>
-          </label>
         </div>
-      </header>
-      <div class="scroll-wrap">
-        <table>
-          <thead>
-            <tr id="table-head"></tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
+        
+        <!-- 数据更新时间 -->
+        <p style="margin: 0 0 12px; font-size: 0.85rem; color: #64748b; text-align: right;">数据更新：<span id="update-time">--</span></p>
+        
+        <!-- 筛选和标签云 -->
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+          <div id="ent-tags" style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;"></div>
+          <div style="display: flex; align-items: center; gap: 6px; background: #1e293b; padding: 6px 12px; border-radius: 8px; border: 1px solid #334155;">
+            <span style="font-size: 12px; color: #94a3b8;">每作者</span>
+            <select id="limit-input" style="background: transparent; border: none; color: #f8fafc; font-size: 12px; cursor: pointer;"></select>
+            <span style="font-size: 12px; color: #94a3b8;">条</span>
+          </div>
+        </div>
+        
+        <!-- 视频列表 -->
+        <div id="ent-tag-cloud" style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
+          <div id="status" class="status" style="margin: 0 0 12px; font-size: 13px;">正在加载数据...</div>
+          <div id="ent-video-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 500px; overflow-y: auto;"></div>
+        </div>
+
+        <!-- 迭代方向 -->
+        <div class="plan-block" style="margin-top: 20px;">
+          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+          <div class="plan-section">
+            <ul class="plan-list">
+              <li>接入：王者荣耀自动化战绩分析，每日英雄梯度分析，强势英雄推荐</li>
+              <li>接入：原神自动化任务完成情况</li>
+            </ul>
+          </div>
+        </div>
       </section>
       <section class="tab-panel" id="tab-knowledge">
-        <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">笔记</p>
-          <div class="plan-section">
-            <p class="note-heading">读《道德经》有感：</p>
-            <ul class="plan-list">
-              <li>“天下万物生于有，有生于无。”<br />—&gt; 这个站点的意义在于，用最少的精力获得最重要的信息，让思维恢复到“无”的状态，恢复灵感。</li>
-            </ul>
-            <hr class="note-divider" />
-            <p class="note-heading">看 罗永浩对 Minimax 闫俊杰访谈有感：</p>
-            <ul class="plan-list">
-              <li>“合作不顺的根本上是组织不顺。” —&gt; AI Agent 的组织形式是影响效率的核心原因。</li>
-              <li>“公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。”<br />—&gt; 如果把不同的 AI 赋予“工程师”、“架构师”、“产品经理”的身份并划定职责，容易产生幻觉与遗忘。<br />是否应该尝试赋予 AI 不同的性格画像？比如：较真的 AI；善于发现问题的 AI；善于管理的 AI；善于向人类汇报的 AI；善于总结沉淀的 AI；善于运用第一性原理拆解分析问题的 AI</li>
-            </ul>
+        <!-- 读书笔记 -->
+        <div class="plan-block" style="margin-bottom: 16px;">
+          <p class="plan-title" style="margin: 0 0 12px;">读书笔记</p>
+          
+          <div style="margin-bottom: 16px; padding: 14px; background: rgba(139, 92, 246, 0.08); border-radius: 10px; border-left: 3px solid #8b5cf6;">
+            <div style="font-size: 13px; font-weight: 600; color: #c4b5fd; margin-bottom: 8px;">《道德经》</div>
+            <blockquote style="margin: 0 0 8px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
+              "天下万物生于有，有生于无。"
+            </blockquote>
+            <p style="margin: 0; font-size: 13px; color: #cbd5f5; line-height: 1.6;">
+              这个站点的意义在于，用最少的精力获得最重要的信息，让思维恢复到"无"的状态，恢复灵感。
+            </p>
           </div>
-          <p class="plan-title" style="margin: 12px 0 6px;">迭代方向</p>
+
+          <div style="padding: 14px; background: rgba(59, 130, 246, 0.08); border-radius: 10px; border-left: 3px solid #3b82f6;">
+            <div style="font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 8px;">罗永浩 × Minimax 闫俊杰 访谈</div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div>
+                <blockquote style="margin: 0 0 6px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
+                  "合作不顺的根本上是组织不顺。"
+                </blockquote>
+                <p style="margin: 0; font-size: 13px; color: #cbd5f5;">AI Agent 的组织形式是影响效率的核心原因。</p>
+              </div>
+              <div>
+                <blockquote style="margin: 0 0 6px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
+                  "公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。"
+                </blockquote>
+                <p style="margin: 0; font-size: 13px; color: #cbd5f5; line-height: 1.6;">
+                  如果把不同的 AI 赋予"工程师"、"架构师"、"产品经理"的身份并划定职责，容易产生幻觉与遗忘。
+                  是否应该尝试赋予 AI 不同的性格画像？比如：较真的 AI、善于发现问题的 AI、善于管理的 AI、善于向人类汇报的 AI、善于总结沉淀的 AI、善于运用第一性原理拆解分析问题的 AI。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">更多知识库功能开发中...</p>
+        
+        <!-- 迭代方向 -->
+        <div class="plan-block">
+          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
           <div class="plan-section">
             <ul class="plan-list">
               <li>分析中：微信读书笔记接口</li>
@@ -454,10 +738,141 @@
             </ul>
           </div>
         </div>
-        <p>知识库敬请期待。</p>
       </section>
       <section class="tab-panel" id="tab-wealth">
-        <div class="plan-block">
+        <!-- 资产配置总览 -->
+        <div class="plan-block" style="margin-bottom: 16px;">
+          <p class="plan-title" style="margin: 0 0 12px;">资产配置</p>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px; text-align: center; padding: 16px; background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%); border-radius: 12px;">
+              <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">总资产</div>
+              <div style="font-size: 28px; font-weight: 700; color: #fff;">¥ --</div>
+              <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px;">月环比 <span style="color: #4ade80;">+--</span></div>
+            </div>
+            <div style="flex: 2; min-width: 280px;">
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">现金存款</span>
+                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 40%; height: 100%; background: #3b82f6;"></div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">理财产品</span>
+                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 30%; height: 100%; background: #22c55e;"></div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">股票基金</span>
+                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 20%; height: 100%; background: #f59e0b;"></div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; background: #ec4899; border-radius: 2px;"></div>
+                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">其他</span>
+                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                    <div style="width: 10%; height: 100%; background: #ec4899;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 储蓄目标 -->
+        <div class="plan-block" style="margin-bottom: 16px;">
+          <p class="plan-title" style="margin: 0 0 12px;">储蓄目标</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div style="padding: 14px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">买车目标</span>
+                <span style="font-size: 11px; color: #64748b;">¥200,000</span>
+              </div>
+              <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                <div style="width: 35%; height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 4px;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                <span style="color: #3b82f6;">已攒 ¥--</span>
+                <span style="color: #64748b;">预计 -- 个月</span>
+              </div>
+            </div>
+            <div style="padding: 14px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.3);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">买房首付</span>
+                <span style="font-size: 11px; color: #64748b;">¥1,000,000</span>
+              </div>
+              <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                <div style="width: 15%; height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); border-radius: 4px;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                <span style="color: #22c55e;">已攒 ¥--</span>
+                <span style="color: #64748b;">预计 -- 个月</span>
+              </div>
+            </div>
+            <div style="padding: 14px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">应急基金</span>
+                <span style="font-size: 11px; color: #64748b;">6个月支出</span>
+              </div>
+              <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                <div style="width: 80%; height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24); border-radius: 4px;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                <span style="color: #f59e0b;">已备 ¥--</span>
+                <span style="color: #4ade80;">接近达成</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 收支监控 -->
+        <div class="plan-block" style="margin-bottom: 16px;">
+          <p class="plan-title" style="margin: 0 0 12px;">本月收支</p>
+          <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 100px; padding: 12px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b;">收入</div>
+              <div style="font-size: 18px; font-weight: 700; color: #22c55e;">¥ --</div>
+            </div>
+            <div style="flex: 1; min-width: 100px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b;">支出</div>
+              <div style="font-size: 18px; font-weight: 700; color: #ef4444;">¥ --</div>
+            </div>
+            <div style="flex: 1; min-width: 100px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b;">结余</div>
+              <div style="font-size: 18px; font-weight: 700; color: #3b82f6;">¥ --</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">支出分类</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.05); border-radius: 6px;">
+              <span style="width: 20px; text-align: center;">🍜</span>
+              <span style="flex: 1; font-size: 13px; color: #e2e8f0;">餐饮</span>
+              <span style="font-size: 13px; color: #ef4444;">¥ --</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.03); border-radius: 6px;">
+              <span style="width: 20px; text-align: center;">🏠</span>
+              <span style="flex: 1; font-size: 13px; color: #e2e8f0;">房租</span>
+              <span style="font-size: 13px; color: #f87171;">¥ --</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.02); border-radius: 6px;">
+              <span style="width: 20px; text-align: center;">🚗</span>
+              <span style="flex: 1; font-size: 13px; color: #e2e8f0;">交通</span>
+              <span style="font-size: 13px; color: #fca5a5;">¥ --</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 迭代方向 -->
+        <div class="plan-block" style="margin-top: 20px;">
           <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
           <div class="plan-section">
             <ul class="plan-list">
@@ -468,7 +883,99 @@
             </ul>
           </div>
         </div>
-        <p>更多数据接入与可视化待规划。</p>
+      </section>
+      <!-- AI咨询 TAB -->
+      <section class="tab-panel" id="tab-ai-news">
+        <div class="plan-block">
+          <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
+          <div class="plan-section">
+            <ul class="plan-list">
+              <li>每月汇总各大AI产品的重大突破与实用技巧</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 本月AI动态 -->
+        <div class="plan-block" style="margin-top: 16px;">
+          <p class="plan-title" style="margin: 0 0 12px;">本月AI产品动态</p>
+          
+          <!-- OpenAI -->
+          <div style="margin-bottom: 16px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 3px solid #10b981;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-weight: 600; color: #10b981;">OpenAI</span>
+              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">ChatGPT / GPT-4</span>
+            </div>
+            <ul class="plan-list" style="margin: 0; font-size: 13px;">
+              <li>数据待接入...</li>
+            </ul>
+          </div>
+          
+          <!-- Anthropic -->
+          <div style="margin-bottom: 16px; padding: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border-left: 3px solid #8b5cf6;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-weight: 600; color: #8b5cf6;">Anthropic</span>
+              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">Claude</span>
+            </div>
+            <ul class="plan-list" style="margin: 0; font-size: 13px;">
+              <li>数据待接入...</li>
+            </ul>
+          </div>
+          
+          <!-- Google -->
+          <div style="margin-bottom: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid #3b82f6;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-weight: 600; color: #3b82f6;">Google</span>
+              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">Gemini</span>
+            </div>
+            <ul class="plan-list" style="margin: 0; font-size: 13px;">
+              <li>数据待接入...</li>
+            </ul>
+          </div>
+          
+          <!-- 国产大模型 -->
+          <div style="margin-bottom: 16px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 3px solid #ef4444;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-weight: 600; color: #ef4444;">国产大模型</span>
+              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">文心 / 通义 / 豆包 / Kimi</span>
+            </div>
+            <ul class="plan-list" style="margin: 0; font-size: 13px;">
+              <li>数据待接入...</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 实用Tips -->
+        <div class="plan-block" style="margin-top: 16px;">
+          <p class="plan-title" style="margin: 0 0 12px;">本月实用Tips</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+            <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
+              <div style="font-size: 12px; color: #f59e0b; margin-bottom: 6px;">Prompt技巧</div>
+              <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
+            </div>
+            <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
+              <div style="font-size: 12px; color: #06b6d4; margin-bottom: 6px;">效率工具</div>
+              <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
+            </div>
+            <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
+              <div style="font-size: 12px; color: #ec4899; margin-bottom: 6px;">创意应用</div>
+              <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
+            </div>
+          </div>
+        </div>
+        
+        <p style="margin-top: 16px; color: #64748b; font-size: 13px;">数据来源待接入，敬请期待。</p>
+
+        <!-- 迭代方向 -->
+        <div class="plan-block" style="margin-top: 20px;">
+          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+          <div class="plan-section">
+            <ul class="plan-list">
+              <li>接入：AI产品更新RSS订阅</li>
+              <li>接入：AI论文热点追踪</li>
+              <li>待规划：大模型自动总结本月AI领域动态</li>
+            </ul>
+          </div>
+        </div>
       </section>
     </main>
     <script>
@@ -506,185 +1013,185 @@
       const DEFAULT_LIMIT = 1;
       const MAX_LIMIT = 10;
       const CSV_SOURCES = [{ url: "video/video_ls.csv", label: "Local" }];
-      const HEALTH_SOURCES = [{ url: "health/sleep_daily.csv", label: "Local" }];
-      const WEIGHT_SOURCES = [{ url: "health/weight_daily.csv", label: "Local" }];
-      const STEPS_SOURCES = [{ url: "health/steps_daily.csv", label: "Local" }];
-      const ENERGY_SOURCES = [{ url: "health/energy_daily.csv", label: "Local" }];
+      const HEALTH_SOURCES = [{ url: "health/data/sleep_daily.csv", label: "Local" }];
+      const WEIGHT_SOURCES = [{ url: "health/data/weight_daily.csv", label: "Local" }];
+      const STEPS_SOURCES = [{ url: "health/data/steps_daily.csv", label: "Local" }];
+      const ENERGY_SOURCES = [{ url: "health/data/energy_daily.csv", label: "Local" }];
       const DIET_SOURCES = [
-        { url: "health/diet_daily.csv", label: "Local" },
+        { url: "health/data/diet_daily.csv", label: "Local" },
       ];
       const HR_SOURCES = [
-        { url: "health/heart_rate_daily.csv", label: "Local" },
+        { url: "health/data/heart_rate_daily.csv", label: "Local" },
       ];
       const REST_HR_SOURCES = [
-        { url: "health/resting_hr_daily.csv", label: "Local" },
+        { url: "health/data/resting_hr_daily.csv", label: "Local" },
       ];
       const WALK_HR_SOURCES = [
-        { url: "health/walking_hr_daily.csv", label: "Local" },
+        { url: "health/data/walking_hr_daily.csv", label: "Local" },
       ];
       const RESP_SOURCES = [
-        { url: "health/respiratory_daily.csv", label: "Local" },
+        { url: "health/data/respiratory_daily.csv", label: "Local" },
       ];
       const VO2_SOURCES = [
-        { url: "health/vo2max_daily.csv", label: "Local" },
+        { url: "health/data/vo2max_daily.csv", label: "Local" },
       ];
       const WALK_METRIC_SOURCES = [
-        { url: "health/walking_metrics_daily.csv", label: "Local" },
+        { url: "health/data/walking_metrics_daily.csv", label: "Local" },
       ];
       const WALK_STEP_LEN_SOURCES = [
-        { url: "health/walking_step_length_daily.csv", label: "Local" },
+        { url: "health/data/walking_step_length_daily.csv", label: "Local" },
       ];
       const WALK_DS_SOURCES = [
-        { url: "health/walking_double_support_daily.csv", label: "Local" },
+        { url: "health/data/walking_double_support_daily.csv", label: "Local" },
       ];
       const WALK_ASYM_SOURCES = [
-        { url: "health/walking_asymmetry_daily.csv", label: "Local" },
+        { url: "health/data/walking_asymmetry_daily.csv", label: "Local" },
       ];
       const WALK_STEADY_SOURCES = [
-        { url: "health/walking_steadiness_daily.csv", label: "Local" },
+        { url: "health/data/walking_steadiness_daily.csv", label: "Local" },
       ];
       const RUN_SPEED_SOURCES = [
-        { url: "health/running_speed_daily.csv", label: "Local" },
+        { url: "health/data/running_speed_daily.csv", label: "Local" },
       ];
       const RUN_POWER_SOURCES = [
-        { url: "health/running_power_daily.csv", label: "Local" },
+        { url: "health/data/running_power_daily.csv", label: "Local" },
       ];
       const RUN_VERT_SOURCES = [
-        { url: "health/running_vertical_osc_daily.csv", label: "Local" },
+        { url: "health/data/running_vertical_osc_daily.csv", label: "Local" },
       ];
       const RUN_GC_SOURCES = [
-        { url: "health/running_ground_contact_daily.csv", label: "Local" },
+        { url: "health/data/running_ground_contact_daily.csv", label: "Local" },
       ];
       const RUN_STRIDE_SOURCES = [
-        { url: "health/running_stride_length_daily.csv", label: "Local" },
+        { url: "health/data/running_stride_length_daily.csv", label: "Local" },
       ];
       const STAIR_ASC_SOURCES = [
-        { url: "health/stair_ascent_speed_daily.csv", label: "Local" },
+        { url: "health/data/stair_ascent_speed_daily.csv", label: "Local" },
       ];
       const STAIR_DESC_SOURCES = [
-        { url: "health/stair_descent_speed_daily.csv", label: "Local" },
+        { url: "health/data/stair_descent_speed_daily.csv", label: "Local" },
       ];
       const AUDIO_ENV_SOURCES = [
-        { url: "health/audio_exposure_daily.csv", label: "Local" },
+        { url: "health/data/audio_exposure_daily.csv", label: "Local" },
       ];
       const AUDIO_HEAD_SOURCES = [
-        { url: "health/headphone_audio_daily.csv", label: "Local" },
+        { url: "health/data/headphone_audio_daily.csv", label: "Local" },
       ];
       const EXERCISE_SOURCES = [
-        { url: "health/exercise_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/exercise_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/exercise_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/exercise_daily.csv", label: "GitHub Raw" },
       ];
       const DISTANCE_SOURCES = [
-        { url: "health/distance_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/distance_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/distance_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/distance_daily.csv", label: "GitHub Raw" },
       ];
       const RESTING_HR_SOURCES = [
-        { url: "health/resting_hr_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/resting_hr_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/resting_hr_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/resting_hr_daily.csv", label: "GitHub Raw" },
       ];
       const BODY_SOURCES = [
-        { url: "health/body_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/body_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/body_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/body_daily.csv", label: "GitHub Raw" },
       ];
       const HEART_RATE_SOURCES = [
-        { url: "health/heart_rate_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/heart_rate_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/heart_rate_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/heart_rate_daily.csv", label: "GitHub Raw" },
       ];
       const HRV_SOURCES = [
-        { url: "health/hrv_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/hrv_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/hrv_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/hrv_daily.csv", label: "GitHub Raw" },
       ];
       const RESPIRATORY_SOURCES = [
-        { url: "health/respiratory_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/respiratory_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/respiratory_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/respiratory_daily.csv", label: "GitHub Raw" },
       ];
       const SPO2_SOURCES = [
-        { url: "health/spo2_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/spo2_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/spo2_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/spo2_daily.csv", label: "GitHub Raw" },
       ];
       const VO2MAX_SOURCES = [
-        { url: "health/vo2max_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/vo2max_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/vo2max_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/vo2max_daily.csv", label: "GitHub Raw" },
       ];
       const FLIGHTS_SOURCES = [
-        { url: "health/flights_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/flights_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/flights_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/flights_daily.csv", label: "GitHub Raw" },
       ];
       const DAYLIGHT_SOURCES = [
-        { url: "health/daylight_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/daylight_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/daylight_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/daylight_daily.csv", label: "GitHub Raw" },
       ];
       const WALKING_HR_SOURCES = [
-        { url: "health/walking_hr_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_hr_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/walking_hr_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_hr_daily.csv", label: "GitHub Raw" },
       ];
       const WALKING_METRICS_SOURCES = [
-        { url: "health/walking_metrics_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_metrics_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/walking_metrics_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_metrics_daily.csv", label: "GitHub Raw" },
       ];
       const WALKING_STEP_LENGTH_SOURCES = [
-        { url: "health/walking_step_length_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_step_length_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/walking_step_length_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_step_length_daily.csv", label: "GitHub Raw" },
       ];
       const WALKING_DOUBLE_SUPPORT_SOURCES = [
-        { url: "health/walking_double_support_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_double_support_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/walking_double_support_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_double_support_daily.csv", label: "GitHub Raw" },
       ];
       const WALKING_ASYMMETRY_SOURCES = [
-        { url: "health/walking_asymmetry_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_asymmetry_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/walking_asymmetry_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_asymmetry_daily.csv", label: "GitHub Raw" },
       ];
       const WALKING_STEADINESS_SOURCES = [
-        { url: "health/walking_steadiness_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/walking_steadiness_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/walking_steadiness_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_steadiness_daily.csv", label: "GitHub Raw" },
       ];
       const RUNNING_SPEED_SOURCES = [
-        { url: "health/running_speed_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_speed_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/running_speed_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_speed_daily.csv", label: "GitHub Raw" },
       ];
       const RUNNING_POWER_SOURCES = [
-        { url: "health/running_power_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_power_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/running_power_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_power_daily.csv", label: "GitHub Raw" },
       ];
       const RUNNING_STRIDE_LENGTH_SOURCES = [
-        { url: "health/running_stride_length_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_stride_length_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/running_stride_length_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_stride_length_daily.csv", label: "GitHub Raw" },
       ];
       const RUNNING_VERTICAL_OSC_SOURCES = [
-        { url: "health/running_vertical_osc_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_vertical_osc_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/running_vertical_osc_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_vertical_osc_daily.csv", label: "GitHub Raw" },
       ];
       const RUNNING_GROUND_CONTACT_SOURCES = [
-        { url: "health/running_ground_contact_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/running_ground_contact_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/running_ground_contact_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_ground_contact_daily.csv", label: "GitHub Raw" },
       ];
       const STAIR_ASCENT_SPEED_SOURCES = [
-        { url: "health/stair_ascent_speed_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/stair_ascent_speed_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/stair_ascent_speed_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/stair_ascent_speed_daily.csv", label: "GitHub Raw" },
       ];
       const STAIR_DESCENT_SPEED_SOURCES = [
-        { url: "health/stair_descent_speed_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/stair_descent_speed_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/stair_descent_speed_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/stair_descent_speed_daily.csv", label: "GitHub Raw" },
       ];
       const AUDIO_EXPOSURE_SOURCES = [
-        { url: "health/audio_exposure_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/audio_exposure_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/audio_exposure_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/audio_exposure_daily.csv", label: "GitHub Raw" },
       ];
       const HEADPHONE_AUDIO_SOURCES = [
-        { url: "health/headphone_audio_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/headphone_audio_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/headphone_audio_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/headphone_audio_daily.csv", label: "GitHub Raw" },
       ];
       const SLEEP_TEMP_SOURCES = [
-        { url: "health/sleep_temp_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_temp_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/sleep_temp_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/sleep_temp_daily.csv", label: "GitHub Raw" },
       ];
       const SLEEP_SCHEDULE_SOURCES = [
-        { url: "health/sleep_schedule_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/sleep_schedule_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/sleep_schedule_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/sleep_schedule_daily.csv", label: "GitHub Raw" },
       ];
       const DISTANCE_CYCLING_SOURCES = [
-        { url: "health/distance_daily.csv", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/distance_daily.csv", label: "GitHub Raw" },
+        { url: "health/data/distance_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/distance_daily.csv", label: "GitHub Raw" },
       ];
 
       const METRIC_DEFS = [
@@ -740,8 +1247,8 @@
       const EXERCISE_DAY_THRESHOLD_MIN = 30;
 
       const HEALTH_METRIC_CONFIG_SOURCES = [
-        { url: "health/metric_config.json", label: "Local" },
-        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/metric_config.json", label: "GitHub Raw" },
+        { url: "config/health_metrics.json", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/config/health_metrics.json", label: "GitHub Raw" },
       ];
 
       const DEFAULT_HEALTH_METRIC_CATEGORY = "基础体征";
@@ -897,6 +1404,7 @@
       };
 
       const ensureLimitValue = () => {
+        if (!limitInput) return DEFAULT_LIMIT;
         let value = parseInt(limitInput.value, 10);
         if (Number.isNaN(value) || value < 1) {
           value = DEFAULT_LIMIT;
@@ -907,6 +1415,7 @@
       };
 
       const initLimitSelect = () => {
+        if (!limitInput) return;
         limitInput.innerHTML = "";
         for (let i = 1; i <= MAX_LIMIT; i++) {
           const option = document.createElement("option");
@@ -995,6 +1504,7 @@
       };
 
       const renderCategoryChips = () => {
+        if (!categoryGroup) return;
         categoryGroup.innerHTML = "";
         CATEGORY_OPTIONS.forEach((label) => {
           const chip = document.createElement("button");
@@ -1025,6 +1535,7 @@
       };
 
       const renderHeader = () => {
+        if (!headRow) return;
         headRow.innerHTML = "";
         ["作者", "视频发布时间", "视频名称"].forEach((text) => {
           headRow.appendChild(createCell("th", text));
@@ -1032,6 +1543,7 @@
       };
 
       const renderBody = (rows) => {
+        if (!bodyEl) return;
         bodyEl.innerHTML = "";
         if (!rows.length) {
           const tr = document.createElement("tr");
@@ -1088,10 +1600,12 @@
         }
       };
 
-      limitInput.addEventListener("change", () => {
-        ensureLimitValue();
-        applyFilters();
-      });
+      if (limitInput) {
+        limitInput.addEventListener("change", () => {
+          ensureLimitValue();
+          applyFilters();
+        });
+      }
 
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => switchTab(button.dataset.tab));
@@ -1265,22 +1779,6 @@
         renderMetricTable(rows);
       };
 
-      const resolveChartsImage = (def) => {
-        if (!def) return null;
-        const sources = Array.isArray(def.sources) ? def.sources : [];
-        const url =
-          sources
-            .map((source) => (source && typeof source.url === "string" ? source.url : ""))
-            .find((candidate) => candidate && /\.csv$/i.test(candidate.split("?")[0])) || "";
-        if (!url) return null;
-
-        const filename = url.split("?")[0].split("/").pop();
-        if (!filename || !/\.csv$/i.test(filename)) return null;
-
-        const stem = filename.replace(/\.csv$/i, "");
-        return `health/charts/${stem}__${def.valueKey}.svg`;
-      };
-
       const parseMetricSeries = (text, valueKey) => {
         const rows = parseCSV(text);
         if (!rows.length) return [];
@@ -1436,7 +1934,7 @@
       };
 
       const loadHealthHighlight = async () => {
-        if (!highlightEls.weight) return;
+        // 不再依赖 highlight 元素，仪表盘数据始终加载
         const highlightWindow = 7;
         const highlightOffset = 7;
         const calcAvg = (series) => avgWindowByDate(series, highlightWindow, 0);
@@ -1476,6 +1974,8 @@
           setHighlightDelta(highlightEls.weightWow, weightAvg, weightPrev);
           setHighlightValue(highlightEls.bodyFat, formatValueWithUnit(fatAvg, "%"));
           setHighlightDelta(highlightEls.bodyFatWow, fatAvg, fatPrev);
+          // 更新可视化方案
+          updateVizPanels({ weight: weightAvg, weightPrev: weightPrev });
         } catch (error) {
           console.error("加载体重高亮失败:", error);
         }
@@ -1487,6 +1987,8 @@
           const sleepPrev = calcPrev(sleepSeries);
           setHighlightValue(highlightEls.sleep, formatValueWithUnit(sleepAvg, "小时"));
           setHighlightDelta(highlightEls.sleepWow, sleepAvg, sleepPrev);
+          // 更新可视化方案
+          updateVizPanels({ sleep: sleepAvg, sleepPrev: sleepPrev });
         } catch (error) {
           console.error("加载睡眠高亮失败:", error);
         }
@@ -1509,6 +2011,8 @@
           setHighlightDelta(highlightEls.bedTimeWow, bedAvg, bedPrev);
           setHighlightValue(highlightEls.wakeTime, formatClock(wakeAvg, false));
           setHighlightDelta(highlightEls.wakeTimeWow, wakeAvg, wakePrev);
+          // 更新可视化方案
+          updateVizPanels({ bedTime: bedAvg, bedTimePrev: bedPrev, wakeTime: wakeAvg, wakeTimePrev: wakePrev });
         } catch (error) {
           console.error("加载睡眠作息高亮失败:", error);
         }
@@ -1520,6 +2024,8 @@
           const hrvPrev = calcPrev(hrvSeries);
           setHighlightValue(highlightEls.hrv, formatValueWithUnit(hrvAvg, "ms"));
           setHighlightDelta(highlightEls.hrvWow, hrvAvg, hrvPrev);
+          // 更新可视化方案
+          updateVizPanels({ hrv: hrvAvg, hrvPrev: hrvPrev });
         } catch (error) {
           console.error("加载 HRV 高亮失败:", error);
         }
@@ -1533,8 +2039,404 @@
           setHighlightValue(highlightEls.exerciseMonth, monthCount === null ? "--" : monthCount);
           const canRest = (weekCount || 0) >= 5 || (monthCount || 0) >= 21;
           setHighlightValue(highlightEls.exerciseMsg, canRest ? "今天可以休息～" : "今天要继续加油");
+          // 更新可视化方案
+          updateVizPanels({ exerciseWeek: weekCount, exerciseMonth: monthCount, canRest });
         } catch (error) {
           console.error("加载运动天数高亮失败:", error);
+        }
+        
+        // 加载饮食数据
+        try {
+          const { text } = await fetchFromSources(DIET_SOURCES);
+          const kcalSeries = parseMetricSeries(text, "dietary_kcal");
+          const proteinSeries = parseMetricSeries(text, "dietary_protein_g");
+          const fatSeries = parseMetricSeries(text, "dietary_fat_g");
+          const carbSeries = parseMetricSeries(text, "dietary_carb_g");
+          
+          const kcalAvg = calcAvg(kcalSeries);
+          const proteinAvg = calcAvg(proteinSeries);
+          const fatAvg = calcAvg(fatSeries);
+          const carbAvg = calcAvg(carbSeries);
+          
+          updateVizPanels({ kcal: kcalAvg, protein: proteinAvg, fat: fatAvg, carb: carbAvg });
+        } catch (error) {
+          console.error("加载饮食数据失败:", error);
+        }
+        
+        // 加载能量消耗数据（基础代谢+主动能量）
+        try {
+          const { text } = await fetchFromSources(ENERGY_SOURCES);
+          const basalSeries = parseMetricSeries(text, "basal_energy");
+          const activeSeries = parseMetricSeries(text, "active_energy");
+          
+          const basalAvg = calcAvg(basalSeries);
+          const activeAvg = calcAvg(activeSeries);
+          const totalBurn = (basalAvg || 0) + (activeAvg || 0);
+          
+          updateVizPanels({ basalEnergy: basalAvg, activeEnergy: activeAvg, totalBurn: totalBurn });
+        } catch (error) {
+          console.error("加载能量消耗数据失败:", error);
+        }
+        
+        // 加载睡眠趋势数据（最近7天入睡/起床时间）
+        try {
+          const { text } = await fetchFromSources(SLEEP_SCHEDULE_SOURCES);
+          const rows = text.trim().split("\n").slice(1);
+          const scheduleData = rows.map(row => {
+            const [date, bed_time, wake_time] = row.split(",");
+            return { date, bed_time, wake_time };
+          }).filter(d => d.date && d.bed_time && d.wake_time);
+          const recent7 = scheduleData.slice(-7);
+          updateVizPanels({ sleepScheduleTrend: recent7 });
+        } catch (error) {
+          console.error("加载睡眠趋势数据失败:", error);
+        }
+        
+        // 设置健康数据更新时间
+        try {
+          const response = await fetch("health/data/sleep_daily.csv", { method: "HEAD", cache: "no-store" });
+          const lastModified = response.headers.get("Last-Modified");
+          const healthUpdateEl = document.getElementById("health-update-time");
+          if (healthUpdateEl && lastModified) {
+            const date = new Date(lastModified);
+            healthUpdateEl.textContent = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+          }
+        } catch (error) {
+          console.error("获取健康数据更新时间失败:", error);
+        }
+      };
+
+      // 可视化方案数据缓存
+      const vizData = { weight: null, weightPrev: null, sleep: null, sleepPrev: null, hrv: null, hrvPrev: null, exerciseWeek: null, exerciseMonth: null, bedTime: null, bedTimePrev: null, wakeTime: null, wakeTimePrev: null, kcal: null, protein: null, fat: null, carb: null, basalEnergy: null, activeEnergy: null, totalBurn: null, sleepScheduleTrend: null };
+
+      const updateVizPanels = (data) => {
+        Object.assign(vizData, data);
+        const { weight, weightPrev, sleep, sleepPrev, hrv, hrvPrev, exerciseWeek, exerciseMonth, canRest, bedTime, bedTimePrev, wakeTime, wakeTimePrev, kcal, protein, fat, carb, basalEnergy, activeEnergy, totalBurn, sleepScheduleTrend } = vizData;
+
+        // 辅助函数
+        const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        const setHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+        const setStyle = (id, prop, val) => { const el = document.getElementById(id); if (el) el.style[prop] = val; };
+        const deltaHtml = (cur, prev) => formatDeltaSigned(cur, prev);
+        
+        // 饮食数据
+        if (kcal !== null) {
+          setEl("viz1-kcal", Math.round(kcal) + "kcal");
+          const kcalPct = Math.max(0, Math.min(100, (kcal / 2200) * 100));
+          setStyle("viz1-kcal-bar", "width", kcalPct + "%");
+        }
+        if (protein !== null) setEl("viz1-protein", Math.round(protein) + "g");
+        if (fat !== null) setEl("viz1-fat", Math.round(fat) + "g");
+        if (carb !== null) setEl("viz1-carb", Math.round(carb) + "g");
+        
+        // 能量消耗数据
+        if (totalBurn !== null && totalBurn > 0) {
+          setEl("viz1-burn", Math.round(totalBurn) + "kcal");
+          setEl("viz1-burn-detail", `基础${Math.round(basalEnergy || 0)} + 主动${Math.round(activeEnergy || 0)}`);
+          const burnPct = Math.max(0, Math.min(100, (totalBurn / 2500) * 100));
+          setStyle("viz1-burn-bar", "width", burnPct + "%");
+          
+          // 计算热量差
+          if (kcal !== null) {
+            const calorieDiff = Math.round(kcal - totalBurn);
+            const diffColor = calorieDiff > 200 ? "#ef4444" : calorieDiff < -500 ? "#3b82f6" : "#22c55e";
+            const diffSign = calorieDiff > 0 ? "+" : "";
+            setHtml("viz1-calorie-diff", `<span style="color: ${diffColor}">${diffSign}${calorieDiff}kcal</span>`);
+          }
+        }
+        
+        // 营养成分扇形图
+        if (protein !== null && fat !== null && carb !== null) {
+          const total = protein + fat + carb;
+          if (total > 0) {
+            const proteinPct = (protein / total) * 100;
+            const fatPct = (fat / total) * 100;
+            const carbPct = (carb / total) * 100;
+            
+            const pieProtein = document.getElementById("pie-protein");
+            const pieFat = document.getElementById("pie-fat");
+            const pieCarb = document.getElementById("pie-carb");
+            
+            if (pieProtein) pieProtein.setAttribute("stroke-dasharray", `${proteinPct}, 100`);
+            if (pieFat) {
+              pieFat.setAttribute("stroke-dasharray", `${fatPct}, 100`);
+              pieFat.setAttribute("stroke-dashoffset", `-${proteinPct}`);
+            }
+            if (pieCarb) {
+              pieCarb.setAttribute("stroke-dasharray", `${carbPct}, 100`);
+              pieCarb.setAttribute("stroke-dashoffset", `-${proteinPct + fatPct}`);
+            }
+          }
+        }
+
+        // 方案一：仪表盘卡片
+        if (weight !== null) {
+          setEl("viz1-weight", weight.toFixed(1) + "kg");
+          setHtml("viz1-weight-delta", deltaHtml(weight, weightPrev));
+          const weightPct = Math.max(0, Math.min(100, ((80 - weight) / (80 - 70)) * 100));
+          setStyle("viz1-weight-bar", "width", weightPct + "%");
+        }
+        if (sleep !== null) {
+          setEl("viz1-sleep", sleep.toFixed(1) + "h");
+          setHtml("viz1-sleep-delta", deltaHtml(sleep, sleepPrev));
+          const sleepPct = Math.max(0, Math.min(100, (sleep / 8) * 100));
+          setStyle("viz1-sleep-bar", "width", sleepPct + "%");
+        }
+        if (hrv !== null) {
+          setEl("viz1-hrv", hrv.toFixed(0) + "ms");
+          setHtml("viz1-hrv-delta", deltaHtml(hrv, hrvPrev));
+          const hrvPct = Math.max(0, Math.min(100, (hrv / 50) * 100));
+          setStyle("viz1-hrv-bar", "width", hrvPct + "%");
+        }
+        if (exerciseWeek !== null) {
+          setEl("viz1-exercise", exerciseWeek + "天");
+          setEl("viz1-exercise-sub", "本月 " + (exerciseMonth || "--") + "天");
+          const exPct = Math.max(0, Math.min(100, (exerciseWeek / 4) * 100));
+          setStyle("viz1-exercise-bar", "width", exPct + "%");
+        }
+        // 入睡/起床时间 (bedTime/wakeTime 是分钟数)
+        const formatClockFromMinutes = (mins, isBed) => {
+          if (mins === null || mins === undefined || Number.isNaN(mins)) return "--";
+          let totalMins = Math.round(mins);
+          // 入睡时间可能超过24小时（跨午夜），需要减回来
+          if (isBed && totalMins >= 24 * 60) totalMins -= 24 * 60;
+          const hh = Math.floor(totalMins / 60) % 24;
+          const mm = totalMins % 60;
+          return String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0");
+        };
+        if (bedTime !== null) {
+          setEl("viz1-bedtime", formatClockFromMinutes(bedTime, true));
+          setHtml("viz1-bedtime-delta", deltaHtml(bedTime, bedTimePrev));
+          // 目标23:00(23*60=1380)，预警00:00(24*60=1440 normalized)，越早越好
+          // bedTime 是分钟数，可能是 1380-1560 范围（23:00-02:00跨午夜后+1440）
+          const bedPct = Math.max(0, Math.min(100, ((1500 - bedTime) / (1500 - 1380)) * 100));
+          setStyle("viz1-bedtime-bar", "width", bedPct + "%");
+        }
+        if (wakeTime !== null) {
+          setEl("viz1-waketime", formatClockFromMinutes(wakeTime, false));
+          setHtml("viz1-waketime-delta", deltaHtml(wakeTime, wakeTimePrev));
+          // 目标07:00(420)，预警09:00(540)，越早越好
+          const wakePct = Math.max(0, Math.min(100, ((540 - wakeTime) / (540 - 420)) * 100));
+          setStyle("viz1-waketime-bar", "width", wakePct + "%");
+        }
+        
+        // 同步睡眠模块的数据
+        if (sleep !== null) {
+          setEl("viz1-sleep2", sleep.toFixed(1) + "h");
+          setHtml("viz1-sleep2-delta", deltaHtml(sleep, sleepPrev));
+          const sleepPct2 = Math.max(0, Math.min(100, (sleep / 8) * 100));
+          setStyle("viz1-sleep2-bar", "width", sleepPct2 + "%");
+        }
+
+        // 运动建议规则
+        // 规则：综合判断运动天数、HRV、睡眠来给出今日运动建议
+        const getExerciseAdvice = () => {
+          const weekGoal = 4, monthGoal = 16;
+          const sleepOk = sleep !== null && sleep >= 6;
+          const hrvOk = hrv !== null && hrv >= 30;
+          const weekOk = exerciseWeek !== null && exerciseWeek >= weekGoal;
+          const monthOk = exerciseMonth !== null && exerciseMonth >= monthGoal;
+          const bodyReady = sleepOk && hrvOk;
+
+          // 已达标，可以休息
+          if (weekOk && monthOk) {
+            return { level: "rest", text: "本周本月都达标了，今天可以休息～", color: "#22c55e" };
+          }
+          // 本周达标但本月未达标
+          if (weekOk && !monthOk) {
+            if (bodyReady) {
+              return { level: "suggest", text: "本周达标但本月还差一点，身体状态不错，可以加练", color: "#3b82f6" };
+            }
+            return { level: "rest", text: "本周达标，今天休息也行", color: "#22c55e" };
+          }
+          // 本周未达标
+          if (!weekOk) {
+            if (!bodyReady) {
+              const reason = !sleepOk ? "睡眠不足" : "HRV偏低";
+              return { level: "warn", text: `运动未达标，但${reason}，先休息恢复`, color: "#f97316" };
+            }
+            const gap = weekGoal - (exerciseWeek || 0);
+            return { level: "go", text: `本周还差${gap}天，身体状态OK，快起来运动！`, color: "#ef4444" };
+          }
+          return { level: "unknown", text: "数据加载中...", color: "#64748b" };
+        };
+
+        if (exerciseWeek !== null && sleep !== null && hrv !== null) {
+          const advice = getExerciseAdvice();
+          // 仪表盘运动建议
+          setEl("viz1-advice-text", advice.text);
+          const adviceBox1 = document.getElementById("viz1-advice");
+          if (adviceBox1) adviceBox1.style.borderLeftColor = advice.color;
+        }
+        
+        // 饮食建议 - 考虑热量差
+        const getDietAdvice = () => {
+          if (weight === null) return { text: "数据加载中...", color: "#64748b" };
+          const issues = [];
+          let mainAdvice = "";
+          let color = "#22c55e";
+          
+          // 体重判断
+          if (weight > 80) {
+            issues.push("体重超过预警值80kg");
+            color = "#ef4444";
+          } else if (weight > 75) {
+            issues.push("体重略高于目标");
+            color = "#f97316";
+          }
+          
+          // 热量差判断
+          if (kcal !== null && totalBurn !== null && totalBurn > 0) {
+            const calorieDiff = kcal - totalBurn;
+            if (weight > 75) {
+              // 需要减重
+              if (calorieDiff > 0) {
+                issues.push("热量盈余不利于减重");
+                mainAdvice = "建议制造300-500kcal热量缺口";
+              } else if (calorieDiff > -300) {
+                mainAdvice = "热量缺口不够，可以再少吃一点或多运动";
+              } else if (calorieDiff < -800) {
+                mainAdvice = "热量缺口过大，注意营养均衡";
+                color = "#f97316";
+              } else {
+                mainAdvice = "热量缺口合理，继续保持";
+                color = "#22c55e";
+              }
+            } else {
+              // 维持体重
+              if (Math.abs(calorieDiff) <= 200) {
+                mainAdvice = "热量平衡，体重稳定";
+              } else if (calorieDiff > 200) {
+                mainAdvice = "热量略有盈余，注意控制";
+              } else {
+                mainAdvice = "热量略有缺口，可适当补充";
+              }
+            }
+          } else {
+            mainAdvice = weight > 75 ? "建议控制饮食热量" : "保持均衡饮食";
+          }
+          
+          return { 
+            text: issues.length > 0 ? issues.join("，") + "。" + mainAdvice : mainAdvice, 
+            color 
+          };
+        };
+        if (weight !== null) {
+          const dietAdvice = getDietAdvice();
+          setEl("diet-advice-text", dietAdvice.text);
+          const dietBox = document.getElementById("diet-advice");
+          if (dietBox) dietBox.style.borderLeftColor = dietAdvice.color;
+        }
+        
+        // 睡眠建议 - 重点考虑入睡时间，强调早睡早起
+        const getSleepAdvice = () => {
+          if (sleep === null || bedTime === null) return { text: "数据加载中...", color: "#64748b" };
+          const issues = [];
+          let mainAdvice = "";
+          let color = "#22c55e";
+          
+          // 入睡时间判断（最重要）- bedTime是分钟数，可能超过1440（跨午夜）
+          const bedHour = bedTime >= 1440 ? (bedTime - 1440) / 60 : bedTime / 60;
+          const isLateBed = bedTime > 1440 || bedHour >= 24 || (bedHour >= 0 && bedHour < 6); // 00:00后入睡
+          const isVeryLateBed = bedTime > 1500 || (bedHour >= 1 && bedHour < 6); // 01:00后入睡
+          
+          if (isVeryLateBed) {
+            issues.push("入睡时间太晚（超过凌晨1点）");
+            mainAdvice = "请务必早睡！长期熬夜伤身体";
+            color = "#ef4444";
+          } else if (isLateBed) {
+            issues.push("入睡时间偏晚（超过午夜）");
+            mainAdvice = "建议23点前入睡，早睡早起身体好";
+            color = "#f97316";
+          }
+          
+          // 睡眠时长判断
+          if (sleep < 6) {
+            issues.push("睡眠时长不足6小时");
+            if (!mainAdvice) mainAdvice = "睡眠严重不足，影响恢复和免疫力";
+            color = "#ef4444";
+          } else if (sleep < 7) {
+            if (!issues.length) issues.push("睡眠时长略少");
+            if (!mainAdvice) mainAdvice = "建议保证7-8小时睡眠";
+            if (color === "#22c55e") color = "#f97316";
+          }
+          
+          // 起床时间判断
+          if (wakeTime > 600) { // 10:00后
+            issues.push("起床太晚");
+            if (!mainAdvice) mainAdvice = "建议7-8点起床，保持规律作息";
+            if (color === "#22c55e") color = "#f97316";
+          }
+          
+          if (issues.length === 0) {
+            return { text: "睡眠状态良好，早睡早起，继续保持！", color: "#22c55e" };
+          }
+          
+          return { text: issues.join("，") + "。" + mainAdvice, color };
+        };
+        if (sleep !== null) {
+          const sleepAdvice = getSleepAdvice();
+          setEl("sleep-advice-text", sleepAdvice.text);
+          const sleepBox = document.getElementById("sleep-advice");
+          if (sleepBox) sleepBox.style.borderLeftColor = sleepAdvice.color;
+        }
+        
+        // 睡眠趋势图渲染 - 垂直时间轴样式
+        if (sleepScheduleTrend && sleepScheduleTrend.length > 0) {
+          const chartContainer = document.getElementById("sleep-trend-chart");
+          const labelsContainer = document.getElementById("sleep-trend-labels");
+          const titleEl = document.getElementById("sleep-trend-title");
+          if (chartContainer && labelsContainer) {
+            // 更新标题显示日期范围
+            const firstDate = new Date(sleepScheduleTrend[0].date);
+            const lastDate = new Date(sleepScheduleTrend[sleepScheduleTrend.length - 1].date);
+            if (titleEl) {
+              titleEl.textContent = `${firstDate.getFullYear()}年${firstDate.getMonth() + 1}月${firstDate.getDate()}日至${lastDate.getDate()}日`;
+            }
+            
+            // 时间轴范围：21:00 到 11:00（跨午夜，共14小时）
+            const timeMin = 21 * 60; // 21:00 = 1260分钟
+            const timeMax = (24 + 11) * 60; // 11:00 next day = 2100分钟
+            const totalRange = timeMax - timeMin; // 840分钟
+            
+            // 解析时间字符串为分钟数（相对于当天0点）
+            const parseTimeToMins = (timeStr) => {
+              const [hh, mm] = timeStr.split(":").map(Number);
+              return hh * 60 + mm;
+            };
+            
+            // 将时间转换为图表位置（百分比）
+            const timeToPosition = (mins, isBed) => {
+              let adjustedMins = mins;
+              // 入睡时间：如果在0-21点之间，说明是跨午夜后的时间，需要+1440
+              if (isBed && mins < timeMin) adjustedMins = mins + 24 * 60;
+              // 起床时间：如果在0-11点之间，说明是第二天，需要+1440
+              if (!isBed && mins < 12 * 60) adjustedMins = mins + 24 * 60;
+              return ((adjustedMins - timeMin) / totalRange) * 100;
+            };
+            
+            chartContainer.innerHTML = sleepScheduleTrend.map((d, i) => {
+              const bedMins = parseTimeToMins(d.bed_time);
+              const wakeMins = parseTimeToMins(d.wake_time);
+              
+              const bedPos = timeToPosition(bedMins, true);
+              const wakePos = timeToPosition(wakeMins, false);
+              const height = wakePos - bedPos;
+              
+              // 只使用3种颜色：深睡(#6366f1)、浅睡(#60a5fa)、清醒(#f97316)
+              // 整体使用深睡+浅睡渐变，模拟睡眠周期
+              return `<div style="flex: 1; position: relative; height: 100%;">
+                <div style="position: absolute; top: ${bedPos}%; height: ${Math.max(height, 2)}%; width: 100%; background: linear-gradient(180deg, #6366f1 0%, #60a5fa 30%, #6366f1 50%, #60a5fa 70%, #6366f1 100%); border-radius: 3px; opacity: 0.85;"></div>
+              </div>`;
+            }).join("");
+            
+            // 渲染底部日期标签
+            labelsContainer.innerHTML = sleepScheduleTrend.map(d => {
+              const date = new Date(d.date);
+              const dayNames = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+              return `<span>${dayNames[date.getDay()]}</span>`;
+            }).join("");
+          }
         }
       };
 
@@ -1670,20 +2572,24 @@
       };
 
       const loadCSV = async () => {
-        statusEl.textContent = "正在加载数据...";
-        updateTimeEl.textContent = " 正在获取...";
+        if (statusEl) statusEl.textContent = "正在加载数据...";
+        if (updateTimeEl) updateTimeEl.textContent = " 正在获取...";
         try {
           const { text, lastModified, sourceLabel } = await fetchCSVSource();
           if (lastModified) {
-            updateTimeEl.textContent = formatUpdateTime(lastModified);
-            updateTimeEl.title = `${lastModified.toString()} · 来源：${sourceLabel}`;
+            if (updateTimeEl) {
+              updateTimeEl.textContent = formatUpdateTime(lastModified);
+              updateTimeEl.title = `${lastModified.toString()} · 来源：${sourceLabel}`;
+            }
           } else {
-            updateTimeEl.textContent = ` 无可用数据（来源：${sourceLabel})`;
-            updateTimeEl.removeAttribute("title");
+            if (updateTimeEl) {
+              updateTimeEl.textContent = ` 无可用数据（来源：${sourceLabel})`;
+              updateTimeEl.removeAttribute("title");
+            }
           }
           const rows = parseCSV(text);
           if (!rows.length) {
-            statusEl.textContent = "CSV 文件为空";
+            if (statusEl) statusEl.textContent = "CSV 文件为空";
             records = [];
             renderBody([]);
             return;
@@ -1692,7 +2598,7 @@
           applyFilters();
         } catch (error) {
           console.error(error);
-          statusEl.textContent = "加载失败，请确认 CSV 文件路径正确";
+          if (statusEl) statusEl.textContent = "加载失败，请确认 CSV 文件路径正确";
           records = [];
           renderBody([]);
         }
@@ -1718,10 +2624,22 @@
     <div class="modal" id="sleep-info-modal" aria-hidden="true">
       <div class="modal-content">
         <button class="modal-close" id="sleep-info-close" type="button">关闭</button>
-        <div class="modal-title">睡眠时长 ≠ 起床 - 入睡</div>
-        <div class="modal-text">
-          睡眠时长来自实际睡眠片段的总和，清醒时段不会计入；入睡/起床取的是每晚最长睡眠段的开始与结束。
-          因此两者差值代表“在床时长”，如果存在夜间醒来、分段睡眠或午休，差值就会大于实际睡眠时长。
+        <div class="modal-title">睡眠建议规则</div>
+        <div class="modal-text" style="font-size: 13px; line-height: 1.8;">
+          <p style="margin: 0 0 12px; font-weight: 600; color: #c4b5fd;">阈值设定：</p>
+          <ul style="margin: 0 0 16px; padding-left: 20px; color: #94a3b8;">
+            <li>睡眠时长目标：8小时 · 预警：6小时</li>
+            <li>入睡时间目标：23:00前 · 预警：00:00后</li>
+            <li>起床时间目标：07:00前 · 预警：09:00后</li>
+          </ul>
+          <p style="margin: 0 0 12px; font-weight: 600; color: #c4b5fd;">判断逻辑：</p>
+          <ul style="margin: 0; padding-left: 20px; color: #94a3b8;">
+            <li><span style="color: #22c55e;">早睡早起</span>：入睡≤23:00 且 睡眠≥7h</li>
+            <li><span style="color: #3b82f6;">睡眠充足</span>：睡眠≥7h 但入睡较晚</li>
+            <li><span style="color: #f97316;">注意作息</span>：入睡在00:00-01:00之间</li>
+            <li><span style="color: #ef4444;">严重熬夜</span>：入睡≥01:00</li>
+            <li><span style="color: #ef4444;">睡眠不足</span>：睡眠＜6h</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1749,13 +2667,76 @@
         );
 
         const GUIDE_LINES = {
+          // 睡眠相关
           sleep_hours: [
             { value: 8, label: "目标 8h", color: "#22d3ee" },
             { value: 6, label: "预警 6h", color: "#f97316" },
           ],
+          bed_time: [
+            { value: 23 * 60, label: "目标 23:00", color: "#22d3ee" },
+            { value: 24 * 60, label: "预警 00:00", color: "#f97316" },
+          ],
+          wake_time: [
+            { value: 7 * 60, label: "目标 7:00", color: "#22d3ee" },
+            { value: 9 * 60, label: "预警 9:00", color: "#f97316" },
+          ],
+          // 体重体脂
           weight_kg: [
             { value: 70, label: "目标 70kg", color: "#22d3ee" },
             { value: 80, label: "预警 80kg", color: "#f97316" },
+          ],
+          bmi: [
+            { value: 22, label: "目标 22", color: "#22d3ee" },
+            { value: 25, label: "预警 25", color: "#f97316" },
+          ],
+          body_fat_pct: [
+            { value: 15, label: "目标 15%", color: "#22d3ee" },
+            { value: 25, label: "预警 25%", color: "#f97316" },
+          ],
+          // 运动相关
+          steps: [
+            { value: 10000, label: "目标 10000步", color: "#22d3ee" },
+            { value: 5000, label: "预警 5000步", color: "#f97316" },
+          ],
+          active_energy: [
+            { value: 500, label: "目标 500kcal", color: "#22d3ee" },
+            { value: 200, label: "预警 200kcal", color: "#f97316" },
+          ],
+          exercise_time_min: [
+            { value: 30, label: "目标 30分钟", color: "#22d3ee" },
+            { value: 10, label: "预警 10分钟", color: "#f97316" },
+          ],
+          stand_hours: [
+            { value: 12, label: "目标 12小时", color: "#22d3ee" },
+            { value: 8, label: "预警 8小时", color: "#f97316" },
+          ],
+          // 心率相关
+          resting_hr_avg: [
+            { value: 60, label: "目标 60bpm", color: "#22d3ee" },
+            { value: 80, label: "预警 80bpm", color: "#f97316" },
+          ],
+          sdnn_avg: [
+            { value: 50, label: "目标 50ms", color: "#22d3ee" },
+            { value: 30, label: "预警 30ms", color: "#f97316" },
+          ],
+          // 血氧
+          spo2_avg: [
+            { value: 98, label: "目标 98%", color: "#22d3ee" },
+            { value: 95, label: "预警 95%", color: "#f97316" },
+          ],
+          // 最大摄氧量
+          vo2max_avg: [
+            { value: 45, label: "目标 45", color: "#22d3ee" },
+            { value: 35, label: "预警 35", color: "#f97316" },
+          ],
+          // 噪声
+          env_audio_avg: [
+            { value: 50, label: "目标 <50dB", color: "#22d3ee" },
+            { value: 70, label: "预警 70dB", color: "#f97316" },
+          ],
+          headphone_audio_avg: [
+            { value: 60, label: "目标 <60dB", color: "#22d3ee" },
+            { value: 80, label: "预警 80dB", color: "#f97316" },
           ],
         };
 
@@ -2290,6 +3271,60 @@
           });
         }
 
+        // 运动建议规则弹窗
+        const exerciseAdviceTrigger = document.getElementById("exercise-advice-trigger");
+        const exerciseAdvicePopup = document.getElementById("exercise-advice-popup");
+        const exerciseAdviceClose = document.getElementById("exercise-advice-close");
+        const exerciseAdviceOverlay = document.getElementById("exercise-advice-overlay");
+        if (exerciseAdviceTrigger && exerciseAdvicePopup && exerciseAdviceClose && exerciseAdviceOverlay) {
+          const openExerciseAdvice = () => {
+            exerciseAdvicePopup.style.display = "block";
+            exerciseAdviceOverlay.style.display = "block";
+          };
+          const closeExerciseAdvice = () => {
+            exerciseAdvicePopup.style.display = "none";
+            exerciseAdviceOverlay.style.display = "none";
+          };
+          exerciseAdviceTrigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openExerciseAdvice();
+          });
+          exerciseAdviceClose.addEventListener("click", closeExerciseAdvice);
+          exerciseAdviceOverlay.addEventListener("click", closeExerciseAdvice);
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && exerciseAdvicePopup.style.display === "block") {
+              closeExerciseAdvice();
+            }
+          });
+        }
+
+        // 饮食建议规则弹窗
+        const dietAdviceTrigger = document.getElementById("diet-advice-trigger");
+        const dietAdvicePopup = document.getElementById("diet-advice-popup");
+        const dietAdviceClose = document.getElementById("diet-advice-close");
+        const dietAdviceOverlay = document.getElementById("diet-advice-overlay");
+        if (dietAdviceTrigger && dietAdvicePopup && dietAdviceClose && dietAdviceOverlay) {
+          const openDietAdvice = () => {
+            dietAdvicePopup.style.display = "block";
+            dietAdviceOverlay.style.display = "block";
+          };
+          const closeDietAdvice = () => {
+            dietAdvicePopup.style.display = "none";
+            dietAdviceOverlay.style.display = "none";
+          };
+          dietAdviceTrigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openDietAdvice();
+          });
+          dietAdviceClose.addEventListener("click", closeDietAdvice);
+          dietAdviceOverlay.addEventListener("click", closeDietAdvice);
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && dietAdvicePopup.style.display === "block") {
+              closeDietAdvice();
+            }
+          });
+        }
+
         modalClose.addEventListener("click", closeModal);
         modal.addEventListener("click", (e) => {
           if (e.target === modal) closeModal();
@@ -2300,6 +3335,513 @@
           }
         });
 
+        // 仪表盘卡片点击显示趋势图 - 绑定到各个卡片容器
+        const cardContainers = ['exercise-cards', 'diet-cards', 'sleep-cards'];
+        const metricLabelMap = {
+          weight_kg: "体重",
+          sleep_hours: "睡眠时长",
+          sdnn_avg: "HRV-SDNN均值",
+          exercise_time_min: "锻炼时长",
+          bed_time: "入睡时间",
+          wake_time: "起床时间",
+        };
+        
+        cardContainers.forEach(containerId => {
+          const container = document.getElementById(containerId);
+          if (container) {
+            container.addEventListener("click", (e) => {
+              const card = e.target.closest(".viz-card[data-metric]");
+              if (!card) return;
+              const metricKey = card.dataset.metric;
+              const label = metricLabelMap[metricKey];
+              if (label) {
+                openMetric(label);
+              }
+            });
+            
+            // 悬停效果
+            container.addEventListener("mouseover", (e) => {
+              const card = e.target.closest(".viz-card[data-metric]");
+              if (card) card.style.borderColor = "#60a5fa";
+            });
+            container.addEventListener("mouseout", (e) => {
+              const card = e.target.closest(".viz-card[data-metric]");
+              if (card) card.style.borderColor = "#334155";
+            });
+          }
+        });
+
+      })();
+    </script>
+    
+    <!-- 运动日历和娱乐Tab渲染 -->
+    <script>
+      // 运动日历展开/收起
+      let calendarExpanded = false;
+      window.toggleExerciseCalendar = function() {
+        calendarExpanded = !calendarExpanded;
+        const calendar = document.getElementById("exercise-calendar-v1");
+        const toggleIcon = document.getElementById("calendar-toggle-icon");
+        const toggleBtn = document.getElementById("exercise-calendar-toggle");
+        if (calendar) {
+          calendar.style.display = calendarExpanded ? "block" : "none";
+          if (toggleBtn) {
+            toggleBtn.style.borderRadius = calendarExpanded ? "8px 8px 0 0" : "8px";
+          }
+        }
+        if (toggleIcon) {
+          toggleIcon.style.transform = calendarExpanded ? "rotate(180deg)" : "rotate(0deg)";
+        }
+      };
+      
+      // 运动详情弹窗
+      window.showExerciseDetail = function(date, minutes, energy, type) {
+        const popup = document.getElementById("exercise-detail-popup");
+        const overlay = document.getElementById("exercise-detail-overlay");
+        const dateEl = document.getElementById("exercise-detail-date");
+        const contentEl = document.getElementById("exercise-detail-content");
+        if (!popup || !overlay || !dateEl || !contentEl) return;
+        
+        const dateObj = new Date(date);
+        const dayNames = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+        dateEl.textContent = `${dateObj.getMonth() + 1}月${dateObj.getDate()}日 ${dayNames[dateObj.getDay()]}`;
+        
+        if (minutes === 0 && energy === 0) {
+          contentEl.innerHTML = '<div style="color: #64748b;">当日无运动记录</div>';
+        } else {
+          const typeIcon = type === "跑步" ? "🏃" : type === "骑行" ? "🚴" : type === "力量" ? "🏋️" : type === "游泳" ? "🏊" : "⚽";
+          contentEl.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 24px;">${typeIcon}</span>
+              <span style="font-size: 16px; font-weight: 600; color: #f8fafc;">${type || "运动"}</span>
+            </div>
+            <div>⏱️ 运动时长：<span style="color: #22c55e; font-weight: 600;">${Math.round(minutes)} 分钟</span></div>
+            <div>🔥 消耗热量：<span style="color: #fb923c; font-weight: 600;">${Math.round(energy)} kcal</span></div>
+          `;
+        }
+        
+        popup.style.display = "block";
+        overlay.style.display = "block";
+      };
+      
+      // 关闭运动详情弹窗
+      document.getElementById("exercise-detail-close")?.addEventListener("click", () => {
+        document.getElementById("exercise-detail-popup").style.display = "none";
+        document.getElementById("exercise-detail-overlay").style.display = "none";
+      });
+      document.getElementById("exercise-detail-overlay")?.addEventListener("click", () => {
+        document.getElementById("exercise-detail-popup").style.display = "none";
+        document.getElementById("exercise-detail-overlay").style.display = "none";
+      });
+      
+      (() => {
+        // 运动日历渲染 - 支持多运动类型
+        let workoutsData = {}; // 存储每天的运动类型数据
+        
+        const loadExerciseCalendar = async () => {
+          try {
+            // 加载运动数据
+            const exerciseRes = await fetch("health/data/exercise_daily.csv", { cache: "no-store" });
+            if (!exerciseRes.ok) return;
+            const exerciseText = await exerciseRes.text();
+            const exerciseRows = exerciseText.trim().split("\n").slice(1);
+            const exerciseData = {};
+            exerciseRows.forEach(row => {
+              const [date, exercise_time] = row.split(",");
+              if (date) exerciseData[date] = parseFloat(exercise_time) || 0;
+            });
+            
+            // 加载能量数据
+            let energyData = {};
+            try {
+              const energyRes = await fetch("health/data/energy_daily.csv", { cache: "no-store" });
+              if (energyRes.ok) {
+                const energyText = await energyRes.text();
+                const energyRows = energyText.trim().split("\n").slice(1);
+                energyRows.forEach(row => {
+                  const parts = row.split(",");
+                  const date = parts[0];
+                  const activeEnergy = parseFloat(parts[1]) || 0;
+                  if (date) energyData[date] = activeEnergy;
+                });
+              }
+            } catch (e) {
+              console.warn("加载能量数据失败:", e);
+            }
+            
+            // 加载运动类型数据
+            try {
+              const workoutsRes = await fetch("health/data/workouts_daily.csv", { cache: "no-store" });
+              if (workoutsRes.ok) {
+                const workoutsText = await workoutsRes.text();
+                const workoutsRows = workoutsText.trim().split("\n").slice(1);
+                workoutsRows.forEach(row => {
+                  const [date, workout_type, duration_min, energy_kcal] = row.split(",");
+                  if (date) {
+                    if (!workoutsData[date]) workoutsData[date] = [];
+                    workoutsData[date].push({
+                      type: workout_type,
+                      duration: parseFloat(duration_min) || 0,
+                      energy: parseFloat(energy_kcal) || 0
+                    });
+                  }
+                });
+                // 每天按时长排序（最长的排前面）
+                Object.keys(workoutsData).forEach(date => {
+                  workoutsData[date].sort((a, b) => b.duration - a.duration);
+                });
+              }
+            } catch (e) {
+              console.warn("加载运动类型数据失败:", e);
+            }
+            
+            // 合并数据
+            const allDates = new Set([...Object.keys(exerciseData), ...Object.keys(energyData)]);
+            const data = Array.from(allDates).map(date => ({
+              date,
+              minutes: exerciseData[date] || 0,
+              energy: energyData[date] || 0,
+              workouts: workoutsData[date] || []
+            })).sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // 渲染日历
+            renderCalendarV1(data);
+          } catch (e) {
+            console.error("加载运动日历失败:", e);
+          }
+        };
+        
+        // 根据热量消耗获取颜色（柔和的蓝紫色系，与主题更搭配）
+        const getEnergyColor = (energy) => {
+          if (energy === 0) return "#1e293b";
+          if (energy < 200) return "#475569"; // 深灰蓝
+          if (energy < 400) return "#6366f1"; // 靛蓝
+          if (energy < 600) return "#8b5cf6"; // 紫色
+          if (energy < 800) return "#a855f7"; // 亮紫
+          return "#c084fc"; // 浅紫
+        };
+        
+        // 运动类型映射到中文和图标
+        const workoutTypeMap = {
+          Running: { name: "跑步", icon: "🏃" },
+          Cycling: { name: "骑行", icon: "🚴" },
+          TraditionalStrengthTraining: { name: "力量", icon: "🏋️" },
+          Swimming: { name: "游泳", icon: "🏊" },
+          Stairs: { name: "爬楼", icon: "🪜" },
+          Walking: { name: "步行", icon: "🚶" },
+          Hiking: { name: "徒步", icon: "🥾" },
+          Yoga: { name: "瑜伽", icon: "🧘" },
+          Dance: { name: "舞蹈", icon: "💃" },
+          Elliptical: { name: "椭圆机", icon: "🔄" },
+          Rowing: { name: "划船", icon: "🚣" },
+          StairClimbing: { name: "爬楼", icon: "🪜" },
+        };
+        
+        // 获取运动图标（支持多运动）
+        const getWorkoutIcons = (workouts) => {
+          if (!workouts || workouts.length === 0) return "";
+          // 取前2个运动类型的图标
+          return workouts.slice(0, 2).map(w => {
+            const info = workoutTypeMap[w.type] || { icon: "⚽" };
+            return info.icon;
+          }).join("");
+        };
+        
+        // 获取运动类型名称
+        const getWorkoutTypeName = (type) => {
+          const info = workoutTypeMap[type];
+          return info ? info.name : type;
+        };
+        
+        const getIntensityLabel = (minutes, energy) => {
+          if (minutes === 0 && energy === 0) return "休息";
+          if (energy < 200) return "低消耗";
+          if (energy < 400) return "中消耗";
+          if (energy < 600) return "较高消耗";
+          return "高消耗";
+        };
+        
+        // 显示运动详情弹窗
+        window.showExerciseDetailV2 = function(date, minutes, energy, workoutsJson) {
+          const popup = document.getElementById("exercise-detail-popup");
+          const overlay = document.getElementById("exercise-detail-overlay");
+          const dateEl = document.getElementById("exercise-detail-date");
+          const contentEl = document.getElementById("exercise-detail-content");
+          if (!popup || !overlay || !dateEl || !contentEl) return;
+          
+          const workouts = JSON.parse(decodeURIComponent(workoutsJson));
+          const dateObj = new Date(date);
+          const weekDay = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][dateObj.getDay()];
+          dateEl.textContent = `${date} ${weekDay}`;
+          
+          let content = "";
+          if (workouts && workouts.length > 0) {
+            content = workouts.map(w => {
+              const info = workoutTypeMap[w.type] || { name: w.type, icon: "⚽" };
+              return `<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #334155;">
+                <span style="font-size: 16px;">${info.icon}</span>
+                <span style="flex: 1; color: #e2e8f0;">${info.name}</span>
+                <span style="color: #94a3b8;">${w.duration.toFixed(0)}分钟</span>
+              </div>`;
+            }).join("");
+            content += `<div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #475569; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">总计</span>
+              <span style="color: #c4b5fd; font-weight: 600;">${minutes.toFixed(0)}分钟 · ${energy.toFixed(0)}kcal</span>
+            </div>`;
+          } else if (minutes > 0) {
+            content = `<div style="color: #94a3b8;">运动时长: ${minutes.toFixed(0)}分钟</div>
+              <div style="color: #94a3b8; margin-top: 4px;">消耗能量: ${energy.toFixed(0)}kcal</div>`;
+          } else {
+            content = `<div style="color: #64748b; text-align: center; padding: 12px 0;">休息日</div>`;
+          }
+          
+          contentEl.innerHTML = content;
+          popup.style.display = "block";
+          overlay.style.display = "block";
+        };
+        
+        const renderCalendarV1 = (data) => {
+          const grid = document.getElementById("cal-v1-grid");
+          if (!grid) return;
+          
+          // 取最近28天
+          const today = new Date();
+          const days = [];
+          for (let i = 27; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split("T")[0];
+            const found = data.find(r => r.date === dateStr);
+            days.push({
+              date: dateStr,
+              minutes: found ? found.minutes : 0,
+              energy: found ? found.energy : 0,
+              workouts: found ? found.workouts : [],
+              dayOfWeek: d.getDay()
+            });
+          }
+          
+          // 获取运动类型文字（取前2个，用简称）
+          const getWorkoutText = (workouts) => {
+            if (!workouts || workouts.length === 0) return "";
+            const shortNames = {
+              Running: "跑", Cycling: "骑", TraditionalStrengthTraining: "力", Swimming: "泳",
+              Stairs: "楼", Walking: "走", Hiking: "徒", Yoga: "瑜", Dance: "舞",
+              Elliptical: "椭", Rowing: "划", StairClimbing: "楼"
+            };
+            return workouts.slice(0, 2).map(w => shortNames[w.type] || "动").join("");
+          };
+          
+          grid.innerHTML = days.map(d => {
+            const color = getEnergyColor(d.energy);
+            const text = getWorkoutText(d.workouts);
+            const textColor = d.energy > 300 ? '#fff' : '#94a3b8';
+            const workoutsJson = encodeURIComponent(JSON.stringify(d.workouts));
+            return `<div onclick="showExerciseDetailV2('${d.date}', ${d.minutes}, ${d.energy}, '${workoutsJson}')" style="aspect-ratio: 1; background: ${color}; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: ${textColor}; border: 1px solid ${d.energy > 0 ? 'rgba(139, 92, 246, 0.3)' : '#334155'}; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${text}</div>`;
+          }).join("");
+        };
+        
+        const renderCalendarV2 = (data) => {
+          const weekRing = document.getElementById("cal-v2-week-ring");
+          const weekCount = document.getElementById("cal-v2-week-count");
+          const monthRing = document.getElementById("cal-v2-month-ring");
+          const monthCount = document.getElementById("cal-v2-month-count");
+          const daysContainer = document.getElementById("cal-v2-days");
+          if (!weekRing || !monthRing || !daysContainer) return;
+          
+          const today = new Date();
+          const THRESHOLD = 30;
+          
+          // 计算本周运动天数
+          const weekDays = [];
+          for (let i = 6; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split("T")[0];
+            const found = data.find(r => r.date === dateStr);
+            weekDays.push({
+              date: dateStr,
+              minutes: found ? found.minutes : 0,
+              dayName: ["日", "一", "二", "三", "四", "五", "六"][d.getDay()]
+            });
+          }
+          const weekExDays = weekDays.filter(d => d.minutes >= THRESHOLD).length;
+          
+          // 计算本月运动天数
+          const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+          let monthExDays = 0;
+          for (const d of data) {
+            const dDate = new Date(d.date);
+            if (dDate >= monthStart && dDate <= today && d.minutes >= THRESHOLD) {
+              monthExDays++;
+            }
+          }
+          
+          // 更新环形进度
+          const weekPct = Math.min(100, (weekExDays / 4) * 100);
+          const monthPct = Math.min(100, (monthExDays / 16) * 100);
+          weekRing.setAttribute("stroke-dasharray", `${weekPct}, 100`);
+          monthRing.setAttribute("stroke-dasharray", `${monthPct}, 100`);
+          weekCount.textContent = weekExDays;
+          monthCount.textContent = monthExDays;
+          
+          // 渲染周详情
+          daysContainer.innerHTML = weekDays.map(d => {
+            const isActive = d.minutes >= THRESHOLD;
+            const bg = isActive ? "#22c55e" : "#334155";
+            const textColor = isActive ? "#fff" : "#94a3b8";
+            return `<div style="text-align: center;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: ${bg}; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+                <span style="font-size: 11px; color: ${textColor}; font-weight: 600;">${d.minutes >= THRESHOLD ? "✓" : ""}</span>
+              </div>
+              <div style="font-size: 10px; color: #64748b;">${d.dayName}</div>
+            </div>`;
+          }).join("");
+        };
+        
+        const renderCalendarV3 = (data) => {
+          const list = document.getElementById("cal-v3-list");
+          if (!list) return;
+          
+          // 取最近14天有运动的记录
+          const recent = data.filter(d => d.minutes > 0).slice(-14).reverse();
+          
+          if (!recent.length) {
+            list.innerHTML = '<div style="color: #64748b; font-size: 13px; padding: 8px;">暂无运动记录</div>';
+            return;
+          }
+          
+          list.innerHTML = recent.map((d, idx) => {
+            const intensity = getIntensityLabel(d.minutes);
+            const color = d.minutes >= 60 ? "#4ade80" : d.minutes >= 30 ? "#22c55e" : "#166534";
+            const dateObj = new Date(d.date);
+            const dateLabel = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+            const dayName = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][dateObj.getDay()];
+            return `<div style="margin-bottom: 12px; position: relative;">
+              <div style="position: absolute; left: -14px; top: 4px; width: 8px; height: 8px; background: ${color}; border-radius: 50%; box-shadow: 0 0 6px ${color};"></div>
+              <div style="font-size: 10px; color: #64748b; margin-bottom: 2px;">${dateLabel} ${dayName}</div>
+              <div style="background: rgba(34, 197, 94, 0.1); border-radius: 6px; padding: 8px 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 13px; color: #f8fafc;">${d.minutes.toFixed(0)} 分钟</span>
+                  <span style="font-size: 11px; padding: 2px 8px; background: ${color}; color: #fff; border-radius: 10px;">${intensity}</span>
+                </div>
+              </div>
+            </div>`;
+          }).join("");
+        };
+        
+        // 娱乐Tab分类标签云渲染 - 从配置文件加载分类
+        const renderEntertainmentTagCloud = async () => {
+          const tagsContainer = document.getElementById("ent-tags");
+          const videoList = document.getElementById("ent-video-list");
+          if (!tagsContainer || !videoList) return;
+          
+          // 使用全局 records
+          if (typeof records === "undefined" || !records.length) {
+            setTimeout(renderEntertainmentTagCloud, 500);
+            return;
+          }
+          
+          // 从配置文件加载分类顺序
+          let categoryOrder = ["超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
+          try {
+            const configRes = await fetch("config/bilibili_authors.json", { cache: "no-store" });
+            if (configRes.ok) {
+              const config = await configRes.json();
+              // 获取配置文件中的所有分类（排除_说明字段）
+              categoryOrder = Object.keys(config).filter(key => !key.startsWith("_"));
+            }
+          } catch (e) {
+            console.warn("加载分类配置失败，使用默认顺序:", e);
+          }
+          
+          // 统计各分类数量
+          const categoryCount = {};
+          records.forEach(r => {
+            const cat = r.category || "其他";
+            categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+          });
+          
+          // 按配置文件顺序排列，确保所有配置的分类都显示（即使数量为0）
+          const sortedCats = [];
+          categoryOrder.forEach(cat => {
+            sortedCats.push([cat, categoryCount[cat] || 0]);
+          });
+          // 添加未在配置文件中的分类
+          Object.entries(categoryCount).forEach(([cat, count]) => {
+            if (!categoryOrder.includes(cat)) {
+              sortedCats.push([cat, count]);
+            }
+          });
+          
+          // 默认选中"超优质"
+          let activeTag = sortedCats.find(([cat]) => cat === "超优质")?.[0] || sortedCats[0]?.[0] || "全部";
+          
+          const renderTags = () => {
+            tagsContainer.innerHTML = sortedCats.map(([cat, count]) => {
+              const isActive = cat === activeTag;
+              const style = isActive 
+                ? "padding: 6px 14px; background: #2563eb; border-radius: 16px; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; border: none;"
+                : "padding: 6px 14px; background: transparent; border: 1px solid #475569; border-radius: 16px; font-size: 13px; color: #94a3b8; cursor: pointer;";
+              return `<span data-cat="${cat}" style="${style}">${cat}<span style="margin-left: 4px; opacity: 0.7; font-size: 11px;">${count}</span></span>`;
+            }).join("");
+          };
+          
+          const renderVideos = () => {
+            const limit = parseInt(document.getElementById("limit-input")?.value || "1", 10);
+            const filtered = records.filter(r => (r.category || "其他") === activeTag);
+            const authorCounts = new Map();
+            const videos = [];
+            
+            filtered.forEach(r => {
+              if (!r.author || !r.title) return;
+              const used = authorCounts.get(r.author) || 0;
+              if (used >= limit) return;
+              authorCounts.set(r.author, used + 1);
+              videos.push(r);
+            });
+            
+            videos.sort((a, b) => (b._timestamp || 0) - (a._timestamp || 0));
+            
+            if (!videos.length) {
+              videoList.innerHTML = '<div style="text-align: center; padding: 20px; color: #64748b;">暂无视频</div>';
+              return;
+            }
+            
+            videoList.innerHTML = videos.slice(0, 20).map((v, idx) => {
+              const bg = idx % 2 === 0 ? "rgba(59, 130, 246, 0.08)" : "rgba(59, 130, 246, 0.03)";
+              return `<a href="${v.url || "#"}" target="_blank" rel="noopener" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: ${bg}; border-radius: 6px; text-decoration: none; transition: background 0.2s;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${v.title}</div>
+                  <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${v.author} · ${v.publish_date || ""}</div>
+                </div>
+              </a>`;
+            }).join("");
+          };
+          
+          renderTags();
+          renderVideos();
+          
+          // 点击切换标签
+          tagsContainer.addEventListener("click", (e) => {
+            const tag = e.target.closest("[data-cat]");
+            if (!tag) return;
+            activeTag = tag.dataset.cat;
+            renderTags();
+            renderVideos();
+          });
+          
+          // 监听筛选变化
+          const limitInput = document.getElementById("limit-input");
+          if (limitInput) {
+            limitInput.addEventListener("change", renderVideos);
+          }
+        };
+        
+        // 初始化
+        loadExerciseCalendar();
+        setTimeout(renderEntertainmentTagCloud, 800);
+        
       })();
     </script>
   </body>

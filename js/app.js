@@ -696,6 +696,7 @@ const statusEl = document.getElementById("status");
         limitInput.addEventListener("change", () => {
           ensureLimitValue();
           applyFilters();
+          renderEntertainmentTagCloud();
         });
       }
 
@@ -1702,5 +1703,192 @@ const statusEl = document.getElementById("status");
       renderHeader();
       renderBody([]);
       initHealthMetricTable();
-      loadHealthHighlight();
-      loadCSV();
+loadHealthHighlight();
+loadCSV();
+
+// --- UI helpers for modals, tips, and entertainment tab ---
+const bindInfoPopup = (triggerId, popupId, closeId, overlayId) => {
+  const trigger = document.getElementById(triggerId);
+  const popup = document.getElementById(popupId);
+  const close = document.getElementById(closeId);
+  const overlay = document.getElementById(overlayId);
+  if (!trigger || !popup || !close || !overlay) return;
+
+  const open = () => {
+    popup.style.display = "block";
+    overlay.style.display = "block";
+    document.body.classList.add("modal-open");
+  };
+  const closeFn = () => {
+    popup.style.display = "none";
+    overlay.style.display = "none";
+    document.body.classList.remove("modal-open");
+  };
+
+  trigger.addEventListener("click", open);
+  close.addEventListener("click", closeFn);
+  overlay.addEventListener("click", closeFn);
+};
+
+bindInfoPopup("exercise-advice-trigger", "exercise-advice-popup", "exercise-advice-close", "exercise-advice-overlay");
+bindInfoPopup("diet-advice-trigger", "diet-advice-popup", "diet-advice-close", "diet-advice-overlay");
+bindInfoPopup("sleep-advice-trigger", "sleep-advice-popup", "sleep-advice-close", "sleep-advice-overlay");
+
+const chartModal = {
+  modal: document.getElementById("chart-modal"),
+  title: document.getElementById("modal-title"),
+  chart: document.getElementById("modal-chart"),
+  image: document.getElementById("modal-image"),
+  close: document.getElementById("modal-close"),
+};
+
+const openChartModal = () => {
+  if (!chartModal.modal) return;
+  chartModal.modal.classList.add("modal--open");
+  document.body.classList.add("modal-open");
+};
+
+const closeChartModal = () => {
+  if (!chartModal.modal) return;
+  chartModal.modal.classList.remove("modal--open");
+  document.body.classList.remove("modal-open");
+};
+
+if (chartModal.close) {
+  chartModal.close.addEventListener("click", closeChartModal);
+}
+if (chartModal.modal) {
+  chartModal.modal.addEventListener("click", (event) => {
+    if (event.target === chartModal.modal) closeChartModal();
+  });
+}
+
+const renderTrendChart = async (metricLabel) => {
+  const baseDefs = typeof healthMetricDefs === "undefined" ? METRIC_DEFS : healthMetricDefs;
+  const extraDefs = typeof HIGHLIGHT_EXTRA_DEFS === "undefined" ? [] : HIGHLIGHT_EXTRA_DEFS;
+  const metricDef = [...baseDefs, ...extraDefs].find((def) => def.label === metricLabel);
+  if (!metricDef) return;
+
+  try {
+    const { text } = await fetchFromSources(metricDef.sources);
+    const series = parseMetricSeries(text, metricDef.valueKey);
+    if (!series.length) return;
+    const data = series.slice(-30).map((item) => ({
+      label: item.date.toISOString().slice(5, 10),
+      value: item.value,
+    }));
+
+    if (chartModal.title) chartModal.title.textContent = metricDef.label;
+    if (chartModal.chart) chartModal.chart.style.display = "block";
+    if (chartModal.image) chartModal.image.style.display = "none";
+    renderLineChart(chartModal.chart, data, { color: "#60a5fa" });
+    openChartModal();
+  } catch (error) {
+    console.error("Render trend chart failed:", error);
+  }
+};
+
+if (metricTableBody) {
+  metricTableBody.addEventListener("click", (event) => {
+    const cell = event.target.closest(".metric-link");
+    if (!cell) return;
+    const label = cell.dataset.metricLabel || cell.textContent;
+    if (!label) return;
+    renderTrendChart(label.trim());
+  });
+}
+
+function renderEntertainmentTagCloud() {
+  const tagsContainer = document.getElementById("ent-tags");
+  const videoList = document.getElementById("ent-video-list");
+  if (!tagsContainer || !videoList) return;
+  if (!records || !records.length) return;
+
+  let categoryOrder = ["超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
+  const config = window.KDM_CONFIG && window.KDM_CONFIG.bilibiliAuthors;
+  if (config) {
+    categoryOrder = Object.keys(config).filter((key) => !key.startsWith("_"));
+  }
+
+  const categoryCount = {};
+  records.forEach((r) => {
+    const cat = r.category || "其他";
+    categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+  });
+
+  const sortedCats = [];
+  categoryOrder.forEach((cat) => {
+    sortedCats.push([cat, categoryCount[cat] || 0]);
+  });
+  Object.entries(categoryCount).forEach(([cat, count]) => {
+    if (!categoryOrder.includes(cat)) sortedCats.push([cat, count]);
+  });
+
+  let activeTag =
+    sortedCats.find(([cat]) => cat === "超优质")?.[0] ||
+    sortedCats[0]?.[0] ||
+    "全部";
+
+  const renderTags = () => {
+    tagsContainer.innerHTML = sortedCats
+      .map(([cat, count]) => {
+        const isActive = cat === activeTag;
+        const style = isActive
+          ? "padding: 6px 14px; background: #2563eb; border-radius: 16px; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; border: none;"
+          : "padding: 6px 14px; background: transparent; border: 1px solid #475569; border-radius: 16px; font-size: 13px; color: #94a3b8; cursor: pointer;";
+        return `<span data-cat="${cat}" style="${style}">${cat}<span style="margin-left: 4px; opacity: 0.7; font-size: 11px;">${count}</span></span>`;
+      })
+      .join("");
+  };
+
+  const renderVideos = () => {
+    const limit = parseInt(document.getElementById("limit-input")?.value || "1", 10);
+    const filtered = records.filter((r) => (r.category || "其他") === activeTag);
+    const authorCounts = new Map();
+    const videos = [];
+
+    filtered.forEach((r) => {
+      if (!r.author || !r.title) return;
+      const used = authorCounts.get(r.author) || 0;
+      if (used >= limit) return;
+      authorCounts.set(r.author, used + 1);
+      videos.push(r);
+    });
+
+    videos.sort((a, b) => (b._timestamp || 0) - (a._timestamp || 0));
+
+    if (!videos.length) {
+      videoList.innerHTML = '<div style="text-align: center; padding: 20px; color: #64748b;">暂无视频</div>';
+      return;
+    }
+
+    videoList.innerHTML = videos
+      .slice(0, 20)
+      .map((v, idx) => {
+        const bg = idx % 2 === 0 ? "rgba(59, 130, 246, 0.08)" : "rgba(59, 130, 246, 0.03)";
+        return `<a href="${v.url || "#"}" target="_blank" rel="noopener" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: ${bg}; border-radius: 6px; text-decoration: none; transition: background 0.2s;">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 13px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${v.title}</div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${v.author} · ${v.publish_date || ""}</div>
+          </div>
+        </a>`;
+      })
+      .join("");
+  };
+
+  renderTags();
+  renderVideos();
+
+  tagsContainer.addEventListener("click", (event) => {
+    const tag = event.target.closest("[data-cat]");
+    if (!tag) return;
+    activeTag = tag.dataset.cat;
+    renderTags();
+    renderVideos();
+  });
+
+  const limitSelect = document.getElementById("limit-input");
+  if (limitSelect) {
+    limitSelect.addEventListener("change", renderVideos);
+  }
+}

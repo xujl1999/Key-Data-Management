@@ -1,0 +1,452 @@
+{
+  "CSV_SOURCES": [
+    {
+      "url": "video/video_ls.csv",
+      "label": "Local"
+    }
+  ],
+  "HEALTH_SOURCES": [
+    {
+      "url": "health/data/sleep_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WEIGHT_SOURCES": [
+    {
+      "url": "health/data/weight_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "STEPS_SOURCES": [
+    {
+      "url": "health/data/steps_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "ENERGY_SOURCES": [
+    {
+      "url": "health/data/energy_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "DIET_SOURCES": [
+    {
+      "url": "health/data/diet_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "HR_SOURCES": [
+    {
+      "url": "health/data/heart_rate_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "REST_HR_SOURCES": [
+    {
+      "url": "health/data/resting_hr_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WALK_HR_SOURCES": [
+    {
+      "url": "health/data/walking_hr_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "RESP_SOURCES": [
+    {
+      "url": "health/data/respiratory_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "VO2_SOURCES": [
+    {
+      "url": "health/data/vo2max_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WALK_METRIC_SOURCES": [
+    {
+      "url": "health/data/walking_metrics_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WALK_STEP_LEN_SOURCES": [
+    {
+      "url": "health/data/walking_step_length_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WALK_DS_SOURCES": [
+    {
+      "url": "health/data/walking_double_support_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WALK_ASYM_SOURCES": [
+    {
+      "url": "health/data/walking_asymmetry_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "WALK_STEADY_SOURCES": [
+    {
+      "url": "health/data/walking_steadiness_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "RUN_SPEED_SOURCES": [
+    {
+      "url": "health/data/running_speed_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "RUN_POWER_SOURCES": [
+    {
+      "url": "health/data/running_power_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "RUN_VERT_SOURCES": [
+    {
+      "url": "health/data/running_vertical_osc_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "RUN_GC_SOURCES": [
+    {
+      "url": "health/data/running_ground_contact_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "RUN_STRIDE_SOURCES": [
+    {
+      "url": "health/data/running_stride_length_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "STAIR_ASC_SOURCES": [
+    {
+      "url": "health/data/stair_ascent_speed_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "STAIR_DESC_SOURCES": [
+    {
+      "url": "health/data/stair_descent_speed_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "AUDIO_ENV_SOURCES": [
+    {
+      "url": "health/data/audio_exposure_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "AUDIO_HEAD_SOURCES": [
+    {
+      "url": "health/data/headphone_audio_daily.csv",
+      "label": "Local"
+    }
+  ],
+  "EXERCISE_SOURCES": [
+    {
+      "url": "health/data/exercise_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/exercise_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "DISTANCE_SOURCES": [
+    {
+      "url": "health/data/distance_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/distance_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RESTING_HR_SOURCES": [
+    {
+      "url": "health/data/resting_hr_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/resting_hr_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "BODY_SOURCES": [
+    {
+      "url": "health/data/body_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/body_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "HEART_RATE_SOURCES": [
+    {
+      "url": "health/data/heart_rate_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/heart_rate_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "HRV_SOURCES": [
+    {
+      "url": "health/data/hrv_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/hrv_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RESPIRATORY_SOURCES": [
+    {
+      "url": "health/data/respiratory_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/respiratory_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "SPO2_SOURCES": [
+    {
+      "url": "health/data/spo2_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/spo2_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "VO2MAX_SOURCES": [
+    {
+      "url": "health/data/vo2max_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/vo2max_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "FLIGHTS_SOURCES": [
+    {
+      "url": "health/data/flights_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/flights_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "DAYLIGHT_SOURCES": [
+    {
+      "url": "health/data/daylight_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/daylight_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "WALKING_HR_SOURCES": [
+    {
+      "url": "health/data/walking_hr_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_hr_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "WALKING_METRICS_SOURCES": [
+    {
+      "url": "health/data/walking_metrics_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_metrics_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "WALKING_STEP_LENGTH_SOURCES": [
+    {
+      "url": "health/data/walking_step_length_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_step_length_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "WALKING_DOUBLE_SUPPORT_SOURCES": [
+    {
+      "url": "health/data/walking_double_support_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_double_support_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "WALKING_ASYMMETRY_SOURCES": [
+    {
+      "url": "health/data/walking_asymmetry_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_asymmetry_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "WALKING_STEADINESS_SOURCES": [
+    {
+      "url": "health/data/walking_steadiness_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/walking_steadiness_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RUNNING_SPEED_SOURCES": [
+    {
+      "url": "health/data/running_speed_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_speed_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RUNNING_POWER_SOURCES": [
+    {
+      "url": "health/data/running_power_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_power_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RUNNING_STRIDE_LENGTH_SOURCES": [
+    {
+      "url": "health/data/running_stride_length_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_stride_length_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RUNNING_VERTICAL_OSC_SOURCES": [
+    {
+      "url": "health/data/running_vertical_osc_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_vertical_osc_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "RUNNING_GROUND_CONTACT_SOURCES": [
+    {
+      "url": "health/data/running_ground_contact_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/running_ground_contact_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "STAIR_ASCENT_SPEED_SOURCES": [
+    {
+      "url": "health/data/stair_ascent_speed_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/stair_ascent_speed_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "STAIR_DESCENT_SPEED_SOURCES": [
+    {
+      "url": "health/data/stair_descent_speed_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/stair_descent_speed_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "AUDIO_EXPOSURE_SOURCES": [
+    {
+      "url": "health/data/audio_exposure_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/audio_exposure_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "HEADPHONE_AUDIO_SOURCES": [
+    {
+      "url": "health/data/headphone_audio_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/headphone_audio_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "SLEEP_TEMP_SOURCES": [
+    {
+      "url": "health/data/sleep_temp_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/sleep_temp_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "SLEEP_SCHEDULE_SOURCES": [
+    {
+      "url": "health/data/sleep_schedule_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/sleep_schedule_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "DISTANCE_CYCLING_SOURCES": [
+    {
+      "url": "health/data/distance_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/distance_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
+  "HEALTH_METRIC_CONFIG_SOURCES": [
+    {
+      "url": "config/health_metrics.json",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/config/health_metrics.json",
+      "label": "GitHub Raw"
+    }
+  ]
+}

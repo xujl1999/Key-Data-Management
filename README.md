@@ -4,7 +4,10 @@
 
 ## 目录结构
 - `video/`：抓取脚本及配置，输出 `video_ls.csv`。
-- `index.html`：根目录下的前端页面，从 `video/video_ls.csv` 读取并展示数据。
+- `index.html`：根目录下的前端页面，引用 `css/` 和 `js/` 资源。
+- `css/`：前端样式（base/components/tabs）。
+- `js/`：前端脚本（config + 业务逻辑）。
+- `config/data-sources.json`：数据源配置，便于后续配置驱动改造。
 - `video_update.bat`：一键执行抓取并将整个仓库提交到远端。
 
 ## 使用步骤

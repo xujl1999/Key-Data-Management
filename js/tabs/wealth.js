@@ -1,0 +1,1 @@
+window.KDMTabs = window.KDMTabs || {};

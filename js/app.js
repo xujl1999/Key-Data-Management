@@ -271,16 +271,10 @@ const statusEl = document.getElementById("status");
         { label: "本月运动天数", valueKey: "exercise_days", unit: "天", sources: EXERCISE_SOURCES },
       ];
 
-      const healthGoals = (window.KDM_CONFIG && window.KDM_CONFIG.healthGoals) || {};
-const exerciseGoal =
-  healthGoals["运动相关"]?.exercise_time_min ||
-  healthGoals["Ã¨Â¿ÂÃ¥Å Â¨Ã§â€ºÂ¸Ã¥â€¦Â³"]?.exercise_time_min;
-const sleepGoal =
-  healthGoals["睡眠相关"]?.sleep_hours ||
-  healthGoals["Ã§ÂÂ¡Ã§Å“Â Ã§â€ºÂ¸Ã¥â€¦Â³"]?.sleep_hours;
-const hrvGoal =
-  healthGoals["心肺指标"]?.sdnn_avg ||
-  healthGoals["Ã¥Â¿Æ’Ã¨â€šÂºÃ¦Å’â€¡Ã¦Â â€¡"]?.sdnn_avg;
+            const healthGoals = (window.KDM_CONFIG && window.KDM_CONFIG.healthGoals) || {};
+      const exerciseGoal = healthGoals["运动相关"]?.exercise_time_min;
+      const sleepGoal = healthGoals["睡眠相关"]?.sleep_hours;
+      const hrvGoal = healthGoals["心肺指标"]?.sdnn_avg;
 
 const EXERCISE_DAY_THRESHOLD_MIN = Number(exerciseGoal?.target) || 30;
 const EXERCISE_WARN_SLEEP_HOURS = Number(sleepGoal?.warning) || 6;
@@ -350,12 +344,14 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
       ].forEach(([key, target]) => applySourceOverrides(key, target));
 
       const DEFAULT_HEALTH_METRIC_CATEGORY = "基础体征";
-      let healthMetricDefs = METRIC_DEFS.slice();
+      window.healthMetricDefs = window.healthMetricDefs || METRIC_DEFS.slice();
+      let healthMetricDefs = window.healthMetricDefs;
       let healthMetricCategories = ["全部"];
       let activeHealthMetricCategory = DEFAULT_HEALTH_METRIC_CATEGORY;
       let metricRows = [];
 
-      let records = [];
+      window.records = window.records || [];
+      let records = window.records;
       let activeCategory = CATEGORY_OPTIONS.includes(DEFAULT_CATEGORY) ? DEFAULT_CATEGORY : CATEGORY_OPTIONS[0];
 
       const fallbackHeader = (text, index) => {
@@ -787,6 +783,7 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
         }
         throw new Error(errors.join(" | "));
       };
+      window.fetchFromSources = fetchFromSources;
 
       const fetchJsonFromSources = async (sourceList) => {
         const { text, sourceLabel } = await fetchFromSources(sourceList);
@@ -905,6 +902,9 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
           .filter(Boolean)
           .sort((a, b) => a.date - b.date);
       };
+      window.parseMetricSeries = parseMetricSeries;
+      window.parseCSV = parseCSV;
+      window.parseDate = parseDate;
 
       const avgWindowByDate = (series, days, offsetDays = 0) => {
         if (!series.length) return null;
@@ -1066,6 +1066,7 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
           }));
         },
       };
+      window.SleepTimeUtils = SleepTimeUtils;
 
       const isDirtySleepTime = (valueKey, minutes) => {
         if (minutes === null || Number.isNaN(minutes)) return true;
@@ -1790,11 +1791,6 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
 
       window.records = records;
       window.healthMetricDefs = healthMetricDefs;
-      window.parseCSV = parseCSV;
-      window.parseDate = parseDate;
-      window.parseMetricSeries = parseMetricSeries;
-      window.fetchFromSources = fetchFromSources;
-      window.SleepTimeUtils = SleepTimeUtils;
 
 // --- UI helpers for modals, tips, and entertainment tab ---
 const bindInfoPopup = (triggerId, popupId, closeId, overlayId) => {
@@ -1824,12 +1820,47 @@ bindInfoPopup("exercise-advice-trigger", "exercise-advice-popup", "exercise-advi
 bindInfoPopup("diet-advice-trigger", "diet-advice-popup", "diet-advice-close", "diet-advice-overlay");
 bindInfoPopup("sleep-advice-trigger", "sleep-advice-popup", "sleep-advice-close", "sleep-advice-overlay");
 
+// 睡眠建议的 ? 按钮绑定
+const sleepInfoTrigger = document.getElementById("sleep-info-trigger");
+const sleepInfoModal = document.getElementById("sleep-info-modal");
+const sleepInfoClose = document.getElementById("sleep-info-close");
+if (sleepInfoTrigger && sleepInfoModal && sleepInfoClose) {
+  sleepInfoTrigger.addEventListener("click", () => {
+    sleepInfoModal.classList.add("modal--open");
+    document.body.classList.add("modal-open");
+  });
+  sleepInfoClose.addEventListener("click", () => {
+    sleepInfoModal.classList.remove("modal--open");
+    document.body.classList.remove("modal-open");
+  });
+  sleepInfoModal.addEventListener("click", (event) => {
+    if (event.target === sleepInfoModal) {
+      sleepInfoModal.classList.remove("modal--open");
+      document.body.classList.remove("modal-open");
+    }
+  });
+}
+
 const chartModal = {
   modal: document.getElementById("chart-modal"),
   title: document.getElementById("modal-title"),
   chart: document.getElementById("modal-chart"),
   image: document.getElementById("modal-image"),
   close: document.getElementById("modal-close"),
+};
+
+let currentEChart = null;
+let currentResizeHandler = null;
+
+const disposeEChart = () => {
+  if (currentResizeHandler) {
+    window.removeEventListener("resize", currentResizeHandler);
+    currentResizeHandler = null;
+  }
+  if (currentEChart) {
+    currentEChart.dispose();
+    currentEChart = null;
+  }
 };
 
 const openChartModal = () => {
@@ -1840,6 +1871,7 @@ const openChartModal = () => {
 
 const closeChartModal = () => {
   if (!chartModal.modal) return;
+  disposeEChart();
   chartModal.modal.classList.remove("modal--open");
   document.body.classList.remove("modal-open");
 };
@@ -1905,7 +1937,6 @@ const buildSeries = (def, text) => {
   return { series: finalSeries, isTime, pivot };
 };
 
-let trendChartInstance = null;
 const renderTrendChart = async (metricLabel) => {
   const baseDefs = typeof healthMetricDefs === "undefined" ? METRIC_DEFS : healthMetricDefs;
   const extraDefs = typeof HIGHLIGHT_EXTRA_DEFS === "undefined" ? [] : HIGHLIGHT_EXTRA_DEFS;
@@ -1988,11 +2019,18 @@ const renderTrendChart = async (metricLabel) => {
     chartModal.chart.style.display = "block";
     if (chartModal.image) chartModal.image.style.display = "none";
     openChartModal();
-    if (!trendChartInstance) {
-      trendChartInstance = window.echarts.init(chartModal.chart);
+    if (!currentEChart) {
+      currentEChart = window.echarts.init(chartModal.chart);
     }
-    trendChartInstance.clear();
-    trendChartInstance.setOption(option);
+    currentEChart.clear();
+    currentEChart.setOption(option);
+    if (currentResizeHandler) {
+      window.removeEventListener("resize", currentResizeHandler);
+    }
+    currentResizeHandler = () => {
+      if (currentEChart) currentEChart.resize();
+    };
+    window.addEventListener("resize", currentResizeHandler);
   } catch (error) {
     console.error("Render trend chart failed:", error);
   }
@@ -2007,6 +2045,128 @@ if (metricTableBody) {
     renderTrendChart(label.trim());
   });
 }
+
+const METRIC_KEY_TO_LABEL = {
+  exercise_time_min: "锻炼时长",
+  sleep_hours: "睡眠时长",
+  weight_kg: "体重",
+  bed_time: "入睡时间",
+  wake_time: "起床时间",
+  sdnn_avg: "HRV-SDNN均值",
+  body_fat_pct: "体脂率",
+  resting_hr_avg: "静息心率",
+  steps: "步数",
+  hr_avg: "心率均值",
+};
+
+document.querySelectorAll(".viz-card[data-metric]").forEach((card) => {
+  card.addEventListener("click", () => {
+    const metricKey = card.dataset.metric;
+    const metricLabel = METRIC_KEY_TO_LABEL[metricKey];
+    if (metricLabel) {
+      renderTrendChart(metricLabel);
+    }
+  });
+});
+
+const exerciseCalendarState = {
+  loaded: false,
+  byDate: new Map(),
+};
+let exerciseDetailBound = false;
+
+const formatDateKey = (date) => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+const showExerciseDetail = (dateKey, value) => {
+  const popup = document.getElementById("exercise-detail-popup");
+  const overlay = document.getElementById("exercise-detail-overlay");
+  const dateEl = document.getElementById("exercise-detail-date");
+  const contentEl = document.getElementById("exercise-detail-content");
+  if (!popup || !overlay || !dateEl || !contentEl) return;
+  dateEl.textContent = dateKey;
+  contentEl.textContent = value
+    ? `运动时长：${Math.round(value)} 分钟`
+    : "当天未记录运动";
+  popup.style.display = "block";
+  overlay.style.display = "block";
+  document.body.classList.add("modal-open");
+
+  if (!exerciseDetailBound) {
+    const closeBtn = document.getElementById("exercise-detail-close");
+    const close = () => {
+      popup.style.display = "none";
+      overlay.style.display = "none";
+      document.body.classList.remove("modal-open");
+    };
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+    exerciseDetailBound = true;
+  }
+};
+
+const loadExerciseCalendar = async () => {
+  const grid = document.getElementById("cal-v1-grid");
+  if (!grid) return;
+  try {
+    const { text } = await fetchFromSources(EXERCISE_SOURCES);
+    const series = parseMetricSeries(text, "exercise_time_min");
+    exerciseCalendarState.byDate = new Map();
+    series.forEach(({ date, value }) => {
+      exerciseCalendarState.byDate.set(formatDateKey(date), value);
+    });
+    const endDate = series.length ? series[series.length - 1].date : new Date();
+    const startDate = new Date(endDate);
+    startDate.setDate(startDate.getDate() - 27);
+    const days = [];
+    for (let i = 0; i < 28; i += 1) {
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + i);
+      const key = formatDateKey(d);
+      const value = exerciseCalendarState.byDate.get(key) || 0;
+      days.push({ key, value });
+    }
+    grid.innerHTML = days
+      .map(({ key, value }) => {
+        const intensity = Math.min(1, value / 60);
+        const opacity = value ? 0.2 + intensity * 0.6 : 0.08;
+        const bg = `rgba(34, 197, 94, ${opacity.toFixed(2)})`;
+        return `<button data-date="${key}" data-value="${value}" style="height: 26px; border-radius: 6px; border: 1px solid #334155; background: ${bg}; color: #f8fafc; font-size: 10px; cursor: pointer;">${key.slice(8)}</button>`;
+      })
+      .join("");
+
+    grid.querySelectorAll("[data-date]").forEach((cell) => {
+      cell.addEventListener("click", () => {
+        const key = cell.dataset.date;
+        const value = Number(cell.dataset.value || "0");
+        showExerciseDetail(key, value);
+      });
+    });
+
+    exerciseCalendarState.loaded = true;
+  } catch (error) {
+    console.error("加载运动日历失败:", error);
+    grid.innerHTML = '<div style="color: #94a3b8; font-size: 12px;">加载失败</div>';
+  }
+};
+
+const toggleExerciseCalendar = () => {
+  const panel = document.getElementById("exercise-calendar-v1");
+  const icon = document.getElementById("calendar-toggle-icon");
+  if (!panel) return;
+  const isOpen = panel.style.display !== "none";
+  panel.style.display = isOpen ? "none" : "block";
+  if (icon) icon.style.transform = isOpen ? "rotate(0deg)" : "rotate(180deg)";
+  if (!isOpen && !exerciseCalendarState.loaded) {
+    loadExerciseCalendar();
+  }
+};
+
+window.toggleExerciseCalendar = toggleExerciseCalendar;
 
 function renderEntertainmentTagCloud() {
   const tagsContainer = document.getElementById("ent-tags");

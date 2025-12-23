@@ -272,13 +272,19 @@ const statusEl = document.getElementById("status");
       ];
 
       const healthGoals = (window.KDM_CONFIG && window.KDM_CONFIG.healthGoals) || {};
-      const exerciseGoal = healthGoals["è¿åŠ¨ç›¸å…³"]?.exercise_time_min;
-      const sleepGoal = healthGoals["ç¡çœ ç›¸å…³"]?.sleep_hours;
-      const hrvGoal = healthGoals["å¿ƒè‚ºæŒ‡æ ‡"]?.sdnn_avg;
+const exerciseGoal =
+  healthGoals["运动相关"]?.exercise_time_min ||
+  healthGoals["Ã¨Â¿ÂÃ¥Å Â¨Ã§â€ºÂ¸Ã¥â€¦Â³"]?.exercise_time_min;
+const sleepGoal =
+  healthGoals["睡眠相关"]?.sleep_hours ||
+  healthGoals["Ã§ÂÂ¡Ã§Å“Â Ã§â€ºÂ¸Ã¥â€¦Â³"]?.sleep_hours;
+const hrvGoal =
+  healthGoals["心肺指标"]?.sdnn_avg ||
+  healthGoals["Ã¥Â¿Æ’Ã¨â€šÂºÃ¦Å’â€¡Ã¦Â â€¡"]?.sdnn_avg;
 
-      const EXERCISE_DAY_THRESHOLD_MIN = Number(exerciseGoal?.target) || 30;
-      const EXERCISE_WARN_SLEEP_HOURS = Number(sleepGoal?.warning) || 6;
-      const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
+const EXERCISE_DAY_THRESHOLD_MIN = Number(exerciseGoal?.target) || 30;
+const EXERCISE_WARN_SLEEP_HOURS = Number(sleepGoal?.warning) || 6;
+const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
 
       const HEALTH_METRIC_CONFIG_SOURCES = [
         { url: "config/health_metrics.json", label: "Local" },
@@ -831,6 +837,7 @@ const statusEl = document.getElementById("status");
             if (activeHealthMetricCategory === label) return;
             activeHealthMetricCategory = label;
             renderHealthCategoryChips();
+        window.healthMetricDefs = healthMetricDefs;
             applyHealthMetricFilters();
           });
           healthCategoryGroup.appendChild(chip);
@@ -873,6 +880,14 @@ const statusEl = document.getElementById("status");
       };
 
       const parseMetricSeries = (text, valueKey) => {
+        if (SleepTimeUtils.isSleepTimeKey(valueKey)) {
+          const baseSeries = SleepTimeUtils.parseSeries(text, valueKey, parseCSV, parseDate);
+          if (!baseSeries.length) return [];
+          const finalSeries = SleepTimeUtils.needsUnwrap(valueKey)
+            ? SleepTimeUtils.unwrapSeries(baseSeries, valueKey)
+            : baseSeries;
+          return finalSeries.sort((a, b) => a.date - b.date);
+        }
         const rows = parseCSV(text);
         if (!rows.length) return [];
         const headers = rows[0].map((h) => h.trim().toLowerCase());
@@ -985,6 +1000,71 @@ const statusEl = document.getElementById("status");
         }
         const num = parseFloat(cleaned);
         return Number.isNaN(num) ? null : num;
+      };
+
+      const SleepTimeUtils = {
+        isSleepTimeKey: (valueKey) => valueKey === "bed_time" || valueKey === "wake_time",
+        needsUnwrap: (valueKey) => valueKey === "bed_time",
+        parseClockToMinutes,
+        formatMinutesToClock: (minutes, short = false) => {
+          if (minutes === null || Number.isNaN(minutes)) return "";
+          const m = ((minutes % 1440) + 1440) % 1440;
+          const h = Math.floor(m / 60);
+          const mm = Math.round(m % 60);
+          return short
+            ? `${h}:${String(mm).padStart(2, "0")}`
+            : `${String(h).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+        },
+        isDirtyValue: (valueKey, minutes) => {
+          if (minutes === null || Number.isNaN(minutes)) return true;
+          if (!SleepTimeUtils.isSleepTimeKey(valueKey)) return false;
+          return minutes >= 12 * 60 && minutes < 18 * 60;
+        },
+        computeUnwrapPivot: (values) => {
+          if (!values.length) return 720;
+          const sorted = values.slice().sort((a, b) => a - b);
+          if (sorted.length === 1) return (sorted[0] + 720) % 1440;
+          let maxGap = -1;
+          let pivot = 720;
+          for (let i = 0; i < sorted.length; i += 1) {
+            const current = sorted[i];
+            const next = sorted[(i + 1) % sorted.length];
+            const gap = (next - current + 1440) % 1440;
+            if (gap > maxGap) {
+              maxGap = gap;
+              pivot = (current + gap / 2) % 1440;
+            }
+          }
+          return pivot;
+        },
+        unwrapValue: (value, pivot) => (value < pivot ? value + 1440 : value),
+        parseSeries: (csvText, valueKey, parseCSVFn, parseDateFn) => {
+          const rows = parseCSVFn(csvText);
+          if (!rows.length) return [];
+          const headers = rows[0].map((h) => h.trim().toLowerCase());
+          const idxDate = headers.indexOf("date");
+          const idxVal = headers.indexOf(valueKey.toLowerCase());
+          if (idxDate === -1 || idxVal === -1) return [];
+          return rows
+            .slice(1)
+            .map((cells) => {
+              const d = parseDateFn(cells[idxDate]);
+              const v = SleepTimeUtils.parseClockToMinutes(cells[idxVal]);
+              if (!d || v === null) return null;
+              if (SleepTimeUtils.isDirtyValue(valueKey, v)) return null;
+              return { date: d, value: v };
+            })
+            .filter(Boolean)
+            .sort((a, b) => a.date - b.date);
+        },
+        unwrapSeries: (series, valueKey) => {
+          if (!series.length || !SleepTimeUtils.needsUnwrap(valueKey)) return series;
+          const pivot = SleepTimeUtils.computeUnwrapPivot(series.map((item) => item.value));
+          return series.map((item) => ({
+            date: item.date,
+            value: SleepTimeUtils.unwrapValue(item.value, pivot),
+          }));
+        },
       };
 
       const isDirtySleepTime = (valueKey, minutes) => {
@@ -1688,7 +1768,9 @@ const statusEl = document.getElementById("status");
             return;
           }
           records = buildRecords(rows);
+          window.records = records;
           applyFilters();
+          renderEntertainmentTagCloud();
         } catch (error) {
           console.error(error);
           if (statusEl) statusEl.textContent = "加载失败，请确认 CSV 文件路径正确";
@@ -1703,8 +1785,16 @@ const statusEl = document.getElementById("status");
       renderHeader();
       renderBody([]);
       initHealthMetricTable();
-loadHealthHighlight();
-loadCSV();
+ loadHealthHighlight();
+ loadCSV();
+
+      window.records = records;
+      window.healthMetricDefs = healthMetricDefs;
+      window.parseCSV = parseCSV;
+      window.parseDate = parseDate;
+      window.parseMetricSeries = parseMetricSeries;
+      window.fetchFromSources = fetchFromSources;
+      window.SleepTimeUtils = SleepTimeUtils;
 
 // --- UI helpers for modals, tips, and entertainment tab ---
 const bindInfoPopup = (triggerId, popupId, closeId, overlayId) => {
@@ -1763,26 +1853,146 @@ if (chartModal.modal) {
   });
 }
 
+const GUIDE_LINES = {
+  sleep_hours: [
+    { value: 8, label: "目标 8h", color: "#22d3ee" },
+    { value: 6, label: "预警 6h", color: "#f97316" },
+  ],
+  bed_time: [
+    { value: 23 * 60, label: "目标 23:00", color: "#22d3ee" },
+    { value: 24 * 60, label: "预警 00:00", color: "#f97316" },
+  ],
+  wake_time: [
+    { value: 7 * 60, label: "目标 7:00", color: "#22d3ee" },
+    { value: 9 * 60, label: "预警 9:00", color: "#f97316" },
+  ],
+};
+
+const computeRollingAvg = (series, windowSize = 7) => {
+  const out = [];
+  const queue = [];
+  let sum = 0;
+  series.forEach((point) => {
+    queue.push(point.value);
+    sum += point.value;
+    if (queue.length > windowSize) {
+      sum -= queue.shift();
+    }
+    out.push({ date: point.date, value: sum / queue.length });
+  });
+  return out;
+};
+
+const buildSeries = (def, text) => {
+  const isTime = SleepTimeUtils.isSleepTimeKey(def.valueKey);
+  let baseSeries;
+  if (isTime) {
+    baseSeries = SleepTimeUtils.parseSeries(text, def.valueKey, parseCSV, parseDate);
+  } else {
+    baseSeries = parseMetricSeries(text, def.valueKey);
+  }
+  if (!baseSeries.length) return { series: [], isTime, pivot: null };
+  let finalSeries = baseSeries;
+  let pivot = null;
+  if (isTime && SleepTimeUtils.needsUnwrap(def.valueKey)) {
+    pivot = SleepTimeUtils.computeUnwrapPivot(baseSeries.map((item) => item.value));
+    finalSeries = baseSeries.map((item) => ({
+      date: item.date,
+      value: SleepTimeUtils.unwrapValue(item.value, pivot),
+    }));
+  }
+  finalSeries.sort((a, b) => a.date - b.date);
+  return { series: finalSeries, isTime, pivot };
+};
+
+let trendChartInstance = null;
 const renderTrendChart = async (metricLabel) => {
   const baseDefs = typeof healthMetricDefs === "undefined" ? METRIC_DEFS : healthMetricDefs;
   const extraDefs = typeof HIGHLIGHT_EXTRA_DEFS === "undefined" ? [] : HIGHLIGHT_EXTRA_DEFS;
   const metricDef = [...baseDefs, ...extraDefs].find((def) => def.label === metricLabel);
-  if (!metricDef) return;
+  if (!metricDef || !chartModal.chart) return;
+  if (!window.echarts) {
+    console.warn("ECharts not loaded.");
+    return;
+  }
 
   try {
     const { text } = await fetchFromSources(metricDef.sources);
-    const series = parseMetricSeries(text, metricDef.valueKey);
+    const { series, isTime, pivot } = buildSeries(metricDef, text);
     if (!series.length) return;
-    const data = series.slice(-30).map((item) => ({
-      label: item.date.toISOString().slice(5, 10),
-      value: item.value,
-    }));
+
+    const lastDate = series[series.length - 1].date;
+    const monthStart = new Date(lastDate.getTime() - 89 * 86400000);
+    const yearStart = new Date(lastDate.getTime() - 364 * 86400000);
+    const topSeries = series.filter((p) => p.date >= monthStart);
+    const bottomSeries = computeRollingAvg(series.filter((p) => p.date >= yearStart), 7);
+
+    const formatYAxis = (val) =>
+      isTime ? SleepTimeUtils.formatMinutesToClock(val, true) : val;
+    const guideLines = GUIDE_LINES[metricDef.valueKey] || [];
+    const markLineData = guideLines.map((line) => {
+      const rawValue =
+        isTime && SleepTimeUtils.needsUnwrap(metricDef.valueKey) && pivot !== null
+          ? SleepTimeUtils.unwrapValue(line.value, pivot)
+          : line.value;
+      return {
+        yAxis: rawValue,
+        lineStyle: { color: line.color, type: "dashed" },
+        label: { formatter: line.label, color: line.color },
+      };
+    });
+
+    const option = {
+      backgroundColor: "#0f172a",
+      grid: [
+        { left: 60, right: 30, top: 50, height: "35%" },
+        { left: 60, right: 30, top: "55%", height: "35%" },
+      ],
+      tooltip: {
+        trigger: "axis",
+        valueFormatter: (value) =>
+          isTime ? SleepTimeUtils.formatMinutesToClock(value) : value,
+      },
+      xAxis: [
+        { type: "time", gridIndex: 0, axisLine: { lineStyle: { color: "#334155" } } },
+        { type: "time", gridIndex: 1, axisLine: { lineStyle: { color: "#334155" } } },
+      ],
+      yAxis: [
+        { type: "value", gridIndex: 0, axisLabel: { formatter: formatYAxis } },
+        { type: "value", gridIndex: 1, axisLabel: { formatter: formatYAxis } },
+      ],
+      series: [
+        {
+          name: "近3个月分天",
+          type: "line",
+          xAxisIndex: 0,
+          yAxisIndex: 0,
+          data: topSeries.map((p) => [p.date, p.value]),
+          symbol: "circle",
+          symbolSize: 4,
+          markLine: markLineData.length ? { data: markLineData } : undefined,
+        },
+        {
+          name: "近1年7日均值",
+          type: "line",
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          data: bottomSeries.map((p) => [p.date, p.value]),
+          symbol: "none",
+          areaStyle: { opacity: 0.3 },
+        },
+      ],
+    };
 
     if (chartModal.title) chartModal.title.textContent = metricDef.label;
-    if (chartModal.chart) chartModal.chart.style.display = "block";
+    chartModal.chart.style.display = "block";
     if (chartModal.image) chartModal.image.style.display = "none";
-    renderLineChart(chartModal.chart, data, { color: "#60a5fa" });
     openChartModal();
+    if (!trendChartInstance) {
+      trendChartInstance = window.echarts.init(chartModal.chart);
+    }
+    trendChartInstance.clear();
+    trendChartInstance.setOption(option);
   } catch (error) {
     console.error("Render trend chart failed:", error);
   }

@@ -1919,6 +1919,68 @@ const computeRollingAvg = (series, windowSize = 7) => {
   return out;
 };
 
+// 计算Y轴范围（包含数据和参考线）
+const calcExtent = (series, guideLines, isTime) => {
+  if (!series.length) return { min: 0, max: 1 };
+  let minVal = Math.min(...series.map((item) => item.value));
+  let maxVal = Math.max(...series.map((item) => item.value));
+  (guideLines || []).forEach((line) => {
+    if (typeof line.value !== "number") return;
+    minVal = Math.min(minVal, line.value);
+    maxVal = Math.max(maxVal, line.value);
+  });
+  if (minVal === maxVal) {
+    minVal -= 1;
+    maxVal += 1;
+  }
+  const pad = isTime
+    ? Math.max((maxVal - minVal) * 0.1, 30)
+    : Math.max((maxVal - minVal) * 0.1, 0.2);
+  return { min: minVal - pad, max: maxVal + pad };
+};
+
+// 格式化月-日
+const formatMonthDay = (value) => {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${month}-${day}`;
+};
+
+// 格式化年-月
+const formatYearMonth = (value) => {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${date.getFullYear()}-${month}`;
+};
+
+// 格式化完整日期
+const formatFullDate = (value) => {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+};
+
+// 格式化数值（智能小数位）
+const formatChartNumber = (value) => {
+  if (value === null || value === undefined || Number.isNaN(value)) return "";
+  const abs = Math.abs(value);
+  if (abs >= 1000) return String(Math.round(value));
+  if (abs >= 10) return value.toFixed(1).replace(/\.0$/, "");
+  return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+};
+
+// 统一格式化（时间或数值）
+const formatChartValue = (value, isTime) =>
+  isTime ? window.SleepTimeUtils.formatMinutesToClock(value, true) : formatChartNumber(value);
+
+// 主色调
+const MAIN_CHART_COLOR = "#60a5fa";
+
 const buildSeries = (def, text) => {
   const isTime = window.SleepTimeUtils.isSleepTimeKey(def.valueKey);
   let baseSeries;
@@ -1967,59 +2029,170 @@ const renderTrendChart = async (metricLabel) => {
     const topSeries = series.filter((p) => p.date >= monthStart);
     const bottomSeries = computeRollingAvg(series.filter((p) => p.date >= yearStart), 7);
 
-    const formatYAxis = (val) =>
-      isTime ? window.SleepTimeUtils.formatMinutesToClock(val, true) : val;
     const guideLines = GUIDE_LINES[metricDef.valueKey] || [];
-    const markLineData = guideLines.map((line) => {
-      const rawValue =
+    const expandedGuideLines = guideLines.map((line) => ({
+      ...line,
+      value:
         isTime && window.SleepTimeUtils.needsUnwrap(metricDef.valueKey) && pivot !== null
           ? window.SleepTimeUtils.unwrapValue(line.value, pivot)
-          : line.value;
-      return {
-        yAxis: rawValue,
-        lineStyle: { color: line.color, type: "dashed" },
-        label: { formatter: line.label, color: line.color },
-      };
-    });
+          : line.value,
+    }));
+
+    const topExtent = calcExtent(topSeries, expandedGuideLines, isTime);
+    const bottomExtent = calcExtent(bottomSeries, expandedGuideLines, isTime);
+
+    const markLine = expandedGuideLines.length
+      ? {
+          symbol: "none",
+          silent: true,
+          data: expandedGuideLines.map((line) => ({
+            yAxis: line.value,
+            lineStyle: { color: line.color, type: "dashed", width: 1 },
+            label: { formatter: line.label, color: line.color, position: "end" },
+          })),
+        }
+      : null;
+
+    const topData = topSeries.map((point) => ({
+      value: [point.date.getTime(), point.value],
+    }));
+    const bottomData = bottomSeries.map((point) => ({
+      value: [point.date.getTime(), point.value],
+    }));
+
+    const rect = chartModal.chart.getBoundingClientRect();
+    const chartWidth = rect.width || 920;
+    const isCompact = chartWidth < 560;
 
     const option = {
       backgroundColor: "#0f172a",
+      textStyle: { color: "#cbd5f5" },
+      title: [
+        {
+          text: "近3个月分天指标明细",
+          left: 60,
+          top: 32,
+          textStyle: { color: "#e2e8f0", fontSize: 13, fontWeight: 600 },
+        },
+        {
+          text: "近1年核心指标趋势（滑动7日窗口平均）",
+          left: 60,
+          top: "52%",
+          textStyle: { color: "#e2e8f0", fontSize: 13, fontWeight: 600 },
+        },
+      ],
       grid: [
-        { left: 60, right: 30, top: 50, height: "35%" },
-        { left: 60, right: 30, top: "55%", height: "35%" },
+        { left: 60, right: 30, top: 60, height: "32%" },
+        { left: 60, right: 30, top: "58%", height: "32%" },
       ],
       tooltip: {
         trigger: "axis",
-        valueFormatter: (value) =>
-          isTime ? window.SleepTimeUtils.formatMinutesToClock(value) : value,
+        axisPointer: { type: "line" },
+        backgroundColor: "rgba(15,23,42,0.95)",
+        borderColor: "rgba(148,163,184,0.4)",
+        textStyle: { color: "#e2e8f0" },
+        formatter: (params) => {
+          const items = Array.isArray(params) ? params : [params];
+          if (!items.length) return "";
+          const dateLabel = formatFullDate(items[0].value[0]);
+          const lines = items.map(
+            (item) =>
+              `${item.marker}${item.seriesName}：${formatChartValue(item.value[1], isTime)}`
+          );
+          return [dateLabel, ...lines].join("<br/>");
+        },
       },
       xAxis: [
-        { type: "time", gridIndex: 0, axisLine: { lineStyle: { color: "#334155" } } },
-        { type: "time", gridIndex: 1, axisLine: { lineStyle: { color: "#334155" } } },
+        {
+          type: "time",
+          gridIndex: 0,
+          axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+          axisTick: { show: true },
+          axisLabel: {
+            color: "#cbd5f5",
+            hideOverlap: true,
+            showMinLabel: true,
+            showMaxLabel: true,
+            rotate: isCompact ? 30 : 0,
+            formatter: (value) => formatMonthDay(value),
+          },
+          splitLine: { show: false },
+        },
+        {
+          type: "time",
+          gridIndex: 1,
+          axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+          axisTick: { show: true },
+          axisLabel: {
+            color: "#cbd5f5",
+            hideOverlap: true,
+            showMinLabel: true,
+            showMaxLabel: true,
+            rotate: isCompact ? 30 : 0,
+            formatter: (value) => formatYearMonth(value),
+          },
+          splitLine: { show: false },
+        },
       ],
       yAxis: [
-        { type: "value", gridIndex: 0, axisLabel: { formatter: formatYAxis } },
-        { type: "value", gridIndex: 1, axisLabel: { formatter: formatYAxis } },
+        {
+          type: "value",
+          gridIndex: 0,
+          min: topExtent.min,
+          max: topExtent.max,
+          splitNumber: 5,
+          axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+          axisLabel: {
+            color: "#cbd5f5",
+            formatter: (value) => formatChartValue(value, isTime),
+          },
+          splitLine: { lineStyle: { color: "rgba(148,163,184,0.18)" } },
+        },
+        {
+          type: "value",
+          gridIndex: 1,
+          min: bottomExtent.min,
+          max: bottomExtent.max,
+          splitNumber: 5,
+          axisLine: { lineStyle: { color: "rgba(148,163,184,0.7)" } },
+          axisLabel: {
+            color: "#cbd5f5",
+            formatter: (value) => formatChartValue(value, isTime),
+          },
+          splitLine: { lineStyle: { color: "rgba(148,163,184,0.18)" } },
+        },
       ],
       series: [
         {
-          name: "近3个月分天",
+          name: "近3个月分天指标明细",
           type: "line",
           xAxisIndex: 0,
           yAxisIndex: 0,
-          data: topSeries.map((p) => [p.date, p.value]),
+          data: topData,
+          smooth: true,
           symbol: "circle",
-          symbolSize: 4,
-          markLine: markLineData.length ? { data: markLineData } : undefined,
+          symbolSize: isCompact ? 4 : 6,
+          lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
+          itemStyle: { color: MAIN_CHART_COLOR },
+          label: {
+            show: true,
+            color: "#e2e8f0",
+            fontSize: 10,
+            formatter: (params) => formatChartValue(params.value[1], isTime),
+          },
+          labelLayout: { hideOverlap: true },
+          markLine: markLine || undefined,
         },
         {
           name: "近1年7日均值",
           type: "line",
           xAxisIndex: 1,
           yAxisIndex: 1,
-          data: bottomSeries.map((p) => [p.date, p.value]),
+          data: bottomData,
+          smooth: true,
           symbol: "none",
-          areaStyle: { opacity: 0.3 },
+          lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
+          areaStyle: { color: MAIN_CHART_COLOR, opacity: 0.15 },
         },
       ],
     };

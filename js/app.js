@@ -264,6 +264,10 @@ const statusEl = document.getElementById("status");
         { label: "睡眠手腕温度均值", valueKey: "temp_avg", unit: "°C", sources: SLEEP_TEMP_SOURCES },
       ];
 
+
+      window.METRIC_DEFS = METRIC_DEFS;
+
+
       const HIGHLIGHT_EXTRA_DEFS = [
         { label: "入睡时间", valueKey: "bed_time", unit: "", sources: SLEEP_SCHEDULE_SOURCES },
         { label: "起床时间", valueKey: "wake_time", unit: "", sources: SLEEP_SCHEDULE_SOURCES },
@@ -1916,21 +1920,26 @@ const computeRollingAvg = (series, windowSize = 7) => {
 };
 
 const buildSeries = (def, text) => {
-  const isTime = SleepTimeUtils.isSleepTimeKey(def.valueKey);
+  const isTime = window.SleepTimeUtils.isSleepTimeKey(def.valueKey);
   let baseSeries;
   if (isTime) {
-    baseSeries = SleepTimeUtils.parseSeries(text, def.valueKey, parseCSV, parseDate);
+    baseSeries = window.SleepTimeUtils.parseSeries(
+      text,
+      def.valueKey,
+      window.parseCSV,
+      window.parseDate
+    );
   } else {
-    baseSeries = parseMetricSeries(text, def.valueKey);
+    baseSeries = window.parseMetricSeries(text, def.valueKey);
   }
   if (!baseSeries.length) return { series: [], isTime, pivot: null };
   let finalSeries = baseSeries;
   let pivot = null;
-  if (isTime && SleepTimeUtils.needsUnwrap(def.valueKey)) {
-    pivot = SleepTimeUtils.computeUnwrapPivot(baseSeries.map((item) => item.value));
+  if (isTime && window.SleepTimeUtils.needsUnwrap(def.valueKey)) {
+    pivot = window.SleepTimeUtils.computeUnwrapPivot(baseSeries.map((item) => item.value));
     finalSeries = baseSeries.map((item) => ({
       date: item.date,
-      value: SleepTimeUtils.unwrapValue(item.value, pivot),
+      value: window.SleepTimeUtils.unwrapValue(item.value, pivot),
     }));
   }
   finalSeries.sort((a, b) => a.date - b.date);
@@ -1938,7 +1947,7 @@ const buildSeries = (def, text) => {
 };
 
 const renderTrendChart = async (metricLabel) => {
-  const baseDefs = typeof healthMetricDefs === "undefined" ? METRIC_DEFS : healthMetricDefs;
+  const baseDefs = window.healthMetricDefs || window.METRIC_DEFS || [];
   const extraDefs = typeof HIGHLIGHT_EXTRA_DEFS === "undefined" ? [] : HIGHLIGHT_EXTRA_DEFS;
   const metricDef = [...baseDefs, ...extraDefs].find((def) => def.label === metricLabel);
   if (!metricDef || !chartModal.chart) return;
@@ -1948,7 +1957,7 @@ const renderTrendChart = async (metricLabel) => {
   }
 
   try {
-    const { text } = await fetchFromSources(metricDef.sources);
+    const { text } = await window.fetchFromSources(metricDef.sources);
     const { series, isTime, pivot } = buildSeries(metricDef, text);
     if (!series.length) return;
 
@@ -1959,12 +1968,12 @@ const renderTrendChart = async (metricLabel) => {
     const bottomSeries = computeRollingAvg(series.filter((p) => p.date >= yearStart), 7);
 
     const formatYAxis = (val) =>
-      isTime ? SleepTimeUtils.formatMinutesToClock(val, true) : val;
+      isTime ? window.SleepTimeUtils.formatMinutesToClock(val, true) : val;
     const guideLines = GUIDE_LINES[metricDef.valueKey] || [];
     const markLineData = guideLines.map((line) => {
       const rawValue =
-        isTime && SleepTimeUtils.needsUnwrap(metricDef.valueKey) && pivot !== null
-          ? SleepTimeUtils.unwrapValue(line.value, pivot)
+        isTime && window.SleepTimeUtils.needsUnwrap(metricDef.valueKey) && pivot !== null
+          ? window.SleepTimeUtils.unwrapValue(line.value, pivot)
           : line.value;
       return {
         yAxis: rawValue,
@@ -1982,7 +1991,7 @@ const renderTrendChart = async (metricLabel) => {
       tooltip: {
         trigger: "axis",
         valueFormatter: (value) =>
-          isTime ? SleepTimeUtils.formatMinutesToClock(value) : value,
+          isTime ? window.SleepTimeUtils.formatMinutesToClock(value) : value,
       },
       xAxis: [
         { type: "time", gridIndex: 0, axisLine: { lineStyle: { color: "#334155" } } },
@@ -2172,7 +2181,8 @@ function renderEntertainmentTagCloud() {
   const tagsContainer = document.getElementById("ent-tags");
   const videoList = document.getElementById("ent-video-list");
   if (!tagsContainer || !videoList) return;
-  if (!records || !records.length) return;
+  const records = window.records || [];
+  if (!records.length) return;
 
   let categoryOrder = ["超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
   const config = window.KDM_CONFIG && window.KDM_CONFIG.bilibiliAuthors;

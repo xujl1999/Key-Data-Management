@@ -1902,6 +1902,30 @@ const GUIDE_LINES = {
     { value: 7 * 60, label: "目标 7:00", color: "#22d3ee" },
     { value: 9 * 60, label: "预警 9:00", color: "#f97316" },
   ],
+  weight_kg: [
+    { value: 70, label: "目标 70kg", color: "#22d3ee" },
+    { value: 80, label: "预警 80kg", color: "#f97316" },
+  ],
+  body_fat_pct: [
+    { value: 15, label: "目标 15%", color: "#22d3ee" },
+    { value: 25, label: "预警 25%", color: "#f97316" },
+  ],
+  steps: [
+    { value: 10000, label: "目标 10000步", color: "#22d3ee" },
+    { value: 5000, label: "预警 5000步", color: "#f97316" },
+  ],
+  exercise_time_min: [
+    { value: 30, label: "目标 30分钟", color: "#22d3ee" },
+    { value: 10, label: "预警 10分钟", color: "#f97316" },
+  ],
+  resting_hr_avg: [
+    { value: 60, label: "目标 60bpm", color: "#22d3ee" },
+    { value: 80, label: "预警 80bpm", color: "#f97316" },
+  ],
+  sdnn_avg: [
+    { value: 50, label: "目标 50ms", color: "#22d3ee" },
+    { value: 30, label: "预警 30ms", color: "#f97316" },
+  ],
 };
 
 const computeRollingAvg = (series, windowSize = 7) => {

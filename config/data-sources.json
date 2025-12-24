@@ -159,6 +159,16 @@
       "label": "GitHub Raw"
     }
   ],
+  "WORKOUT_SOURCES": [
+    {
+      "url": "health/data/workouts_daily.csv",
+      "label": "Local"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/workouts_daily.csv",
+      "label": "GitHub Raw"
+    }
+  ],
   "DISTANCE_SOURCES": [
     {
       "url": "health/data/distance_daily.csv",

@@ -100,6 +100,10 @@ const statusEl = document.getElementById("status");
         { url: "health/data/exercise_daily.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/exercise_daily.csv", label: "GitHub Raw" },
       ];
+      const WORKOUT_SOURCES = [
+        { url: "health/data/workouts_daily.csv", label: "Local" },
+        { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/workouts_daily.csv", label: "GitHub Raw" },
+      ];
       const DISTANCE_SOURCES = [
         { url: "health/data/distance_daily.csv", label: "Local" },
         { url: "https://raw.githubusercontent.com/xujl1999/Key-Data-Management/main/health/data/distance_daily.csv", label: "GitHub Raw" },
@@ -273,6 +277,10 @@ const statusEl = document.getElementById("status");
         { label: "起床时间", valueKey: "wake_time", unit: "", sources: SLEEP_SCHEDULE_SOURCES },
         { label: "本周运动天数", valueKey: "exercise_days", unit: "天", sources: EXERCISE_SOURCES },
         { label: "本月运动天数", valueKey: "exercise_days", unit: "天", sources: EXERCISE_SOURCES },
+        { label: "热量摄入", valueKey: "dietary_kcal", unit: "kcal", sources: DIET_SOURCES },
+        { label: "蛋白质", valueKey: "dietary_protein_g", unit: "g", sources: DIET_SOURCES },
+        { label: "脂肪", valueKey: "dietary_fat_g", unit: "g", sources: DIET_SOURCES },
+        { label: "碳水", valueKey: "dietary_carb_g", unit: "g", sources: DIET_SOURCES },
       ];
 
             const healthGoals = (window.KDM_CONFIG && window.KDM_CONFIG.healthGoals) || {};
@@ -316,6 +324,7 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
         ["AUDIO_ENV_SOURCES", AUDIO_ENV_SOURCES],
         ["AUDIO_HEAD_SOURCES", AUDIO_HEAD_SOURCES],
         ["EXERCISE_SOURCES", EXERCISE_SOURCES],
+        ["WORKOUT_SOURCES", WORKOUT_SOURCES],
         ["DISTANCE_SOURCES", DISTANCE_SOURCES],
         ["RESTING_HR_SOURCES", RESTING_HR_SOURCES],
         ["BODY_SOURCES", BODY_SOURCES],
@@ -1795,6 +1804,7 @@ const EXERCISE_WARN_HRV = Number(hrvGoal?.warning) || 30;
 
       window.records = records;
       window.healthMetricDefs = healthMetricDefs;
+      window.WORKOUT_SOURCES = WORKOUT_SOURCES;
 
 // --- UI helpers for modals, tips, and entertainment tab ---
 const bindInfoPopup = (triggerId, popupId, closeId, overlayId) => {
@@ -1889,43 +1899,72 @@ if (chartModal.modal) {
   });
 }
 
-const GUIDE_LINES = {
-  sleep_hours: [
-    { value: 8, label: "目标 8h", color: "#22d3ee" },
-    { value: 6, label: "预警 6h", color: "#f97316" },
-  ],
-  bed_time: [
-    { value: 23 * 60, label: "目标 23:00", color: "#22d3ee" },
-    { value: 24 * 60, label: "预警 00:00", color: "#f97316" },
-  ],
-  wake_time: [
-    { value: 7 * 60, label: "目标 7:00", color: "#22d3ee" },
-    { value: 9 * 60, label: "预警 9:00", color: "#f97316" },
-  ],
-  weight_kg: [
-    { value: 70, label: "目标 70kg", color: "#22d3ee" },
-    { value: 80, label: "预警 80kg", color: "#f97316" },
-  ],
-  body_fat_pct: [
-    { value: 15, label: "目标 15%", color: "#22d3ee" },
-    { value: 25, label: "预警 25%", color: "#f97316" },
-  ],
-  steps: [
-    { value: 10000, label: "目标 10000步", color: "#22d3ee" },
-    { value: 5000, label: "预警 5000步", color: "#f97316" },
-  ],
-  exercise_time_min: [
-    { value: 30, label: "目标 30分钟", color: "#22d3ee" },
-    { value: 10, label: "预警 10分钟", color: "#f97316" },
-  ],
-  resting_hr_avg: [
-    { value: 60, label: "目标 60bpm", color: "#22d3ee" },
-    { value: 80, label: "预警 80bpm", color: "#f97316" },
-  ],
-  sdnn_avg: [
-    { value: 50, label: "目标 50ms", color: "#22d3ee" },
-    { value: 30, label: "预警 30ms", color: "#f97316" },
-  ],
+const GUIDE_LINE_COLORS = {
+  target: "#22d3ee",
+  warning: "#f97316",
+};
+
+const resolveMetricGoal = (valueKey) => {
+  const goals = window.KDM_CONFIG && window.KDM_CONFIG.healthGoals;
+  if (!goals || typeof goals !== "object") return null;
+  for (const [groupKey, group] of Object.entries(goals)) {
+    if (groupKey.startsWith("_") || !group || typeof group !== "object") continue;
+    if (group[valueKey]) return group[valueKey];
+  }
+  return null;
+};
+
+const normalizeGoalValue = (raw, valueKey) => {
+  if (raw === null || raw === undefined) return null;
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return null;
+    if (window.SleepTimeUtils && window.SleepTimeUtils.isSleepTimeKey(valueKey)) {
+      const minutes = window.SleepTimeUtils.parseClockToMinutes(trimmed);
+      return minutes === null ? null : minutes;
+    }
+    const num = parseFloat(trimmed);
+    return Number.isNaN(num) ? null : num;
+  }
+  return null;
+};
+
+const formatGoalLabel = (raw, unit, valueKey) => {
+  if (raw === null || raw === undefined) return "";
+  if (typeof raw === "string") return raw.trim();
+  if (typeof raw === "number") {
+    if (window.SleepTimeUtils && window.SleepTimeUtils.isSleepTimeKey(valueKey)) {
+      return window.SleepTimeUtils.formatMinutesToClock(raw, true);
+    }
+    return unit ? `${raw}${unit}` : String(raw);
+  }
+  return String(raw);
+};
+
+const getGuideLinesForMetric = (valueKey) => {
+  const goalDef = resolveMetricGoal(valueKey);
+  if (!goalDef) return [];
+  const lines = [];
+  const targetVal = normalizeGoalValue(goalDef.target, valueKey);
+  if (targetVal !== null) {
+    const label = formatGoalLabel(goalDef.target, goalDef.unit, valueKey);
+    lines.push({
+      value: targetVal,
+      label: label ? `目标 ${label}` : "目标",
+      color: GUIDE_LINE_COLORS.target,
+    });
+  }
+  const warningVal = normalizeGoalValue(goalDef.warning, valueKey);
+  if (warningVal !== null) {
+    const label = formatGoalLabel(goalDef.warning, goalDef.unit, valueKey);
+    lines.push({
+      value: warningVal,
+      label: label ? `预警 ${label}` : "预警",
+      color: GUIDE_LINE_COLORS.warning,
+    });
+  }
+  return lines;
 };
 
 const computeRollingAvg = (series, windowSize = 7) => {
@@ -2053,7 +2092,7 @@ const renderTrendChart = async (metricLabel) => {
     const topSeries = series.filter((p) => p.date >= monthStart);
     const bottomSeries = computeRollingAvg(series.filter((p) => p.date >= yearStart), 7);
 
-    const guideLines = GUIDE_LINES[metricDef.valueKey] || [];
+    const guideLines = getGuideLinesForMetric(metricDef.valueKey);
     const expandedGuideLines = guideLines.map((line) => ({
       ...line,
       value:
@@ -2217,6 +2256,7 @@ const renderTrendChart = async (metricLabel) => {
           symbol: "none",
           lineStyle: { color: MAIN_CHART_COLOR, width: 2 },
           areaStyle: { color: MAIN_CHART_COLOR, opacity: 0.15 },
+          markLine: markLine || undefined,
         },
       ],
     };
@@ -2263,6 +2303,10 @@ const METRIC_KEY_TO_LABEL = {
   resting_hr_avg: "静息心率",
   steps: "步数",
   hr_avg: "心率均值",
+  dietary_kcal: "热量摄入",
+  dietary_protein_g: "蛋白质",
+  dietary_fat_g: "脂肪",
+  dietary_carb_g: "碳水",
 };
 
 document.querySelectorAll(".viz-card[data-metric]").forEach((card) => {
@@ -2274,6 +2318,21 @@ document.querySelectorAll(".viz-card[data-metric]").forEach((card) => {
     }
   });
 });
+
+const WORKOUT_TYPE_LABELS = {
+  Running: "跑步",
+  Walking: "步行",
+  Cycling: "骑行",
+  Climbing: "爬楼梯",
+  Stairs: "爬楼梯",
+  Hiking: "徒步",
+  Badminton: "羽毛球",
+  FunctionalStrengthTraining: "功能力量",
+  TraditionalStrengthTraining: "力量训练",
+  Rowing: "划船",
+};
+
+const formatWorkoutType = (rawType) => WORKOUT_TYPE_LABELS[rawType] || rawType;
 
 const exerciseCalendarState = {
   loaded: false,
@@ -2288,16 +2347,30 @@ const formatDateKey = (date) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-const showExerciseDetail = (dateKey, value) => {
+const showExerciseDetail = (dateKey, detail) => {
   const popup = document.getElementById("exercise-detail-popup");
   const overlay = document.getElementById("exercise-detail-overlay");
   const dateEl = document.getElementById("exercise-detail-date");
   const contentEl = document.getElementById("exercise-detail-content");
   if (!popup || !overlay || !dateEl || !contentEl) return;
   dateEl.textContent = dateKey;
-  contentEl.textContent = value
-    ? `运动时长：${Math.round(value)} 分钟`
-    : "当天未记录运动";
+
+  const types = detail && detail.types ? detail.types : [];
+  const energy = detail && typeof detail.energy === "number" ? detail.energy : 0;
+  const duration = detail && typeof detail.duration === "number" ? detail.duration : 0;
+  const lines = [];
+  if (types.length) {
+    lines.push(`运动类型：${types.join("、")}`);
+  }
+  if (energy > 0) {
+    lines.push(`消耗：${Math.round(energy)} kcal`);
+  } else if (duration > 0) {
+    lines.push(`时长：${Math.round(duration)} 分钟`);
+  }
+  if (!lines.length) {
+    lines.push("当天未记录运动");
+  }
+  contentEl.innerHTML = lines.map((line) => `<div>${line}</div>`).join("");
   popup.style.display = "block";
   overlay.style.display = "block";
   document.body.classList.add("modal-open");
@@ -2319,13 +2392,46 @@ const loadExerciseCalendar = async () => {
   const grid = document.getElementById("cal-v1-grid");
   if (!grid) return;
   try {
-    const { text } = await fetchFromSources(EXERCISE_SOURCES);
-    const series = parseMetricSeries(text, "exercise_time_min");
+    const workoutSources = window.WORKOUT_SOURCES || WORKOUT_SOURCES;
+    const { text } = await window.fetchFromSources(workoutSources || []);
+    const rows = window.parseCSV(text);
+    if (!rows.length) {
+      grid.innerHTML = '<div style="color: #94a3b8; font-size: 12px;">暂无数据</div>';
+      return;
+    }
+    const headers = rows[0].map((h) => h.trim().toLowerCase());
+    const idxDate = headers.indexOf("date");
+    const idxType = headers.indexOf("workout_type");
+    const idxEnergy = headers.indexOf("energy_kcal");
+    const idxDuration = headers.indexOf("duration_min");
+    if (idxDate === -1 || idxType === -1) {
+      grid.innerHTML = '<div style="color: #94a3b8; font-size: 12px;">数据格式不支持</div>';
+      return;
+    }
+
     exerciseCalendarState.byDate = new Map();
-    series.forEach(({ date, value }) => {
-      exerciseCalendarState.byDate.set(formatDateKey(date), value);
+    let latestTimestamp = 0;
+    rows.slice(1).forEach((cells) => {
+      const date = window.parseDate(cells[idxDate]);
+      if (!date) return;
+      const typeRaw = (cells[idxType] || "").trim();
+      if (!typeRaw) return;
+      const key = formatDateKey(date);
+      const entry = exerciseCalendarState.byDate.get(key) || {
+        energy: 0,
+        duration: 0,
+        types: new Set(),
+      };
+      const energy = idxEnergy === -1 ? null : parseFloat(cells[idxEnergy]);
+      const duration = idxDuration === -1 ? null : parseFloat(cells[idxDuration]);
+      if (energy !== null && !Number.isNaN(energy)) entry.energy += energy;
+      if (duration !== null && !Number.isNaN(duration)) entry.duration += duration;
+      entry.types.add(formatWorkoutType(typeRaw));
+      exerciseCalendarState.byDate.set(key, entry);
+      latestTimestamp = Math.max(latestTimestamp, date.getTime());
     });
-    const endDate = series.length ? series[series.length - 1].date : new Date();
+
+    const endDate = latestTimestamp ? new Date(latestTimestamp) : new Date();
     const startDate = new Date(endDate);
     startDate.setDate(startDate.getDate() - 27);
     const days = [];
@@ -2333,23 +2439,37 @@ const loadExerciseCalendar = async () => {
       const d = new Date(startDate);
       d.setDate(startDate.getDate() + i);
       const key = formatDateKey(d);
-      const value = exerciseCalendarState.byDate.get(key) || 0;
-      days.push({ key, value });
+      const entry = exerciseCalendarState.byDate.get(key);
+      const types = entry ? Array.from(entry.types) : [];
+      days.push({
+        key,
+        energy: entry ? entry.energy : 0,
+        duration: entry ? entry.duration : 0,
+        types,
+      });
     }
+
+    const maxEnergy = Math.max(...days.map((item) => item.energy), 0);
     grid.innerHTML = days
-      .map(({ key, value }) => {
-        const intensity = Math.min(1, value / 60);
-        const opacity = value ? 0.2 + intensity * 0.6 : 0.08;
+      .map(({ key, energy, duration, types }) => {
+        const intensity = maxEnergy > 0 ? Math.min(1, energy / maxEnergy) : 0;
+        const opacity = energy ? 0.2 + intensity * 0.6 : 0.08;
         const bg = `rgba(34, 197, 94, ${opacity.toFixed(2)})`;
-        return `<button data-date="${key}" data-value="${value}" style="height: 26px; border-radius: 6px; border: 1px solid #334155; background: ${bg}; color: #f8fafc; font-size: 10px; cursor: pointer;">${key.slice(8)}</button>`;
+        const label = types.length ? types.join("、") : key.slice(8);
+        const title = types.length
+          ? `${types.join("、")} · ${Math.round(energy)} kcal`
+          : key;
+        return `<button data-date="${key}" data-energy="${energy}" data-duration="${duration}" data-types="${types.join("|")}" title="${title}" style="min-height: 32px; border-radius: 6px; border: 1px solid #334155; background: ${bg}; color: #f8fafc; font-size: 9px; line-height: 1.2; cursor: pointer; white-space: normal; padding: 2px 3px;">${label}</button>`;
       })
       .join("");
 
     grid.querySelectorAll("[data-date]").forEach((cell) => {
       cell.addEventListener("click", () => {
         const key = cell.dataset.date;
-        const value = Number(cell.dataset.value || "0");
-        showExerciseDetail(key, value);
+        const energy = Number(cell.dataset.energy || "0");
+        const duration = Number(cell.dataset.duration || "0");
+        const types = (cell.dataset.types || "").split("|").filter(Boolean);
+        showExerciseDetail(key, { energy, duration, types });
       });
     });
 

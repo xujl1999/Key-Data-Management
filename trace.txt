@@ -1,0 +1,45 @@
+== Info:   Trying 127.0.0.1:8787...
+== Info: Established connection to 127.0.0.1 (127.0.0.1 port 8787) from 127.0.0.1 port 56382 
+== Info: using HTTP/1.x
+=> Send header, 219 bytes (0xdb)
+0000: POST /analyze HTTP/1.1
+0018: Host: 127.0.0.1:8787
+002e: User-Agent: curl/8.16.0
+0047: Accept: */*
+0054: X-Token:demo-token
+0068: Content-Length: 375
+007d: Content-Type: multipart/form-data; boundary=--------------------
+00bd: ----Q0G6oXBFyorJGiqaFCxWtK
+00d9: 
+=> Send data, 375 bytes (0x177)
+0000: --------------------------Q0G6oXBFyorJGiqaFCxWtK
+0032: Content-Disposition: form-data; name="file"; filename="sample.pn
+0072: g"
+0076: Content-Type: image/png
+008f: 
+0091: .PNG
+0097: ......IHDR.....................IDAT.[c..........>On.....IEND.B`.
+00d9: --------------------------Q0G6oXBFyorJGiqaFCxWtK
+010b: Content-Disposition: form-data; name="locale"
+013a: 
+013c: zh-CN
+0143: --------------------------Q0G6oXBFyorJGiqaFCxWtK--
+== Info: upload completely sent off: 375 bytes
+<= Recv header, 26 bytes (0x1a)
+0000: HTTP/1.1 502 Bad Gateway
+<= Recv header, 37 bytes (0x25)
+0000: date: Fri, 26 Dec 2025 11:29:05 GMT
+<= Recv header, 17 bytes (0x11)
+0000: server: uvicorn
+<= Recv header, 21 bytes (0x15)
+0000: content-length: 210
+<= Recv header, 32 bytes (0x20)
+0000: content-type: application/json
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 210 bytes (0xd2)
+0000: {"request_id":"61dd3ba5-b75f-45ad-b79a-75b024454208","ts":176674
+0040: 8548,"error":{"code":"UPSTREAM_ERROR","message":"Upstream error.
+0080: ","detail":"Illegal header value b'Bearer sk-43acec5efa214e26b0d
+00c0: dc45beabb4a21 '"}}
+== Info: Connection #0 to host 127.0.0.1:8787 left intact

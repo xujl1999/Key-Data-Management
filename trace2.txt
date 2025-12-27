@@ -1,0 +1,40 @@
+== Info:   Trying 127.0.0.1:8787...
+== Info: Established connection to 127.0.0.1 (127.0.0.1 port 8787) from 127.0.0.1 port 56289 
+== Info: using HTTP/1.x
+=> Send header, 219 bytes (0xdb)
+0000: POST /analyze HTTP/1.1
+0018: Host: 127.0.0.1:8787
+002e: User-Agent: curl/8.16.0
+0047: Accept: */*
+0054: X-Token:demo-token
+0068: Content-Length: 269
+007d: Content-Type: multipart/form-data; boundary=--------------------
+00bd: ----oQl7TCz7ItMSeZiFgebqI5
+00d9: 
+=> Send data, 269 bytes (0x10d)
+0000: --------------------------oQl7TCz7ItMSeZiFgebqI5
+0032: Content-Disposition: form-data; name="file"; filename="sample.pn
+0072: g"
+0076: Content-Type: image/png
+008f: 
+0091: .PNG
+0097: ......IHDR.....................IDAT.[c..........>On.....IEND.B`.
+00d9: --------------------------oQl7TCz7ItMSeZiFgebqI5--
+== Info: upload completely sent off: 269 bytes
+<= Recv header, 27 bytes (0x1b)
+0000: HTTP/1.1 401 Unauthorized
+<= Recv header, 37 bytes (0x25)
+0000: date: Fri, 26 Dec 2025 05:45:56 GMT
+<= Recv header, 17 bytes (0x11)
+0000: server: uvicorn
+<= Recv header, 21 bytes (0x15)
+0000: content-length: 155
+<= Recv header, 32 bytes (0x20)
+0000: content-type: application/json
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 155 bytes (0x9b)
+0000: {"request_id":"b09c55db-1b32-462f-8bc1-94c4471ef0cb","ts":176672
+0040: 7956,"error":{"code":"UNAUTHORIZED","message":"Missing or invali
+0080: d X-Token.","detail":null}}
+== Info: Connection #0 to host 127.0.0.1:8787 left intact

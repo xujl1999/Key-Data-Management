@@ -1,0 +1,31 @@
+INFO:     Started server process [89964]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8787 (Press CTRL+C to quit)
+INFO:     127.0.0.1:62671 - "GET /health HTTP/1.1" 200 OK
+auth_expected True 10 demo oken
+auth_header_X_Token True 10 demo oken
+auth_header_x_token True 10 demo oken
+auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'content-type', 'x-token']
+auth_received 10 demo oken
+INFO:     127.0.0.1:55013 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     120.240.178.229:0 - "GET /health HTTP/1.1" 200 OK
+auth_expected True 10 demo oken
+auth_header_X_Token True 10 demo oken
+auth_header_x_token True 10 demo oken
+auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'accept-language', 'cdn-loop', 'cf-connecting-ip', 'cf-ew-via', 'cf-ipcountry', 'cf-ray', 'cf-visitor', 'cf-warp-tag-id', 'cf-worker', 'connection', 'content-type', 'priority', 'x-forwarded-for', 'x-forwarded-proto', 'x-token']
+auth_received 10 demo oken
+INFO:     154.92.130.96:0 - "POST /analyze HTTP/1.1" 502 Bad Gateway
+INFO:     127.0.0.1:50768 - "GET /health HTTP/1.1" 200 OK
+auth_expected True 10 demo oken
+auth_header_X_Token True 10 demo oken
+auth_header_x_token True 10 demo oken
+auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'accept-language', 'cdn-loop', 'cf-connecting-ip', 'cf-ew-via', 'cf-ipcountry', 'cf-ray', 'cf-visitor', 'cf-warp-tag-id', 'cf-worker', 'connection', 'content-type', 'priority', 'x-forwarded-for', 'x-forwarded-proto', 'x-token']
+auth_received 10 demo oken
+INFO:     154.92.130.96:0 - "POST /analyze HTTP/1.1" 502 Bad Gateway
+auth_expected True 10 demo oken
+auth_header_X_Token True 10 demo oken
+auth_header_x_token True 10 demo oken
+auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'accept-language', 'cdn-loop', 'cf-connecting-ip', 'cf-ew-via', 'cf-ipcountry', 'cf-ray', 'cf-visitor', 'cf-warp-tag-id', 'cf-worker', 'connection', 'content-type', 'priority', 'x-forwarded-for', 'x-forwarded-proto', 'x-token']
+auth_received 10 demo oken
+INFO:     154.92.130.104:0 - "POST /analyze HTTP/1.1" 502 Bad Gateway

@@ -1,0 +1,54 @@
+== Info:   Trying 127.0.0.1:8787...
+== Info: Established connection to 127.0.0.1 (127.0.0.1 port 8787) from 127.0.0.1 port 49320 
+== Info: using HTTP/1.x
+=> Send header, 219 bytes (0xdb)
+0000: POST /analyze HTTP/1.1
+0018: Host: 127.0.0.1:8787
+002e: User-Agent: curl/8.16.0
+0047: Accept: */*
+0054: X-Token:demo-token
+0068: Content-Length: 269
+007d: Content-Type: multipart/form-data; boundary=--------------------
+00bd: ----kLewRywCgYlcDv4TlPvIbA
+00d9: 
+=> Send data, 269 bytes (0x10d)
+0000: --------------------------kLewRywCgYlcDv4TlPvIbA
+0032: Content-Disposition: form-data; name="file"; filename="sample.pn
+0072: g"
+0076: Content-Type: image/png
+008f: 
+0091: .PNG
+0097: ......IHDR.....................IDAT.[c..........>On.....IEND.B`.
+00d9: --------------------------kLewRywCgYlcDv4TlPvIbA--
+== Info: upload completely sent off: 269 bytes
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 37 bytes (0x25)
+0000: date: Fri, 26 Dec 2025 05:47:30 GMT
+<= Recv header, 17 bytes (0x11)
+0000: server: uvicorn
+<= Recv header, 22 bytes (0x16)
+0000: content-length: 1034
+<= Recv header, 32 bytes (0x20)
+0000: content-type: application/json
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 1034 bytes (0x40a)
+0000: {"request_id":"56df8ef0-9683-4169-96e3-6e8917773324","ts":176672
+0040: 8050,"source":{"model":"qwen-vision","method":"image_only_estima
+0080: tion","locale":"zh-CN"},"meal":{"hint":null,"detected":null,"con
+00c0: fidence":0.72},"items":[{"name_zh":"............","name_en":"sti
+0100: r-fried tomato and egg","category":"dish","quantity":1,"unit":"p
+0140: late","estimated_weight_g":280,"calories_kcal":420,"macros_g":{"
+0180: protein_g":18.0,"carbs_g":20.0,"fat_g":28.0,"fiber_g":3.0},"micr
+01c0: os":{"sodium_mg":980,"sugar_g":6.0},"confidence":0.78,"evidence"
+0200: :{"visual_cues":["tomato","scrambled egg","oil sheen"],"assumpti
+0240: ons":["home style","medium oil"]}}],"totals":{"calories_kcal":42
+0280: 0.0,"macros_g":{"protein_g":18.0,"carbs_g":20.0,"fat_g":28.0,"fi
+02c0: ber_g":3.0},"micros":{"sodium_mg":980.0,"sugar_g":6.0}},"uncerta
+0300: inty":{"overall_level":"medium","estimated_error_percent":25,"no
+0340: tes":[".........................................................
+0380: ............"]},"warnings":[".............../....../............
+03c0: .................."],"raw":{"provider":"qwen","provider_request_
+0400: id":null}}
+== Info: Connection #0 to host 127.0.0.1:8787 left intact

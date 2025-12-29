@@ -29,3 +29,15 @@ auth_header_x_token True 10 demo oken
 auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'accept-language', 'cdn-loop', 'cf-connecting-ip', 'cf-ew-via', 'cf-ipcountry', 'cf-ray', 'cf-visitor', 'cf-warp-tag-id', 'cf-worker', 'connection', 'content-type', 'priority', 'x-forwarded-for', 'x-forwarded-proto', 'x-token']
 auth_received 10 demo oken
 INFO:     154.92.130.104:0 - "POST /analyze HTTP/1.1" 502 Bad Gateway
+auth_expected True 10 demo oken
+auth_header_X_Token True 10 demo oken
+auth_header_x_token True 10 demo oken
+auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'accept-language', 'cdn-loop', 'cf-connecting-ip', 'cf-ew-via', 'cf-ipcountry', 'cf-ray', 'cf-visitor', 'cf-warp-tag-id', 'cf-worker', 'connection', 'content-type', 'priority', 'x-forwarded-for', 'x-forwarded-proto', 'x-token']
+auth_received 10 demo oken
+INFO:     183.39.16.52:0 - "POST /analyze HTTP/1.1" 502 Bad Gateway
+auth_expected True 10 demo oken
+auth_header_X_Token True 10 demo oken
+auth_header_x_token True 10 demo oken
+auth_headers_keys ['host', 'user-agent', 'content-length', 'accept', 'accept-encoding', 'accept-language', 'cdn-loop', 'cf-connecting-ip', 'cf-ew-via', 'cf-ipcountry', 'cf-ray', 'cf-visitor', 'cf-warp-tag-id', 'cf-worker', 'connection', 'content-type', 'priority', 'x-forwarded-for', 'x-forwarded-proto', 'x-token']
+auth_received 10 demo oken
+INFO:     183.39.16.52:0 - "POST /analyze HTTP/1.1" 502 Bad Gateway

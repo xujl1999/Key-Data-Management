@@ -140,3 +140,22 @@
 {"level":"info","event":0,"ip":"198.41.200.23","connIndex":0,"time":"2025-12-26T14:49:41Z","message":"Retrying connection in up to 32s"}
 {"level":"error","error":"DialContext error: dial tcp 198.41.200.23:7844: i/o timeout","connIndex":0,"time":"2025-12-26T14:50:00Z","message":"Connection terminated"}
 {"level":"info","event":0,"connection":"eb188dd2-242b-4656-af79-fb3599b689ad","connIndex":0,"location":"lax08","ip":"198.41.192.77","protocol":"http2","time":"2025-12-26T14:53:54Z","message":"Registered tunnel connection"}
+{"level":"info","connIndex":0,"time":"2025-12-27T05:30:19Z","message":"Lost connection with the edge"}
+{"level":"error","error":"Error shutting down control stream: client disconnected","time":"2025-12-27T05:30:19Z","message":"failed to serve incoming request"}
+{"level":"error","event":0,"ip":"198.41.192.77","connIndex":0,"error":"connection with edge closed","time":"2025-12-27T05:30:19Z","message":"Serve tunnel error"}
+{"level":"info","event":0,"ip":"198.41.192.77","connIndex":0,"time":"2025-12-27T05:30:19Z","message":"Retrying connection in up to 1s"}
+{"level":"error","error":"connection with edge closed","connIndex":0,"time":"2025-12-27T05:30:19Z","message":"Connection terminated"}
+{"level":"info","event":0,"connection":"79d4813e-eb36-4064-9502-da3326277940","connIndex":0,"location":"lax10","ip":"198.41.192.77","protocol":"http2","time":"2025-12-27T05:30:22Z","message":"Registered tunnel connection"}
+{"level":"info","connIndex":0,"time":"2025-12-27T05:54:59Z","message":"Lost connection with the edge"}
+{"level":"error","error":"Error shutting down control stream: client disconnected","time":"2025-12-27T05:54:59Z","message":"failed to serve incoming request"}
+{"level":"error","event":0,"ip":"198.41.192.77","connIndex":0,"error":"connection with edge closed","time":"2025-12-27T05:54:59Z","message":"Serve tunnel error"}
+{"level":"info","event":0,"ip":"198.41.192.77","connIndex":0,"time":"2025-12-27T05:54:59Z","message":"Retrying connection in up to 1s"}
+{"level":"error","error":"connection with edge closed","connIndex":0,"time":"2025-12-27T05:55:00Z","message":"Connection terminated"}
+{"level":"info","event":0,"connection":"cae58afe-0efa-4bfd-bbb3-cd63680ea52f","connIndex":0,"location":"lax10","ip":"198.41.192.77","protocol":"http2","time":"2025-12-27T05:55:17Z","message":"Registered tunnel connection"}
+{"level":"warn","time":"2025-12-27T07:44:53Z","message":"Your version 2025.8.1 is outdated. We recommend upgrading it to 2025.11.1"}
+{"level":"info","connIndex":0,"time":"2025-12-27T08:11:10Z","message":"Lost connection with the edge"}
+{"level":"error","event":0,"ip":"198.41.192.77","connIndex":0,"error":"connection with edge closed","time":"2025-12-27T08:11:10Z","message":"Serve tunnel error"}
+{"level":"info","event":0,"ip":"198.41.192.77","connIndex":0,"time":"2025-12-27T08:11:10Z","message":"Retrying connection in up to 1s"}
+{"level":"error","error":"Error shutting down control stream: context canceled","time":"2025-12-27T08:11:10Z","message":"failed to serve incoming request"}
+{"level":"error","error":"connection with edge closed","connIndex":0,"time":"2025-12-27T08:11:11Z","message":"Connection terminated"}
+{"level":"info","event":0,"connection":"78f08446-b377-41ed-aaa4-3bc615b270c2","connIndex":0,"location":"lax07","ip":"198.41.192.77","protocol":"http2","time":"2025-12-27T08:11:17Z","message":"Registered tunnel connection"}

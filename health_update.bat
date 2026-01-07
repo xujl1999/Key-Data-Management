@@ -51,7 +51,7 @@ endlocal
 goto end
 
 :onedrive_fail
-echo OneDrive update failed after %RETRIES% attempts.
-exit /b 1
+echo OneDrive update failed after %RETRIES% attempts. Proceeding with existing local file...
+goto onedrive_done
 
 :end

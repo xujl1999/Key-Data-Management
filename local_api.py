@@ -1,13 +1,13 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 import json
 from pathlib import Path
 
 HOST = "127.0.0.1"
-PORT = 8000
+PORT = 8001
 OUTPUT_DIR = Path(__file__).resolve().parent / "video"
 
 
-class Handler(BaseHTTPRequestHandler):
+class Handler(SimpleHTTPRequestHandler):
     def _send(self, code: int, body: str):
         data = body.encode("utf-8")
         self.send_response(code)
@@ -50,6 +50,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    server = HTTPServer((HOST, PORT), Handler)
+    from http.server import ThreadingHTTPServer
+    server = ThreadingHTTPServer((HOST, PORT), Handler)
     print(f"Serving on http://{HOST}:{PORT}")
     server.serve_forever()

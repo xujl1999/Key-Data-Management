@@ -1,698 +1,818 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Key-Data-Management</title>
-        <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/tabs/health.css" />
-    <link rel="stylesheet" href="css/tabs/entertainment.css" />
-    <link rel="stylesheet" href="css/tabs/wealth.css" />
-  </head>
-  <body>
-    <main>
-      <header style="margin-bottom: 16px;">
-        <h1>Key-Data-Management</h1>
-      </header>
-      <div class="tab-bar">
-        <button class="tab-button tab-button--active" data-tab="health">健康</button>
-        <button class="tab-button" data-tab="entertainment">娱乐</button>
-        <button class="tab-button" data-tab="wealth">财产</button>
-        <button class="tab-button" data-tab="ai-news">AI咨询</button>
-        <button class="tab-button" data-tab="knowledge">知识库</button>
-      </div>
-      <section class="tab-panel tab-panel--active" id="tab-health">
-        <!-- 数据更新时间和口径说明 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
-          <span style="font-size: 0.8rem; color: #64748b; background: rgba(100, 116, 139, 0.15); padding: 4px 10px; border-radius: 4px;">口径：周日均</span>
-          <span style="font-size: 0.85rem; color: #64748b;">数据更新：<span id="health-update-time">--</span></span>
-        </div>
-        
-        <!-- 运动模块 -->
-        <div class="plan-block" id="health-exercise-block" style="margin-bottom: 16px;">
-          <div id="viz1-advice" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border-left: 3px solid #22c55e;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 12px; color: #86efac; font-weight: 600;">今日运动建议</span>
-              <button class="info-badge" id="exercise-advice-trigger" type="button" aria-label="运动建议规则说明" style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
-            </div>
-            <div id="viz1-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
-          </div>
-          <!-- 运动建议规则弹窗 -->
-          <div id="exercise-advice-popup" class="info-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-weight: 600; color: #f8fafc;">运动建议规则</span>
-              <button id="exercise-advice-close" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
-            </div>
-            <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
-              <p style="margin: 0 0 8px; font-weight: 600; color: #86efac;">阈值设定：</p>
-              <ul style="margin: 0 0 12px; padding-left: 16px;">
-                <li>周运动目标：4天/周</li>
-                <li>月运动目标：16天/月</li>
-                <li>睡眠达标：≥6小时（预警线）</li>
-                <li>HRV达标：≥30ms（预警线）</li>
-              </ul>
-              <p style="margin: 0 0 8px; font-weight: 600; color: #86efac;">判断逻辑：</p>
-              <ul style="margin: 0; padding-left: 16px;">
-                <li><span style="color: #22c55e;">可休息</span>：周+月都达标</li>
-                <li><span style="color: #3b82f6;">建议运动</span>：周达标但月未达标，且身体状态OK</li>
-                <li><span style="color: #f97316;">先休息</span>：运动未达标，但睡眠不足或HRV偏低</li>
-                <li><span style="color: #ef4444;">快运动</span>：周未达标，身体状态OK</li>
-              </ul>
-            </div>
-          </div>
-          <div id="exercise-advice-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
-          
-          <!-- 运动指标卡片 -->
-          <div id="exercise-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
-            <div class="viz-card" data-metric="exercise_time_min" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">运动天数</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-exercise">--</div>
-              <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;" id="viz1-exercise-sub">本月 --天</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-exercise-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标4天</span> · <span style="color: #f97316;">预警2天</span></div>
-            </div>
-            <div class="viz-card" data-metric="sleep_hours" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep">--</div>
-              <div style="font-size: 11px; margin-top: 4px;" id="viz1-sleep-delta">--</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-sleep-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标8h</span> · <span style="color: #f97316;">预警6h</span></div>
-            </div>
-            <div class="viz-card" data-metric="weight_kg" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">体重</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-weight">--</div>
-              <div style="font-size: 11px; margin-top: 4px;" id="viz1-weight-delta">--</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-weight-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #f97316); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标70kg</span> · <span style="color: #f97316;">预警80kg</span></div>
-            </div>
-          </div>
-          
-          <!-- 运动日历 - 默认隐藏 -->
-          <div id="exercise-calendar-toggle" style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; background: rgba(34, 197, 94, 0.08); border-radius: 8px; margin-bottom: 0;" onclick="toggleExerciseCalendar()">
-            <span style="font-size: 13px; color: #86efac;">📅 最近4周运动记录</span>
-            <span id="calendar-toggle-icon" style="font-size: 12px; color: #64748b; transition: transform 0.3s;">▼</span>
-          </div>
-          <div id="exercise-calendar-v1" style="display: none; background: #1e293b; border-radius: 0 0 12px 12px; padding: 16px; border: 1px solid #334155; border-top: none;">
-            <div id="cal-v1-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;"></div>
-            <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 10px; color: #64748b;">
-              <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
-            </div>
-          </div>
-          <!-- 运动详情弹窗 -->
-          <div id="exercise-detail-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; min-width: 200px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span id="exercise-detail-date" style="font-weight: 600; color: #f8fafc;">--</span>
-              <button id="exercise-detail-close" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
-            </div>
-            <div id="exercise-detail-content" style="font-size: 13px; color: #cbd5f5; line-height: 1.8;"></div>
-          </div>
-          <div id="exercise-detail-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
-        </div>
 
-        <!-- 饮食模块 -->
-        <div class="plan-block" id="health-diet-block" style="margin-bottom: 16px;">
-          <div id="diet-advice" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(251, 146, 60, 0.15); border-radius: 8px; border-left: 3px solid #fb923c;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 12px; color: #fdba74; font-weight: 600;">饮食建议</span>
-              <button class="info-badge" id="diet-advice-trigger" type="button" style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
-            </div>
-            <div id="diet-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 6px; font-style: italic;">饮食数据暂时不全</div>
-          </div>
-          <!-- 饮食建议规则弹窗 -->
-          <div id="diet-advice-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-weight: 600; color: #f8fafc;">饮食建议规则</span>
-              <button id="diet-advice-close" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
-            </div>
-            <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
-              <p style="margin: 0 0 8px; font-weight: 600; color: #fdba74;">热量差计算：</p>
-              <ul style="margin: 0 0 12px; padding-left: 16px;">
-                <li>热量差 = 摄入热量 - 消耗热量</li>
-                <li>消耗热量 = 基础代谢 + 主动能量</li>
-                <li>减脂建议：热量差 -300~-500kcal</li>
-                <li>维持体重：热量差 ±200kcal</li>
-              </ul>
-              <p style="margin: 0 0 8px; font-weight: 600; color: #fdba74;">体重目标：</p>
-              <ul style="margin: 0; padding-left: 16px;">
-                <li><span style="color: #22d3ee;">目标70kg</span> · <span style="color: #f97316;">预警80kg</span></li>
-              </ul>
-            </div>
-          </div>
-          <div id="diet-advice-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
-          
-          <!-- 饮食指标卡片 -->
-          <div id="diet-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
-            <div class="viz-card" data-metric="dietary_kcal" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均摄入</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-kcal">--</div>
-              <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;" id="viz1-kcal-sub">--</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-kcal-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;">建议 1800-2200kcal</div>
-            </div>
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均消耗</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-burn">--</div>
-              <div style="font-size: 11px; margin-top: 4px;" id="viz1-burn-detail">基础代谢 + 主动能量</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-burn-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;">热量差: <span id="viz1-calorie-diff" style="font-weight: 600;">--</span></div>
-            </div>
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; opacity: 0.6;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">血糖</div>
-              <div style="font-size: 24px; font-weight: 700; color: #64748b;">--</div>
-              <div style="font-size: 11px; color: #64748b; margin-top: 4px;">暂未接入</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div style="height: 100%; width: 0%; background: #334155;"></div>
-              </div>
-              <div style="font-size: 10px; color: #475569; margin-top: 4px;">目标 4.0-5.5 mmol/L</div>
-            </div>
-          </div>
-          
-          <!-- 营养成分扇形图 -->
-          <div style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">营养成分占比（周均值）</div>
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <div id="nutrition-pie" style="width: 100px; height: 100px; position: relative;">
-                <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
-                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#334155" stroke-width="3"></circle>
-                  <circle id="pie-protein" cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round"></circle>
-                  <circle id="pie-fat" cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round"></circle>
-                  <circle id="pie-carb" cx="18" cy="18" r="15.9" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round"></circle>
-                </svg>
-              </div>
-              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-                <div class="viz-card" data-metric="dietary_protein_g" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 12px; color: #e2e8f0;">蛋白质</span>
-                  <span style="font-size: 12px; color: #94a3b8;" id="viz1-protein">--g</span>
-                </div>
-                <div class="viz-card" data-metric="dietary_fat_g" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 12px; color: #e2e8f0;">脂肪</span>
-                  <span style="font-size: 12px; color: #94a3b8;" id="viz1-fat">--g</span>
-                </div>
-                <div class="viz-card" data-metric="dietary_carb_g" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                  <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 12px; color: #e2e8f0;">碳水</span>
-                  <span style="font-size: 12px; color: #94a3b8;" id="viz1-carb">--g</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Key-Data-Management</title>
+  <link rel="stylesheet" href="css/base.css?v=2" />
+  <link rel="stylesheet" href="css/chart.css?v=2" />
+  <link rel="stylesheet" href="css/components.css?v=2" />
+  <link rel="stylesheet" href="css/tabs/health.css" />
+  <link rel="stylesheet" href="css/tabs/entertainment.css" />
+  <link rel="stylesheet" href="css/tabs/wealth.css" />
+</head>
 
-        <!-- 睡眠模块 -->
-        <div class="plan-block" id="health-sleep-block" style="margin-bottom: 16px;">
-          <div id="sleep-advice" style="margin-bottom: 12px; padding: 10px 14px; background: rgba(139, 92, 246, 0.15); border-radius: 8px; border-left: 3px solid #8b5cf6;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 12px; color: #c4b5fd; font-weight: 600;">睡眠建议</span>
-              <button class="info-badge" id="sleep-info-trigger" type="button" style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
-            </div>
-            <div id="sleep-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
-          </div>
-          
-          <!-- 睡眠指标卡片 -->
-          <div id="sleep-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
-            <div class="viz-card" data-metric="sleep_hours" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep2">--</div>
-              <div style="font-size: 11px; margin-top: 4px;" id="viz1-sleep2-delta">--</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-sleep2-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #8b5cf6); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标8h</span> · <span style="color: #f97316;">预警6h</span></div>
-            </div>
-            <div class="viz-card" data-metric="bed_time" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">入睡时间</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-bedtime">--</div>
-              <div style="font-size: 11px; margin-top: 4px;" id="viz1-bedtime-delta">--</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-bedtime-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #8b5cf6); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标23:00</span> · <span style="color: #f97316;">预警00:00</span></div>
-            </div>
-            <div class="viz-card" data-metric="wake_time" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">起床时间</div>
-              <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-waketime">--</div>
-              <div style="font-size: 11px; margin-top: 4px;" id="viz1-waketime-delta">--</div>
-              <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                <div id="viz1-waketime-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, #8b5cf6); transition: width 0.5s;"></div>
-              </div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标07:00</span> · <span style="color: #f97316;">预警09:00</span></div>
-            </div>
-          </div>
-          
-          <!-- 睡眠趋势图 - 垂直时间轴样式 -->
-          <div id="sleep-trend-container" style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <div style="font-size: 12px; color: #94a3b8;" id="sleep-trend-title">最近7天睡眠趋势</div>
-              <div style="display: flex; gap: 12px; font-size: 10px;">
-                <span style="color: #6366f1;">■ 深睡</span>
-                <span style="color: #60a5fa;">■ 浅睡</span>
-                <span style="color: #f97316;">■ 清醒</span>
-              </div>
-            </div>
-            <div style="display: flex; gap: 4px;">
-              <!-- 左侧时间轴 -->
-              <div style="display: flex; flex-direction: column; justify-content: space-between; padding: 0 8px 20px 0; font-size: 10px; color: #64748b; min-width: 40px; text-align: right;">
-                <span>21:00</span>
-                <span>23:00</span>
-                <span>01:00</span>
-                <span>03:00</span>
-                <span>05:00</span>
-                <span>07:00</span>
-                <span>09:00</span>
-                <span>11:00</span>
-              </div>
-              <!-- 睡眠柱状图区域 -->
-              <div id="sleep-trend-chart" style="flex: 1; display: flex; gap: 8px; position: relative; height: 200px;"></div>
-            </div>
-            <div id="sleep-trend-labels" style="display: flex; justify-content: space-around; margin-top: 8px; margin-left: 48px; font-size: 10px; color: #64748b;"></div>
-          </div>
-        </div>
-
-        <div id="health-status" class="status">正在加载健康数据...</div>
-        
-        <!-- 数据明细 -->
-        <div style="margin-top: 20px;">
-          <p style="margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #e2e8f0;">数据明细</p>
-          <div class="filters">
-            <div class="filter-field">
-              <span>指标分类</span>
-              <div class="chip-group" id="health-category-group"></div>
-            </div>
-          </div>
-        </div>
-        <div class="scroll-wrap" style="margin-top: 10px;">
-          <table>
-            <thead>
-              <tr>
-                <th>指标名</th>
-                <th>周日均</th>
-                <th>周环比</th>
-                <th>月环比</th>
-                <th>年同比</th>
-              </tr>
-            </thead>
-            <tbody id="health-metric-body">
-              <tr><td colspan="5">正在计算...</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 迭代方向 -->
-        <div class="plan-block" style="margin-top: 20px;">
-          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>待破解：例行化获取苹果健康方法</li>
-              <li>待接入：苹果健康其他指标、分部位健身频率、运动状态数据、动态血糖仪数据</li>
-              <li>每日饮食成分分析</li>
-              <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
-            </ul>
-          </div>
-        </div>
-
-      </section>
-      <section class="tab-panel" id="tab-entertainment">
-        <!-- Highlight说明 -->
-        <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 16px;">✨</span>
-            <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;">每日自动拉取优质博主的更新，避开推荐流对精力的消耗</span>
-          </div>
-        </div>
-        
-        <!-- 数据更新时间 -->
-        <p style="margin: 0 0 12px; font-size: 0.85rem; color: #64748b; text-align: right;">数据更新：<span id="update-time">--</span></p>
-        
-        <!-- 筛选和标签云 -->
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
-          <div id="ent-tags" style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;"></div>
-          <div style="display: flex; align-items: center; gap: 6px; background: #1e293b; padding: 6px 12px; border-radius: 8px; border: 1px solid #334155;">
-            <span style="font-size: 12px; color: #94a3b8;">每作者</span>
-            <select id="limit-input" style="background: transparent; border: none; color: #f8fafc; font-size: 12px; cursor: pointer;"></select>
-            <span style="font-size: 12px; color: #94a3b8;">条</span>
-          </div>
-        </div>
-        
-        <!-- 视频列表 -->
-        <div id="ent-tag-cloud" style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
-          <div id="status" class="status" style="margin: 0 0 12px; font-size: 13px;">正在加载数据...</div>
-          <div id="ent-video-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 500px; overflow-y: auto;"></div>
-        </div>
-
-        <!-- 迭代方向 -->
-        <div class="plan-block" style="margin-top: 20px;">
-          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>接入：王者荣耀自动化战绩分析，每日英雄梯度分析，强势英雄推荐</li>
-              <li>接入：原神自动化任务完成情况</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <section class="tab-panel" id="tab-knowledge">
-        <!-- 读书笔记 -->
-        <div class="plan-block" style="margin-bottom: 16px;">
-          <p class="plan-title" style="margin: 0 0 12px;">读书笔记</p>
-          
-          <div style="margin-bottom: 16px; padding: 14px; background: rgba(139, 92, 246, 0.08); border-radius: 10px; border-left: 3px solid #8b5cf6;">
-            <div style="font-size: 13px; font-weight: 600; color: #c4b5fd; margin-bottom: 8px;">《道德经》</div>
-            <blockquote style="margin: 0 0 8px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
-              "天下万物生于有，有生于无。"
-            </blockquote>
-            <p style="margin: 0; font-size: 13px; color: #cbd5f5; line-height: 1.6;">
-              这个站点的意义在于，用最少的精力获得最重要的信息，让思维恢复到"无"的状态，恢复灵感。
-            </p>
-          </div>
-
-          <div style="padding: 14px; background: rgba(59, 130, 246, 0.08); border-radius: 10px; border-left: 3px solid #3b82f6;">
-            <div style="font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 8px;">罗永浩 × Minimax 闫俊杰 访谈</div>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <div>
-                <blockquote style="margin: 0 0 6px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
-                  "合作不顺的根本上是组织不顺。"
-                </blockquote>
-                <p style="margin: 0; font-size: 13px; color: #cbd5f5;">AI Agent 的组织形式是影响效率的核心原因。</p>
-              </div>
-              <div>
-                <blockquote style="margin: 0 0 6px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
-                  "公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。"
-                </blockquote>
-                <p style="margin: 0; font-size: 13px; color: #cbd5f5; line-height: 1.6;">
-                  如果把不同的 AI 赋予"工程师"、"架构师"、"产品经理"的身份并划定职责，容易产生幻觉与遗忘。
-                  是否应该尝试赋予 AI 不同的性格画像？比如：较真的 AI、善于发现问题的 AI、善于管理的 AI、善于向人类汇报的 AI、善于总结沉淀的 AI、善于运用第一性原理拆解分析问题的 AI。
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">更多知识库功能开发中...</p>
-        
-        <!-- 迭代方向 -->
-        <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>分析中：微信读书笔记接口</li>
-              <li>待规划：大模型理解并总结笔记、播客、优质视频</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <section class="tab-panel" id="tab-wealth">
-        <!-- 资产配置总览 -->
-        <div class="plan-block" style="margin-bottom: 16px;">
-          <p class="plan-title" style="margin: 0 0 12px;">资产配置</p>
-          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px; text-align: center; padding: 16px; background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%); border-radius: 12px;">
-              <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">总资产</div>
-              <div style="font-size: 28px; font-weight: 700; color: #fff;">¥ --</div>
-              <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px;">月环比 <span style="color: #4ade80;">+--</span></div>
-            </div>
-            <div style="flex: 2; min-width: 280px;">
-              <div style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">现金存款</span>
-                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
-                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                    <div style="width: 40%; height: 100%; background: #3b82f6;"></div>
-                  </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">理财产品</span>
-                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
-                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                    <div style="width: 30%; height: 100%; background: #22c55e;"></div>
-                  </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">股票基金</span>
-                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
-                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                    <div style="width: 20%; height: 100%; background: #f59e0b;"></div>
-                  </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; background: #ec4899; border-radius: 2px;"></div>
-                  <span style="flex: 1; font-size: 13px; color: #e2e8f0;">其他</span>
-                  <span style="font-size: 13px; color: #94a3b8;">--%</span>
-                  <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-                    <div style="width: 10%; height: 100%; background: #ec4899;"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 储蓄目标 -->
-        <div class="plan-block" style="margin-bottom: 16px;">
-          <p class="plan-title" style="margin: 0 0 12px;">储蓄目标</p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-            <div style="padding: 14px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">买车目标</span>
-                <span style="font-size: 11px; color: #64748b;">¥200,000</span>
-              </div>
-              <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                <div style="width: 35%; height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 4px;"></div>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                <span style="color: #3b82f6;">已攒 ¥--</span>
-                <span style="color: #64748b;">预计 -- 个月</span>
-              </div>
-            </div>
-            <div style="padding: 14px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.3);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">买房首付</span>
-                <span style="font-size: 11px; color: #64748b;">¥1,000,000</span>
-              </div>
-              <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                <div style="width: 15%; height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); border-radius: 4px;"></div>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                <span style="color: #22c55e;">已攒 ¥--</span>
-                <span style="color: #64748b;">预计 -- 个月</span>
-              </div>
-            </div>
-            <div style="padding: 14px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">应急基金</span>
-                <span style="font-size: 11px; color: #64748b;">6个月支出</span>
-              </div>
-              <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                <div style="width: 80%; height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24); border-radius: 4px;"></div>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                <span style="color: #f59e0b;">已备 ¥--</span>
-                <span style="color: #4ade80;">接近达成</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 收支监控 -->
-        <div class="plan-block" style="margin-bottom: 16px;">
-          <p class="plan-title" style="margin: 0 0 12px;">本月收支</p>
-          <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 100px; padding: 12px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b;">收入</div>
-              <div style="font-size: 18px; font-weight: 700; color: #22c55e;">¥ --</div>
-            </div>
-            <div style="flex: 1; min-width: 100px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b;">支出</div>
-              <div style="font-size: 18px; font-weight: 700; color: #ef4444;">¥ --</div>
-            </div>
-            <div style="flex: 1; min-width: 100px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b;">结余</div>
-              <div style="font-size: 18px; font-weight: 700; color: #3b82f6;">¥ --</div>
-            </div>
-          </div>
-          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">支出分类</div>
-          <div style="display: flex; flex-direction: column; gap: 6px;">
-            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.05); border-radius: 6px;">
-              <span style="width: 20px; text-align: center;">🍜</span>
-              <span style="flex: 1; font-size: 13px; color: #e2e8f0;">餐饮</span>
-              <span style="font-size: 13px; color: #ef4444;">¥ --</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.03); border-radius: 6px;">
-              <span style="width: 20px; text-align: center;">🏠</span>
-              <span style="flex: 1; font-size: 13px; color: #e2e8f0;">房租</span>
-              <span style="font-size: 13px; color: #f87171;">¥ --</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.02); border-radius: 6px;">
-              <span style="width: 20px; text-align: center;">🚗</span>
-              <span style="flex: 1; font-size: 13px; color: #e2e8f0;">交通</span>
-              <span style="font-size: 13px; color: #fca5a5;">¥ --</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 迭代方向 -->
-        <div class="plan-block" style="margin-top: 20px;">
-          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>当前财产配置</li>
-              <li>理财产品收益监控</li>
-              <li>距离买车买房目标的达成时间估算</li>
-              <li>日消费监控</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <!-- AI咨询 TAB -->
-      <section class="tab-panel" id="tab-ai-news">
-        <div class="plan-block">
-          <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>每月汇总各大AI产品的重大突破与实用技巧</li>
-            </ul>
-          </div>
-        </div>
-        
-        <!-- 本月AI动态 -->
-        <div class="plan-block" style="margin-top: 16px;">
-          <p class="plan-title" style="margin: 0 0 12px;">本月AI产品动态</p>
-          
-          <!-- OpenAI -->
-          <div style="margin-bottom: 16px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 3px solid #10b981;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span style="font-weight: 600; color: #10b981;">OpenAI</span>
-              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">ChatGPT / GPT-4</span>
-            </div>
-            <ul class="plan-list" style="margin: 0; font-size: 13px;">
-              <li>数据待接入...</li>
-            </ul>
-          </div>
-          
-          <!-- Anthropic -->
-          <div style="margin-bottom: 16px; padding: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border-left: 3px solid #8b5cf6;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span style="font-weight: 600; color: #8b5cf6;">Anthropic</span>
-              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">Claude</span>
-            </div>
-            <ul class="plan-list" style="margin: 0; font-size: 13px;">
-              <li>数据待接入...</li>
-            </ul>
-          </div>
-          
-          <!-- Google -->
-          <div style="margin-bottom: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid #3b82f6;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span style="font-weight: 600; color: #3b82f6;">Google</span>
-              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">Gemini</span>
-            </div>
-            <ul class="plan-list" style="margin: 0; font-size: 13px;">
-              <li>数据待接入...</li>
-            </ul>
-          </div>
-          
-          <!-- 国产大模型 -->
-          <div style="margin-bottom: 16px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 3px solid #ef4444;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span style="font-weight: 600; color: #ef4444;">国产大模型</span>
-              <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">文心 / 通义 / 豆包 / Kimi</span>
-            </div>
-            <ul class="plan-list" style="margin: 0; font-size: 13px;">
-              <li>数据待接入...</li>
-            </ul>
-          </div>
-        </div>
-        
-        <!-- 实用Tips -->
-        <div class="plan-block" style="margin-top: 16px;">
-          <p class="plan-title" style="margin: 0 0 12px;">本月实用Tips</p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
-            <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
-              <div style="font-size: 12px; color: #f59e0b; margin-bottom: 6px;">Prompt技巧</div>
-              <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
-            </div>
-            <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
-              <div style="font-size: 12px; color: #06b6d4; margin-bottom: 6px;">效率工具</div>
-              <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
-            </div>
-            <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
-              <div style="font-size: 12px; color: #ec4899; margin-bottom: 6px;">创意应用</div>
-              <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
-            </div>
-          </div>
-        </div>
-        
-        <p style="margin-top: 16px; color: #64748b; font-size: 13px;">数据来源待接入，敬请期待。</p>
-
-        <!-- 迭代方向 -->
-        <div class="plan-block" style="margin-top: 20px;">
-          <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
-          <div class="plan-section">
-            <ul class="plan-list">
-              <li>接入：AI产品更新RSS订阅</li>
-              <li>接入：AI论文热点追踪</li>
-              <li>待规划：大模型自动总结本月AI领域动态</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-    </main>
-    
-    <div class="modal" id="chart-modal" aria-hidden="true">
-      <div class="modal-content">
-        <button class="modal-close" id="modal-close" type="button">关闭</button>
-        <div class="modal-title" id="modal-title"></div>
-        <div class="modal-chart" id="modal-chart"></div>
-        <img class="modal-image" id="modal-image" alt="" />
-      </div>
+<body>
+  <main>
+    <header style="margin-bottom: 16px;">
+      <h1>Key-Data-Management</h1>
+    </header>
+    <div class="tab-bar">
+      <button class="tab-button tab-button--active" data-tab="health">健康</button>
+      <button class="tab-button" data-tab="entertainment">娱乐</button>
+      <button class="tab-button" data-tab="wealth">财产</button>
+      <button class="tab-button" data-tab="ai-news">AI咨询</button>
+      <button class="tab-button" data-tab="knowledge">知识库</button>
     </div>
-    <div class="modal" id="sleep-info-modal" aria-hidden="true">
-      <div class="modal-content">
-        <button class="modal-close" id="sleep-info-close" type="button">关闭</button>
-        <div class="modal-title">睡眠建议规则</div>
-        <div class="modal-text" style="font-size: 13px; line-height: 1.8;">
-          <p style="margin: 0 0 12px; font-weight: 600; color: #c4b5fd;">阈值设定：</p>
-          <ul style="margin: 0 0 16px; padding-left: 20px; color: #94a3b8;">
-            <li>睡眠时长目标：8小时 · 预警：6小时</li>
-            <li>入睡时间目标：23:00前 · 预警：00:00后</li>
-            <li>起床时间目标：07:00前 · 预警：09:00后</li>
-          </ul>
-          <p style="margin: 0 0 12px; font-weight: 600; color: #c4b5fd;">判断逻辑：</p>
-          <ul style="margin: 0; padding-left: 20px; color: #94a3b8;">
-            <li><span style="color: #22c55e;">早睡早起</span>：入睡≤23:00 且 睡眠≥7h</li>
-            <li><span style="color: #3b82f6;">睡眠充足</span>：睡眠≥7h 但入睡较晚</li>
-            <li><span style="color: #f97316;">注意作息</span>：入睡在00:00-01:00之间</li>
-            <li><span style="color: #ef4444;">严重熬夜</span>：入睡≥01:00</li>
-            <li><span style="color: #ef4444;">睡眠不足</span>：睡眠＜6h</li>
+    <section class="tab-panel tab-panel--active" id="tab-health">
+      <!-- 数据更新时间和口径说明 -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 16px;">
+        <span
+          style="font-size: 0.8rem; color: #64748b; background: rgba(100, 116, 139, 0.15); padding: 4px 10px; border-radius: 4px;">口径：周日均</span>
+        <span style="font-size: 0.85rem; color: #64748b;">数据更新：<span id="health-update-time">--</span></span>
+      </div>
+
+      <!-- 运动模块 -->
+      <div class="plan-block" id="health-exercise-block" style="margin-bottom: 16px;">
+        <div id="viz1-advice"
+          style="margin-bottom: 12px; padding: 10px 14px; background: rgba(34, 197, 94, 0.15); border-radius: 8px; border-left: 3px solid #22c55e;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 12px; color: #86efac; font-weight: 600;">今日运动建议</span>
+            <button class="info-badge" id="exercise-advice-trigger" type="button" aria-label="运动建议规则说明"
+              style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
+          </div>
+          <div id="viz1-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
+        </div>
+        <!-- 运动建议规则弹窗 -->
+        <div id="exercise-advice-popup" class="info-popup"
+          style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 600; color: #f8fafc;">运动建议规则</span>
+            <button id="exercise-advice-close"
+              style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
+          </div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
+            <p style="margin: 0 0 8px; font-weight: 600; color: #86efac;">阈值设定：</p>
+            <ul style="margin: 0 0 12px; padding-left: 16px;">
+              <li>周运动目标：4天/周</li>
+              <li>月运动目标：16天/月</li>
+              <li>睡眠达标：≥6小时（预警线）</li>
+              <li>HRV达标：≥30ms（预警线）</li>
+            </ul>
+            <p style="margin: 0 0 8px; font-weight: 600; color: #86efac;">判断逻辑：</p>
+            <ul style="margin: 0; padding-left: 16px;">
+              <li><span style="color: #22c55e;">可休息</span>：周+月都达标</li>
+              <li><span style="color: #3b82f6;">建议运动</span>：周达标但月未达标，且身体状态OK</li>
+              <li><span style="color: #f97316;">先休息</span>：运动未达标，但睡眠不足或HRV偏低</li>
+              <li><span style="color: #ef4444;">快运动</span>：周未达标，身体状态OK</li>
+            </ul>
+          </div>
+        </div>
+        <div id="exercise-advice-overlay"
+          style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+        <!-- 运动指标卡片 -->
+        <div id="exercise-cards"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
+          <div class="viz-card" data-metric="exercise_time_min"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">运动天数</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-exercise">--</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;" id="viz1-exercise-sub">本月 --天</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-exercise-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标4天</span> ·
+              <span style="color: #f97316;">预警2天</span>
+            </div>
+          </div>
+          <div class="viz-card" data-metric="sleep_hours"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep">--</div>
+            <div style="font-size: 11px; margin-top: 4px;" id="viz1-sleep-delta">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-sleep-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标8h</span> ·
+              <span style="color: #f97316;">预警6h</span>
+            </div>
+          </div>
+          <div class="viz-card" data-metric="weight_kg"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">体重</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-weight">--</div>
+            <div style="font-size: 11px; margin-top: 4px;" id="viz1-weight-delta">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-weight-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #f97316); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标70kg</span> ·
+              <span style="color: #f97316;">预警80kg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 运动日历 - 默认隐藏 -->
+        <div id="exercise-calendar-toggle"
+          style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; background: rgba(34, 197, 94, 0.08); border-radius: 8px; margin-bottom: 0;"
+          onclick="toggleExerciseCalendar()">
+          <span style="font-size: 13px; color: #86efac;">📅 最近4周运动记录</span>
+          <span id="calendar-toggle-icon" style="font-size: 12px; color: #64748b; transition: transform 0.3s;">▼</span>
+        </div>
+        <div id="exercise-calendar-v1"
+          style="display: none; background: #1e293b; border-radius: 0 0 12px 12px; padding: 16px; border: 1px solid #334155; border-top: none;">
+          <div id="cal-v1-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;"></div>
+          <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 10px; color: #64748b;">
+            <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+          </div>
+        </div>
+        <!-- 运动详情弹窗 -->
+        <div id="exercise-detail-popup"
+          style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; min-width: 200px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span id="exercise-detail-date" style="font-weight: 600; color: #f8fafc;">--</span>
+            <button id="exercise-detail-close"
+              style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
+          </div>
+          <div id="exercise-detail-content" style="font-size: 13px; color: #cbd5f5; line-height: 1.8;"></div>
+        </div>
+        <div id="exercise-detail-overlay"
+          style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+      </div>
+
+      <!-- 饮食模块 -->
+      <div class="plan-block" id="health-diet-block" style="margin-bottom: 16px;">
+        <div id="diet-advice"
+          style="margin-bottom: 12px; padding: 10px 14px; background: rgba(251, 146, 60, 0.15); border-radius: 8px; border-left: 3px solid #fb923c;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 12px; color: #fdba74; font-weight: 600;">饮食建议</span>
+            <button class="info-badge" id="diet-advice-trigger" type="button"
+              style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
+          </div>
+          <div id="diet-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 6px; font-style: italic;">饮食数据暂时不全</div>
+        </div>
+        <!-- 饮食建议规则弹窗 -->
+        <div id="diet-advice-popup"
+          style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; border: 1px solid #475569; border-radius: 12px; padding: 16px 20px; z-index: 1000; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 600; color: #f8fafc;">饮食建议规则</span>
+            <button id="diet-advice-close"
+              style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px;">&times;</button>
+          </div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
+            <p style="margin: 0 0 8px; font-weight: 600; color: #fdba74;">热量差计算：</p>
+            <ul style="margin: 0 0 12px; padding-left: 16px;">
+              <li>热量差 = 摄入热量 - 消耗热量</li>
+              <li>消耗热量 = 基础代谢 + 主动能量</li>
+              <li>减脂建议：热量差 -300~-500kcal</li>
+              <li>维持体重：热量差 ±200kcal</li>
+            </ul>
+            <p style="margin: 0 0 8px; font-weight: 600; color: #fdba74;">体重目标：</p>
+            <ul style="margin: 0; padding-left: 16px;">
+              <li><span style="color: #22d3ee;">目标70kg</span> · <span style="color: #f97316;">预警80kg</span></li>
+            </ul>
+          </div>
+        </div>
+        <div id="diet-advice-overlay"
+          style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+        <!-- 饮食指标卡片 -->
+        <div id="diet-cards"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
+          <div class="viz-card" data-metric="dietary_kcal"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均摄入</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-kcal">--</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;" id="viz1-kcal-sub">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-kcal-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">建议 1800-2200kcal</div>
+          </div>
+          <div class="viz-card" data-metric="active_energy"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均消耗</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-burn">--</div>
+            <div style="font-size: 11px; margin-top: 4px;" id="viz1-burn-detail">基础代谢 + 主动能量</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-burn-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">热量差: <span id="viz1-calorie-diff"
+                style="font-weight: 600;">--</span></div>
+          </div>
+          <div
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; opacity: 0.6;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">血糖</div>
+            <div style="font-size: 24px; font-weight: 700; color: #64748b;">--</div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">暂未接入</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div style="height: 100%; width: 0%; background: #334155;"></div>
+            </div>
+            <div style="font-size: 10px; color: #475569; margin-top: 4px;">目标 4.0-5.5 mmol/L</div>
+          </div>
+        </div>
+
+        <!-- 营养成分扇形图 -->
+        <div style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
+          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">营养成分占比（周均值）</div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div id="nutrition-pie" style="width: 100px; height: 100px; position: relative;">
+              <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#334155" stroke-width="3"></circle>
+                <circle id="pie-protein" cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="3"
+                  stroke-dasharray="0, 100" stroke-linecap="round"></circle>
+                <circle id="pie-fat" cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3"
+                  stroke-dasharray="0, 100" stroke-linecap="round"></circle>
+                <circle id="pie-carb" cx="18" cy="18" r="15.9" fill="none" stroke="#22c55e" stroke-width="3"
+                  stroke-dasharray="0, 100" stroke-linecap="round"></circle>
+              </svg>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <div class="viz-card" data-metric="dietary_protein_g"
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 12px; color: #e2e8f0;">蛋白质</span>
+                <span style="font-size: 12px; color: #94a3b8;" id="viz1-protein">--g</span>
+              </div>
+              <div class="viz-card" data-metric="dietary_fat_g"
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 12px; color: #e2e8f0;">脂肪</span>
+                <span style="font-size: 12px; color: #94a3b8;" id="viz1-fat">--g</span>
+              </div>
+              <div class="viz-card" data-metric="dietary_carb_g"
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 12px; color: #e2e8f0;">碳水</span>
+                <span style="font-size: 12px; color: #94a3b8;" id="viz1-carb">--g</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 睡眠模块 -->
+      <div class="plan-block" id="health-sleep-block" style="margin-bottom: 16px;">
+        <div id="sleep-advice"
+          style="margin-bottom: 12px; padding: 10px 14px; background: rgba(139, 92, 246, 0.15); border-radius: 8px; border-left: 3px solid #8b5cf6;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 12px; color: #c4b5fd; font-weight: 600;">睡眠建议</span>
+            <button class="info-badge" id="sleep-info-trigger" type="button"
+              style="font-size: 10px; width: 14px; height: 14px; border-radius: 50%; background: #475569; color: #94a3b8; border: none; cursor: pointer;">?</button>
+          </div>
+          <div id="sleep-advice-text" style="font-size: 13px; color: #f8fafc; margin-top: 4px;">加载中...</div>
+        </div>
+
+        <!-- 睡眠指标卡片 -->
+        <div id="sleep-cards"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
+          <div class="viz-card" data-metric="sleep_hours"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">睡眠时长</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-sleep2">--</div>
+            <div style="font-size: 11px; margin-top: 4px;" id="viz1-sleep2-delta">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-sleep2-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #8b5cf6); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标8h</span> ·
+              <span style="color: #f97316;">预警6h</span>
+            </div>
+          </div>
+          <div class="viz-card" data-metric="bed_time"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">入睡时间</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-bedtime">--</div>
+            <div style="font-size: 11px; margin-top: 4px;" id="viz1-bedtime-delta">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-bedtime-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #8b5cf6); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标23:00</span>
+              · <span style="color: #f97316;">预警00:00</span></div>
+          </div>
+          <div class="viz-card" data-metric="wake_time"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">起床时间</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-waketime">--</div>
+            <div style="font-size: 11px; margin-top: 4px;" id="viz1-waketime-delta">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-waketime-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, #8b5cf6); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;"><span style="color: #22d3ee;">目标07:00</span>
+              · <span style="color: #f97316;">预警09:00</span></div>
+          </div>
+        </div>
+
+        <!-- 睡眠趋势图 - 垂直时间轴样式 -->
+        <div id="sleep-trend-container"
+          style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="font-size: 12px; color: #94a3b8;" id="sleep-trend-title">最近7天睡眠趋势</div>
+            <div style="display: flex; gap: 12px; font-size: 10px;">
+              <span style="color: #6366f1;">■ 深睡</span>
+              <span style="color: #60a5fa;">■ 浅睡</span>
+              <span style="color: #f97316;">■ 清醒</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 4px;">
+            <!-- 左侧时间轴 -->
+            <div
+              style="display: flex; flex-direction: column; justify-content: space-between; padding: 0 8px 20px 0; font-size: 10px; color: #64748b; min-width: 40px; text-align: right;">
+              <span>21:00</span>
+              <span>23:00</span>
+              <span>01:00</span>
+              <span>03:00</span>
+              <span>05:00</span>
+              <span>07:00</span>
+              <span>09:00</span>
+              <span>11:00</span>
+            </div>
+            <!-- 睡眠柱状图区域 -->
+            <div id="sleep-trend-chart" style="flex: 1; display: flex; gap: 8px; position: relative; height: 200px;">
+            </div>
+          </div>
+          <div id="sleep-trend-labels"
+            style="display: flex; justify-content: space-around; margin-top: 8px; margin-left: 48px; font-size: 10px; color: #64748b;">
+          </div>
+        </div>
+      </div>
+
+      <div id="health-status" class="status">正在加载健康数据...</div>
+
+      <!-- 数据明细 -->
+      <div style="margin-top: 20px;">
+        <p style="margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #e2e8f0;">数据明细</p>
+        <div class="filters">
+          <div class="filter-field">
+            <span>指标分类</span>
+            <div class="chip-group" id="health-category-group"></div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-wrap" style="margin-top: 10px;">
+        <table>
+          <thead>
+            <tr>
+              <th>指标名</th>
+              <th>周日均</th>
+              <th>周环比</th>
+              <th>月环比</th>
+              <th>年同比</th>
+            </tr>
+          </thead>
+          <tbody id="health-metric-body">
+            <tr>
+              <td colspan="5">正在计算...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 迭代方向 -->
+      <div class="plan-block" style="margin-top: 20px;">
+        <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>待破解：例行化获取苹果健康方法</li>
+            <li>待接入：苹果健康其他指标、分部位健身频率、运动状态数据、动态血糖仪数据</li>
+            <li>每日饮食成分分析</li>
+            <li>待规划：可视化形态更简洁，有动作指导 —— 后续尝试大模型 API</li>
           </ul>
         </div>
       </div>
+
+    </section>
+    <section class="tab-panel" id="tab-entertainment">
+      <!-- Highlight说明 -->
+      <div
+        style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">✨</span>
+          <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;">每日自动拉取优质博主的更新，避开推荐流对精力的消耗</span>
+        </div>
+      </div>
+
+      <!-- 数据更新时间 -->
+      <p style="margin: 0 0 12px; font-size: 0.85rem; color: #64748b; text-align: right;">数据更新：<span
+          id="update-time">--</span></p>
+
+      <!-- 筛选和标签云 -->
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+        <div id="ent-tags" style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;"></div>
+        <div
+          style="display: flex; align-items: center; gap: 6px; background: #1e293b; padding: 6px 12px; border-radius: 8px; border: 1px solid #334155;">
+          <span style="font-size: 12px; color: #94a3b8;">每作者</span>
+          <select id="limit-input"
+            style="background: transparent; border: none; color: #f8fafc; font-size: 12px; cursor: pointer;"></select>
+          <span style="font-size: 12px; color: #94a3b8;">条</span>
+        </div>
+      </div>
+
+      <!-- 视频列表 -->
+      <div id="ent-tag-cloud"
+        style="background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155;">
+        <div id="status" class="status" style="margin: 0 0 12px; font-size: 13px;">正在加载数据...</div>
+        <div id="ent-video-list"
+          style="display: flex; flex-direction: column; gap: 8px; max-height: 500px; overflow-y: auto;"></div>
+      </div>
+
+      <!-- 迭代方向 -->
+      <div class="plan-block" style="margin-top: 20px;">
+        <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>接入：王者荣耀自动化战绩分析，每日英雄梯度分析，强势英雄推荐</li>
+            <li>接入：原神自动化任务完成情况</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section class="tab-panel" id="tab-knowledge">
+      <!-- 读书笔记 -->
+      <div class="plan-block" style="margin-bottom: 16px;">
+        <p class="plan-title" style="margin: 0 0 12px;">读书笔记</p>
+
+        <div
+          style="margin-bottom: 16px; padding: 14px; background: rgba(139, 92, 246, 0.08); border-radius: 10px; border-left: 3px solid #8b5cf6;">
+          <div style="font-size: 13px; font-weight: 600; color: #c4b5fd; margin-bottom: 8px;">《道德经》</div>
+          <blockquote
+            style="margin: 0 0 8px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
+            "天下万物生于有，有生于无。"
+          </blockquote>
+          <p style="margin: 0; font-size: 13px; color: #cbd5f5; line-height: 1.6;">
+            这个站点的意义在于，用最少的精力获得最重要的信息，让思维恢复到"无"的状态，恢复灵感。
+          </p>
+        </div>
+
+        <div
+          style="padding: 14px; background: rgba(59, 130, 246, 0.08); border-radius: 10px; border-left: 3px solid #3b82f6;">
+          <div style="font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 8px;">罗永浩 × Minimax 闫俊杰 访谈</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <blockquote
+                style="margin: 0 0 6px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
+                "合作不顺的根本上是组织不顺。"
+              </blockquote>
+              <p style="margin: 0; font-size: 13px; color: #cbd5f5;">AI Agent 的组织形式是影响效率的核心原因。</p>
+            </div>
+            <div>
+              <blockquote
+                style="margin: 0 0 6px; padding-left: 12px; border-left: 2px solid #475569; color: #94a3b8; font-style: italic;">
+                "公司组织不一定是按照岗位划分的，也可以按照角色画像进行划分。"
+              </blockquote>
+              <p style="margin: 0; font-size: 13px; color: #cbd5f5; line-height: 1.6;">
+                如果把不同的 AI 赋予"工程师"、"架构师"、"产品经理"的身份并划定职责，容易产生幻觉与遗忘。
+                是否应该尝试赋予 AI 不同的性格画像？比如：较真的 AI、善于发现问题的 AI、善于管理的 AI、善于向人类汇报的 AI、善于总结沉淀的 AI、善于运用第一性原理拆解分析问题的 AI。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">更多知识库功能开发中...</p>
+
+      <!-- 迭代方向 -->
+      <div class="plan-block">
+        <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>分析中：微信读书笔记接口</li>
+            <li>待规划：大模型理解并总结笔记、播客、优质视频</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section class="tab-panel" id="tab-wealth">
+      <!-- 资产配置总览 -->
+      <div class="plan-block" style="margin-bottom: 16px;">
+        <p class="plan-title" style="margin: 0 0 12px;">资产配置</p>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          <div
+            style="flex: 1; min-width: 200px; text-align: center; padding: 16px; background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%); border-radius: 12px;">
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">总资产</div>
+            <div style="font-size: 28px; font-weight: 700; color: #fff;">¥ --</div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px;">月环比 <span
+                style="color: #4ade80;">+--</span></div>
+          </div>
+          <div style="flex: 2; min-width: 280px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 13px; color: #e2e8f0;">现金存款</span>
+                <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                  <div style="width: 40%; height: 100%; background: #3b82f6;"></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 13px; color: #e2e8f0;">理财产品</span>
+                <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                  <div style="width: 30%; height: 100%; background: #22c55e;"></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 13px; color: #e2e8f0;">股票基金</span>
+                <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                  <div style="width: 20%; height: 100%; background: #f59e0b;"></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 12px; height: 12px; background: #ec4899; border-radius: 2px;"></div>
+                <span style="flex: 1; font-size: 13px; color: #e2e8f0;">其他</span>
+                <span style="font-size: 13px; color: #94a3b8;">--%</span>
+                <div style="width: 100px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                  <div style="width: 10%; height: 100%; background: #ec4899;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 储蓄目标 -->
+      <div class="plan-block" style="margin-bottom: 16px;">
+        <p class="plan-title" style="margin: 0 0 12px;">储蓄目标</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div
+            style="padding: 14px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">买车目标</span>
+              <span style="font-size: 11px; color: #64748b;">¥200,000</span>
+            </div>
+            <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+              <div
+                style="width: 35%; height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 4px;">
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+              <span style="color: #3b82f6;">已攒 ¥--</span>
+              <span style="color: #64748b;">预计 -- 个月</span>
+            </div>
+          </div>
+          <div
+            style="padding: 14px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">买房首付</span>
+              <span style="font-size: 11px; color: #64748b;">¥1,000,000</span>
+            </div>
+            <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+              <div
+                style="width: 15%; height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); border-radius: 4px;">
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+              <span style="color: #22c55e;">已攒 ¥--</span>
+              <span style="color: #64748b;">预计 -- 个月</span>
+            </div>
+          </div>
+          <div
+            style="padding: 14px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #f8fafc;">应急基金</span>
+              <span style="font-size: 11px; color: #64748b;">6个月支出</span>
+            </div>
+            <div style="height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+              <div
+                style="width: 80%; height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24); border-radius: 4px;">
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+              <span style="color: #f59e0b;">已备 ¥--</span>
+              <span style="color: #4ade80;">接近达成</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 收支监控 -->
+      <div class="plan-block" style="margin-bottom: 16px;">
+        <p class="plan-title" style="margin: 0 0 12px;">本月收支</p>
+        <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+          <div
+            style="flex: 1; min-width: 100px; padding: 12px; background: rgba(34, 197, 94, 0.1); border-radius: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #64748b;">收入</div>
+            <div style="font-size: 18px; font-weight: 700; color: #22c55e;">¥ --</div>
+          </div>
+          <div
+            style="flex: 1; min-width: 100px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #64748b;">支出</div>
+            <div style="font-size: 18px; font-weight: 700; color: #ef4444;">¥ --</div>
+          </div>
+          <div
+            style="flex: 1; min-width: 100px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #64748b;">结余</div>
+            <div style="font-size: 18px; font-weight: 700; color: #3b82f6;">¥ --</div>
+          </div>
+        </div>
+        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">支出分类</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div
+            style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.05); border-radius: 6px;">
+            <span style="width: 20px; text-align: center;">🍜</span>
+            <span style="flex: 1; font-size: 13px; color: #e2e8f0;">餐饮</span>
+            <span style="font-size: 13px; color: #ef4444;">¥ --</span>
+          </div>
+          <div
+            style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.03); border-radius: 6px;">
+            <span style="width: 20px; text-align: center;">🏠</span>
+            <span style="flex: 1; font-size: 13px; color: #e2e8f0;">房租</span>
+            <span style="font-size: 13px; color: #f87171;">¥ --</span>
+          </div>
+          <div
+            style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(239, 68, 68, 0.02); border-radius: 6px;">
+            <span style="width: 20px; text-align: center;">🚗</span>
+            <span style="flex: 1; font-size: 13px; color: #e2e8f0;">交通</span>
+            <span style="font-size: 13px; color: #fca5a5;">¥ --</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 迭代方向 -->
+      <div class="plan-block" style="margin-top: 20px;">
+        <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>当前财产配置</li>
+            <li>理财产品收益监控</li>
+            <li>距离买车买房目标的达成时间估算</li>
+            <li>日消费监控</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- AI咨询 TAB -->
+    <section class="tab-panel" id="tab-ai-news">
+      <div class="plan-block">
+        <p class="plan-title" style="margin: 0 0 6px;">Highlight</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>每月汇总各大AI产品的重大突破与实用技巧</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 本月AI动态 -->
+      <div class="plan-block" style="margin-top: 16px;">
+        <p class="plan-title" style="margin: 0 0 12px;">本月AI产品动态</p>
+
+        <!-- OpenAI -->
+        <div
+          style="margin-bottom: 16px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 3px solid #10b981;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-weight: 600; color: #10b981;">OpenAI</span>
+            <span
+              style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">ChatGPT
+              / GPT-4</span>
+          </div>
+          <ul class="plan-list" style="margin: 0; font-size: 13px;">
+            <li>数据待接入...</li>
+          </ul>
+        </div>
+
+        <!-- Anthropic -->
+        <div
+          style="margin-bottom: 16px; padding: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border-left: 3px solid #8b5cf6;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-weight: 600; color: #8b5cf6;">Anthropic</span>
+            <span
+              style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">Claude</span>
+          </div>
+          <ul class="plan-list" style="margin: 0; font-size: 13px;">
+            <li>数据待接入...</li>
+          </ul>
+        </div>
+
+        <!-- Google -->
+        <div
+          style="margin-bottom: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid #3b82f6;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-weight: 600; color: #3b82f6;">Google</span>
+            <span
+              style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">Gemini</span>
+          </div>
+          <ul class="plan-list" style="margin: 0; font-size: 13px;">
+            <li>数据待接入...</li>
+          </ul>
+        </div>
+
+        <!-- 国产大模型 -->
+        <div
+          style="margin-bottom: 16px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 3px solid #ef4444;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-weight: 600; color: #ef4444;">国产大模型</span>
+            <span style="font-size: 11px; color: #64748b; background: #1e293b; padding: 2px 8px; border-radius: 4px;">文心
+              / 通义 / 豆包 / Kimi</span>
+          </div>
+          <ul class="plan-list" style="margin: 0; font-size: 13px;">
+            <li>数据待接入...</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 实用Tips -->
+      <div class="plan-block" style="margin-top: 16px;">
+        <p class="plan-title" style="margin: 0 0 12px;">本月实用Tips</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
+            <div style="font-size: 12px; color: #f59e0b; margin-bottom: 6px;">Prompt技巧</div>
+            <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
+          </div>
+          <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
+            <div style="font-size: 12px; color: #06b6d4; margin-bottom: 6px;">效率工具</div>
+            <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
+          </div>
+          <div style="padding: 12px; background: #1e293b; border-radius: 8px;">
+            <div style="font-size: 12px; color: #ec4899; margin-bottom: 6px;">创意应用</div>
+            <p style="font-size: 13px; color: #e2e8f0; margin: 0;">数据待接入...</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top: 16px; color: #64748b; font-size: 13px;">数据来源待接入，敬请期待。</p>
+
+      <!-- 迭代方向 -->
+      <div class="plan-block" style="margin-top: 20px;">
+        <p class="plan-title" style="margin: 0 0 6px;">迭代方向</p>
+        <div class="plan-section">
+          <ul class="plan-list">
+            <li>接入：AI产品更新RSS订阅</li>
+            <li>接入：AI论文热点追踪</li>
+            <li>待规划：大模型自动总结本月AI领域动态</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="chart-modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" type="button">关闭</button>
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title" style="margin: 0;"></div>
+        <div class="chart-controls" id="chart-controls" style="display: none;">
+          <button class="chart-btn" data-range="1M">1M</button>
+          <button class="chart-btn active" data-range="3M">3M</button>
+          <button class="chart-btn" data-range="6M">6M</button>
+          <button class="chart-btn" data-range="1Y">1Y</button>
+        </div>
+      </div>
+      <div class="modal-chart" id="modal-chart"></div>
+      <img class="modal-image" id="modal-image" alt="" />
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
-    
-      <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/data-loader.js"></script>
-    <script src="js/chart-renderer.js"></script>
-    <script src="js/tabs/health.js"></script>
-    <script src="js/tabs/entertainment.js"></script>
-    <script src="js/tabs/wealth.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+  </div>
+  <div class="modal" id="sleep-info-modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" id="sleep-info-close" type="button">关闭</button>
+      <div class="modal-title">睡眠建议规则</div>
+      <div class="modal-text" style="font-size: 13px; line-height: 1.8;">
+        <p style="margin: 0 0 12px; font-weight: 600; color: #c4b5fd;">阈值设定：</p>
+        <ul style="margin: 0 0 16px; padding-left: 20px; color: #94a3b8;">
+          <li>睡眠时长目标：8小时 · 预警：6小时</li>
+          <li>入睡时间目标：23:00前 · 预警：00:00后</li>
+          <li>起床时间目标：07:00前 · 预警：09:00后</li>
+        </ul>
+        <p style="margin: 0 0 12px; font-weight: 600; color: #c4b5fd;">判断逻辑：</p>
+        <ul style="margin: 0; padding-left: 20px; color: #94a3b8;">
+          <li><span style="color: #22c55e;">早睡早起</span>：入睡≤23:00 且 睡眠≥7h</li>
+          <li><span style="color: #3b82f6;">睡眠充足</span>：睡眠≥7h 但入睡较晚</li>
+          <li><span style="color: #f97316;">注意作息</span>：入睡在00:00-01:00之间</li>
+          <li><span style="color: #ef4444;">严重熬夜</span>：入睡≥01:00</li>
+          <li><span style="color: #ef4444;">睡眠不足</span>：睡眠＜6h</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
+
+  <script src="js/config.js?v=3"></script>
+  <script src="js/utils.js?v=3"></script>
+  <script src="js/data-loader.js?v=3"></script>
+  <script src="js/chart-renderer.js?v=3"></script>
+  <script src="js/tabs/health.js?v=3"></script>
+  <script src="js/tabs/entertainment.js?v=3"></script>
+  <script src="js/tabs/wealth.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
+</body>
+
 </html>

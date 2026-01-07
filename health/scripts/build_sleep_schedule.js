@@ -255,9 +255,16 @@ const buildSchedule = () => {
     const sourceName = getAttr(line, "sourceName") || "Unknown";
     if (!value || !startDate || !endDate) continue;
 
+
+
     const startInfo = parseHealthDate(startDate);
     const endInfo = parseHealthDate(endDate);
-    if (!startInfo || !endInfo) continue;
+    if (!startInfo || !endInfo) {
+      if (startDate.includes("2025-12-25")) {
+        console.log("DEBUG: Date parse failed for", startDate);
+      }
+      continue;
+    }
 
     let kind = "";
     if (value.startsWith("HKCategoryValueSleepAnalysisAsleep")) {
@@ -277,6 +284,8 @@ const buildSchedule = () => {
       offsetMinutes: startInfo.offsetMinutes,
       kind,
     };
+
+
 
     if (kind === "inbed") {
       bucketSegments[bucketIndex].inBed.push(entry);

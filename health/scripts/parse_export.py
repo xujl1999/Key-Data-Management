@@ -115,16 +115,42 @@ def parse_export():
     dietary_water = defaultdict(float)
 
     audio_env = defaultdict(list)
+    audio_env = defaultdict(list)
     audio_headphone = defaultdict(list)
+    workouts = []
 
     with zipfile.ZipFile(EXPORT_ZIP) as zf:
         xml_name = find_main_xml(zf)
         with zf.open(xml_name) as f:
             context = ET.iterparse(f, events=("end",))
             for _, elem in context:
-                if elem.tag != "Record":
+                if elem.tag != "Record" and elem.tag != "Workout":
                     elem.clear()
                     continue
+
+                if elem.tag == "Workout":
+                     workout_type = elem.attrib.get("workoutActivityType", "")
+                     duration = elem.attrib.get("duration", "0")
+                     total_energy = elem.attrib.get("totalEnergyBurned", "0")
+                     start_raw = elem.attrib.get("startDate", "")
+                     source_name = elem.attrib.get("sourceName", "Unknown")
+                     start_dt = parse_datetime(start_raw)
+                     
+                     if start_dt:
+                         # Clean up type name
+                         simple_type = workout_type.replace("HKWorkoutActivityType", "")
+                         try:
+                             dur_val = float(duration)
+                         except:
+                             dur_val = 0.0
+                         try:
+                             energy_val = float(total_energy)
+                         except:
+                             energy_val = 0.0
+                             
+                         workouts.append((start_dt, simple_type, dur_val, energy_val, source_name))
+                     elem.clear()
+                     continue
 
                 record_type = elem.attrib.get("type", "")
                 value = elem.attrib.get("value", "")
@@ -397,8 +423,21 @@ def parse_export():
         )
         df_dist["distance_walk_run_km"] = df_dist["date"].map(distance_walk_run).fillna(0) / 1000
         df_dist["distance_cycling_km"] = df_dist["date"].map(distance_cycling).fillna(0) / 1000
-        df_dist = df_dist.sort_values("date").reset_index(drop=True)
         df_dist.to_csv(ROOT / "distance_daily.csv", index=False, encoding="utf-8")
+
+    if workouts:
+        workouts.sort(key=lambda x: x[0])
+        with (ROOT / "workouts_daily.csv").open("w", encoding="utf-8", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["date", "workout_type", "duration_min", "energy_kcal", "source"])
+            for start_dt, w_type, dur, energy, source in workouts:
+                writer.writerow([
+                    start_dt.strftime("%Y-%m-%d %H:%M:%S"),
+                    w_type,
+                    f"{dur:.1f}",
+                    f"{energy:.1f}",
+                    source
+                ])
 
     if exercise_time or stand_time or stand_hours:
         df_ex = pd.DataFrame({"date": list(set(exercise_time.keys()) | set(stand_time.keys()) | set(stand_hours.keys()))})

@@ -1,324 +1,335 @@
-date,workout_type,duration_min,energy_kcal
-2023-12-27,Running,19.8,0.0
-2023-12-28,Running,23.9,0.0
-2024-01-13,Running,24.6,0.0
-2024-01-14,Running,20.7,0.0
-2024-01-19,Running,6.6,0.0
-2024-02-15,Running,45.0,0.0
-2024-02-17,Running,20.1,0.0
-2024-03-03,Walking,4.5,0.0
-2024-03-05,Walking,4.2,0.0
-2024-03-06,Running,22.7,0.0
-2024-03-18,Walking,8.9,0.0
-2024-03-20,Walking,26.9,0.0
-2024-03-27,Walking,36.8,0.0
-2024-03-30,Cycling,23.8,0.0
-2024-03-30,Cycling,21.8,0.0
-2024-03-31,Cycling,30.6,0.0
-2024-03-31,Walking,52.3,0.0
-2024-04-05,Walking,16.6,0.0
-2024-04-05,Cycling,15.9,0.0
-2024-04-06,Cycling,13.3,0.0
-2024-04-14,Walking,6.7,0.0
-2024-05-02,Walking,13.8,0.0
-2024-06-06,Walking,18.5,0.0
-2024-08-08,Running,34.9,0.0
-2024-08-10,Walking,6.0,0.0
-2024-08-11,Running,3.8,0.0
-2024-08-11,Walking,30.7,0.0
-2024-08-20,Running,39.7,0.0
-2024-08-22,Running,31.1,0.0
-2024-08-23,Running,34.2,0.0
-2024-08-26,Cycling,22.4,0.0
-2024-08-31,Walking,15.6,0.0
-2024-08-31,Cycling,21.2,0.0
-2024-09-02,Running,40.9,0.0
-2024-09-18,Cycling,15.0,0.0
-2024-09-20,Cycling,25.7,0.0
-2024-10-03,Cycling,166.3,0.0
-2024-10-08,Cycling,128.8,0.0
-2024-10-10,Cycling,10.9,0.0
-2024-10-10,Walking,36.1,0.0
-2024-10-11,Walking,110.4,0.0
-2024-10-13,Cycling,338.1,0.0
-2024-10-16,Walking,188.0,0.0
-2024-10-17,Walking,88.8,0.0
-2024-10-21,Cycling,423.9,0.0
-2024-11-14,Walking,35.1,0.0
-2024-11-17,Walking,38.5,0.0
-2024-11-18,Walking,24.9,0.0
-2024-11-20,Walking,30.9,0.0
-2024-11-21,Walking,77.3,0.0
-2024-11-22,Walking,22.7,0.0
-2024-12-14,Climbing,211.1,0.0
-2024-12-14,Climbing,203.9,0.0
-2024-12-21,Climbing,250.3,0.0
-2025-01-12,Running,28.5,0.0
-2025-01-24,Walking,17.1,0.0
-2025-01-24,FunctionalStrengthTraining,2.1,0.0
-2025-01-24,FunctionalStrengthTraining,17.6,0.0
-2025-01-24,Cycling,10.7,0.0
-2025-01-25,Cycling,15.8,0.0
-2025-01-25,Cycling,14.8,0.0
-2025-01-29,Walking,77.1,0.0
-2025-01-31,Walking,26.8,0.0
-2025-01-31,Walking,36.0,0.0
-2025-02-01,Cycling,24.9,0.0
-2025-02-01,Walking,56.2,0.0
-2025-02-03,Cycling,14.8,0.0
-2025-02-06,Walking,18.0,0.0
-2025-02-08,Cycling,10.6,0.0
-2025-02-10,Walking,24.9,0.0
-2025-02-10,Walking,45.0,0.0
-2025-02-11,Cycling,11.6,0.0
-2025-02-11,Cycling,18.5,0.0
-2025-02-13,Cycling,16.3,0.0
-2025-02-13,FunctionalStrengthTraining,24.6,0.0
-2025-02-13,Cycling,9.7,0.0
-2025-02-14,Cycling,8.1,0.0
-2025-02-14,Cycling,23.3,0.0
-2025-02-15,Cycling,10.8,0.0
-2025-02-16,Cycling,12.9,0.0
-2025-02-16,FunctionalStrengthTraining,46.1,0.0
-2025-02-16,Running,25.4,0.0
-2025-02-16,Cycling,12.1,0.0
-2025-02-17,Cycling,13.1,0.0
-2025-02-17,Walking,33.1,0.0
-2025-02-17,Cycling,10.9,0.0
-2025-02-18,Cycling,12.5,0.0
-2025-02-18,FunctionalStrengthTraining,5.7,0.0
-2025-02-18,Cycling,17.4,0.0
-2025-02-19,Cycling,11.5,0.0
-2025-02-19,Walking,30.9,0.0
-2025-02-19,FunctionalStrengthTraining,49.1,0.0
-2025-02-19,Cycling,10.8,0.0
-2025-02-20,Cycling,9.3,0.0
-2025-02-20,Cycling,9.5,0.0
-2025-02-21,Cycling,35.5,0.0
-2025-02-21,FunctionalStrengthTraining,24.4,0.0
-2025-02-21,Running,9.6,0.0
-2025-02-21,Cycling,12.9,0.0
-2025-02-22,Badminton,28.3,0.0
-2025-02-22,Cycling,13.2,0.0
-2025-02-23,Cycling,17.2,0.0
-2025-02-23,TraditionalStrengthTraining,20.8,0.0
-2025-02-23,Running,29.4,0.0
-2025-02-24,Cycling,16.4,0.0
-2025-02-24,Cycling,14.9,0.0
-2025-02-25,Cycling,11.2,0.0
-2025-02-25,Walking,34.3,0.0
-2025-02-25,TraditionalStrengthTraining,9.9,0.0
-2025-02-25,Running,8.7,0.0
-2025-02-25,Cycling,11.9,0.0
-2025-02-26,Cycling,16.1,0.0
-2025-02-26,TraditionalStrengthTraining,34.5,0.0
-2025-02-26,Running,10.2,0.0
-2025-02-26,Cycling,12.9,0.0
-2025-02-27,Cycling,18.0,0.0
-2025-02-27,TraditionalStrengthTraining,21.4,0.0
-2025-02-27,Running,9.7,0.0
-2025-02-27,Running,1.9,0.0
-2025-02-28,Cycling,20.8,0.0
-2025-02-28,Cycling,27.2,0.0
-2025-02-28,Cycling,11.2,0.0
-2025-03-01,Cycling,11.6,0.0
-2025-03-01,Cycling,16.4,0.0
-2025-03-02,Hiking,369.6,0.0
-2025-03-03,Cycling,10.4,0.0
-2025-03-03,Walking,33.9,0.0
-2025-03-04,Stairs,36.7,0.0
-2025-03-04,Cycling,10.4,0.0
-2025-03-05,Cycling,12.0,0.0
-2025-03-06,Running,38.6,0.0
-2025-03-07,Running,18.7,0.0
-2025-03-11,Walking,71.3,0.0
-2025-03-11,Stairs,34.3,0.0
-2025-03-12,Walking,40.6,0.0
-2025-03-12,Stairs,34.2,0.0
-2025-03-12,Cycling,11.8,0.0
-2025-03-13,Cycling,14.2,0.0
-2025-03-13,Walking,128.3,0.0
-2025-03-13,Cycling,13.0,0.0
-2025-03-14,Cycling,16.3,0.0
-2025-03-14,Running,28.6,0.0
-2025-03-14,Cycling,10.1,0.0
-2025-03-15,Cycling,19.7,0.0
-2025-03-16,Cycling,15.5,0.0
-2025-03-16,Cycling,13.2,0.0
-2025-03-17,Cycling,15.5,0.0
-2025-03-17,Walking,24.9,0.0
-2025-03-17,Cycling,12.1,0.0
-2025-03-18,Cycling,12.2,0.0
-2025-03-18,Cycling,19.5,0.0
-2025-03-19,Walking,39.0,0.0
-2025-03-19,Stairs,31.5,0.0
-2025-03-19,Cycling,14.3,0.0
-2025-03-20,Cycling,11.0,0.0
-2025-03-20,Stairs,56.3,0.0
-2025-03-21,Running,11.8,0.0
-2025-03-21,Cycling,9.1,0.0
-2025-03-22,Cycling,25.5,0.0
-2025-03-23,Cycling,11.3,0.0
-2025-03-23,Running,52.8,0.0
-2025-03-23,Cycling,8.0,0.0
-2025-03-24,Cycling,8.8,0.0
-2025-03-25,Stairs,45.0,0.0
-2025-03-25,Cycling,10.3,0.0
-2025-03-26,Stairs,21.8,0.0
-2025-03-26,Cycling,10.1,0.0
-2025-03-27,Stairs,2.8,0.0
-2025-03-27,Stairs,42.5,0.0
-2025-03-29,Cycling,22.1,0.0
-2025-03-31,Stairs,35.5,0.0
-2025-04-01,Stairs,53.4,0.0
-2025-04-02,Stairs,40.6,0.0
-2025-04-08,Stairs,37.0,0.0
-2025-04-09,Stairs,51.0,0.0
-2025-04-10,Stairs,42.3,0.0
-2025-04-11,Stairs,39.3,0.0
-2025-04-14,Stairs,58.3,0.0
-2025-04-15,Stairs,63.9,0.0
-2025-04-16,Stairs,52.0,0.0
-2025-04-17,Stairs,57.3,0.0
-2025-04-18,TraditionalStrengthTraining,39.6,0.0
-2025-04-18,Running,10.3,0.0
-2025-04-19,Hiking,154.4,0.0
-2025-04-20,Running,33.7,0.0
-2025-04-21,Stairs,39.1,0.0
-2025-04-23,Stairs,44.0,0.0
-2025-04-24,TraditionalStrengthTraining,29.2,0.0
-2025-04-24,Running,13.8,0.0
-2025-04-26,TraditionalStrengthTraining,31.9,0.0
-2025-04-26,Running,10.8,0.0
-2025-05-02,TraditionalStrengthTraining,30.1,0.0
-2025-05-05,TraditionalStrengthTraining,55.8,0.0
-2025-05-05,Running,22.7,0.0
-2025-05-07,TraditionalStrengthTraining,30.8,0.0
-2025-05-07,Running,10.6,0.0
-2025-05-08,Stairs,40.5,0.0
-2025-05-11,Hiking,221.1,0.0
-2025-05-13,TraditionalStrengthTraining,20.7,0.0
-2025-05-13,Running,6.1,0.0
-2025-05-14,Stairs,31.4,0.0
-2025-05-14,Cycling,11.9,0.0
-2025-05-15,TraditionalStrengthTraining,32.4,0.0
-2025-05-15,Running,14.0,0.0
-2025-05-21,Stairs,26.1,0.0
-2025-05-22,Stairs,42.8,0.0
-2025-06-02,Stairs,6.1,0.0
-2025-06-02,Cycling,84.0,0.0
-2025-06-02,Cycling,169.2,0.0
-2025-06-02,Cycling,151.8,0.0
-2025-06-02,Cycling,0.2,0.0
-2025-06-11,Stairs,43.4,0.0
-2025-06-12,Stairs,37.6,0.0
-2025-06-19,Stairs,57.9,0.0
-2025-06-20,Cycling,18.0,0.0
-2025-06-20,Stairs,23.3,0.0
-2025-06-21,Cycling,80.5,0.0
-2025-06-22,TraditionalStrengthTraining,18.8,0.0
-2025-06-22,Running,27.0,0.0
-2025-06-24,Stairs,62.7,0.0
-2025-06-25,Stairs,40.0,0.0
-2025-06-26,Stairs,45.3,0.0
-2025-06-28,TraditionalStrengthTraining,7.7,0.0
-2025-06-28,Running,33.1,0.0
-2025-07-09,Stairs,43.9,0.0
-2025-07-10,Stairs,50.4,0.0
-2025-07-14,Stairs,25.0,0.0
-2025-07-15,Stairs,24.5,0.0
-2025-07-18,Stairs,21.7,0.0
-2025-07-21,Stairs,25.4,0.0
-2025-07-22,Stairs,51.5,0.0
-2025-07-24,TraditionalStrengthTraining,21.2,0.0
-2025-07-24,Running,16.7,0.0
-2025-07-31,TraditionalStrengthTraining,42.6,0.0
-2025-08-01,TraditionalStrengthTraining,22.2,0.0
-2025-08-03,Running,23.9,0.0
-2025-08-06,TraditionalStrengthTraining,22.7,0.0
-2025-08-06,Running,5.9,0.0
-2025-08-10,TraditionalStrengthTraining,28.8,0.0
-2025-08-14,TraditionalStrengthTraining,6.9,0.0
-2025-08-15,TraditionalStrengthTraining,30.1,0.0
-2025-08-16,TraditionalStrengthTraining,58.2,0.0
-2025-08-17,TraditionalStrengthTraining,74.8,0.0
-2025-09-03,TraditionalStrengthTraining,20.2,0.0
-2025-09-03,Rowing,6.2,0.0
-2025-09-03,TraditionalStrengthTraining,2.6,0.0
-2025-09-04,TraditionalStrengthTraining,32.5,0.0
-2025-09-05,TraditionalStrengthTraining,36.6,0.0
-2025-09-06,TraditionalStrengthTraining,37.9,0.0
-2025-09-06,Running,21.5,0.0
-2025-09-09,TraditionalStrengthTraining,25.9,0.0
-2025-09-11,TraditionalStrengthTraining,20.4,0.0
-2025-09-11,Running,26.3,0.0
-2025-09-12,TraditionalStrengthTraining,25.5,0.0
-2025-09-12,Running,28.5,0.0
-2025-09-13,TraditionalStrengthTraining,23.3,0.0
-2025-09-13,Running,63.2,0.0
-2025-09-16,TraditionalStrengthTraining,29.3,0.0
-2025-09-18,Running,33.3,0.0
-2025-09-19,Running,14.2,0.0
-2025-09-23,TraditionalStrengthTraining,25.1,0.0
-2025-09-23,Running,29.4,0.0
-2025-09-25,TraditionalStrengthTraining,20.8,0.0
-2025-09-25,Running,18.9,0.0
-2025-09-26,TraditionalStrengthTraining,9.5,0.0
-2025-09-26,Running,32.6,0.0
-2025-09-28,TraditionalStrengthTraining,12.9,0.0
-2025-09-28,Running,35.3,0.0
-2025-09-30,TraditionalStrengthTraining,18.8,0.0
-2025-09-30,Running,31.4,0.0
-2025-10-12,TraditionalStrengthTraining,16.9,0.0
-2025-10-12,Running,17.6,0.0
-2025-10-13,Cycling,17.4,0.0
-2025-10-15,TraditionalStrengthTraining,17.3,0.0
-2025-10-15,Running,21.8,0.0
-2025-10-16,TraditionalStrengthTraining,16.0,0.0
-2025-10-16,Running,23.6,0.0
-2025-10-18,TraditionalStrengthTraining,23.2,0.0
-2025-10-18,Running,62.3,0.0
-2025-10-20,TraditionalStrengthTraining,21.9,0.0
-2025-10-20,Running,8.3,0.0
-2025-10-21,TraditionalStrengthTraining,16.7,0.0
-2025-10-21,Running,23.3,0.0
-2025-10-22,TraditionalStrengthTraining,20.4,0.0
-2025-10-22,Running,14.6,0.0
-2025-10-23,TraditionalStrengthTraining,26.2,0.0
-2025-10-23,Running,10.9,0.0
-2025-10-24,Cycling,99.6,0.0
-2025-10-25,TraditionalStrengthTraining,16.6,0.0
-2025-10-25,Running,68.7,0.0
-2025-10-28,TraditionalStrengthTraining,8.2,0.0
-2025-10-28,Running,6.5,0.0
-2025-10-29,Running,24.6,0.0
-2025-10-29,Running,7.4,0.0
-2025-10-30,Stairs,43.1,0.0
-2025-11-02,Running,78.4,0.0
-2025-11-04,Running,33.0,0.0
-2025-11-05,Running,28.2,0.0
-2025-11-08,Running,172.7,0.0
-2025-11-12,TraditionalStrengthTraining,25.9,0.0
-2025-11-19,TraditionalStrengthTraining,37.5,0.0
-2025-11-21,TraditionalStrengthTraining,14.8,0.0
-2025-11-21,Running,7.5,0.0
-2025-11-22,TraditionalStrengthTraining,14.1,0.0
-2025-11-22,Running,61.0,0.0
-2025-11-23,Cycling,24.3,0.0
-2025-11-26,TraditionalStrengthTraining,24.6,0.0
-2025-11-26,Running,7.0,0.0
-2025-11-27,Stairs,54.5,0.0
-2025-12-02,Stairs,19.9,0.0
-2025-12-03,Stairs,47.4,0.0
-2025-12-04,TraditionalStrengthTraining,17.4,0.0
-2025-12-07,Running,36.2,0.0
-2025-12-08,Stairs,43.3,0.0
-2025-12-09,TraditionalStrengthTraining,4.3,0.0
-2025-12-09,Running,5.0,0.0
-2025-12-11,TraditionalStrengthTraining,15.3,0.0
-2025-12-11,Running,11.8,0.0
-2025-12-17,Running,38.2,0.0
-2025-12-18,Stairs,47.5,0.0
-2025-12-19,Stairs,42.8,0.0
-2025-12-20,Running,21.7,0.0
-2025-12-20,Running,32.8,0.0
+date,workout_type,duration_min,energy_kcal,source
+2023-12-27 08:13:01,Running,19.8,0.0,小米运动健康
+2023-12-28 08:13:03,Running,23.9,0.0,小米运动健康
+2024-01-13 18:02:11,Running,24.6,0.0,小米运动健康
+2024-01-14 18:29:28,Running,20.7,0.0,小米运动健康
+2024-01-19 22:22:14,Running,6.6,0.0,小米运动健康
+2024-02-15 08:24:52,Running,45.0,0.0,小米运动健康
+2024-02-17 17:52:20,Running,20.1,0.0,小米运动健康
+2024-03-03 17:09:53,Walking,4.5,0.0,小米运动健康
+2024-03-05 12:47:44,Walking,4.2,0.0,小米运动健康
+2024-03-06 18:54:43,Running,22.7,0.0,小米运动健康
+2024-03-18 12:11:11,Walking,8.9,0.0,小米运动健康
+2024-03-20 09:53:14,Walking,26.9,0.0,小米运动健康
+2024-03-27 11:53:18,Walking,36.8,0.0,小米运动健康
+2024-03-30 08:31:25,Cycling,21.8,0.0,小米运动健康
+2024-03-30 10:57:33,Cycling,23.8,0.0,小米运动健康
+2024-03-31 10:04:59,Walking,52.3,0.0,小米运动健康
+2024-03-31 11:50:38,Cycling,30.6,0.0,小米运动健康
+2024-04-05 09:32:32,Cycling,15.9,0.0,小米运动健康
+2024-04-05 12:23:53,Walking,16.6,0.0,小米运动健康
+2024-04-06 08:44:50,Cycling,13.3,0.0,小米运动健康
+2024-04-14 13:53:23,Walking,6.7,0.0,小米运动健康
+2024-05-02 13:42:09,Walking,13.8,0.0,小米运动健康
+2024-06-06 17:46:35,Walking,18.5,0.0,小米运动健康
+2024-08-08 08:06:47,Running,34.9,0.0,小米运动健康
+2024-08-10 18:00:44,Walking,6.0,0.0,小米运动健康
+2024-08-11 20:04:32,Walking,30.7,0.0,小米运动健康
+2024-08-11 21:32:50,Running,3.8,0.0,小米运动健康
+2024-08-20 08:29:30,Running,39.7,0.0,小米运动健康
+2024-08-22 08:33:33,Running,31.1,0.0,小米运动健康
+2024-08-23 08:35:25,Running,34.2,0.0,小米运动健康
+2024-08-26 09:24:49,Cycling,22.4,0.0,小米运动健康
+2024-08-31 17:39:37,Cycling,21.2,0.0,小米运动健康
+2024-08-31 19:47:25,Walking,15.6,0.0,小米运动健康
+2024-09-02 12:10:23,Running,40.9,0.0,小米运动健康
+2024-09-18 08:21:13,Cycling,15.0,0.0,小米运动健康
+2024-09-20 08:19:18,Cycling,25.7,0.0,小米运动健康
+2024-10-03 09:56:07,Cycling,166.3,0.0,小米运动健康
+2024-10-08 09:10:58,Cycling,128.8,0.0,小米运动健康
+2024-10-10 18:34:58,Walking,36.1,0.0,小米运动健康
+2024-10-10 20:22:54,Cycling,10.9,0.0,小米运动健康
+2024-10-11 12:19:26,Walking,110.4,0.0,小米运动健康
+2024-10-13 09:45:23,Cycling,338.1,0.0,小米运动健康
+2024-10-16 12:45:11,Walking,188.0,0.0,小米运动健康
+2024-10-17 18:32:41,Walking,88.8,0.0,小米运动健康
+2024-10-21 09:14:06,Cycling,423.9,0.0,小米运动健康
+2024-11-14 12:29:41,Walking,35.1,0.0,小米运动健康
+2024-11-17 11:04:25,Walking,38.5,0.0,小米运动健康
+2024-11-18 08:58:01,Walking,24.9,0.0,小米运动健康
+2024-11-20 09:06:36,Walking,30.9,0.0,小米运动健康
+2024-11-21 09:10:27,Walking,77.3,0.0,小米运动健康
+2024-11-22 09:13:07,Walking,22.7,0.0,小米运动健康
+2024-12-14 10:58:06,Climbing,203.9,0.0,小米运动健康
+2024-12-14 14:25:49,Climbing,211.1,0.0,小米运动健康
+2024-12-21 09:59:49,Climbing,250.3,0.0,小米运动健康
+2025-01-12 11:30:02,Running,28.5,0.0,小米运动健康
+2025-01-24 08:37:44,Cycling,10.7,0.0,徐家力的Apple Watch
+2025-01-24 09:14:08,FunctionalStrengthTraining,17.6,0.0,徐家力的Apple Watch
+2025-01-24 09:32:25,FunctionalStrengthTraining,2.1,0.0,徐家力的Apple Watch
+2025-01-24 13:04:06,Walking,17.1,0.0,徐家力的Apple Watch
+2025-01-25 08:53:11,Cycling,14.8,0.0,徐家力的Apple Watch
+2025-01-25 18:11:03,Cycling,15.8,0.0,徐家力的Apple Watch
+2025-01-29 10:54:17,Walking,77.1,0.0,徐家力的Apple Watch
+2025-01-31 19:37:18,Walking,36.0,0.0,徐家力的Apple Watch
+2025-01-31 20:15:09,Walking,26.8,0.0,徐家力的Apple Watch
+2025-02-01 09:33:41,Walking,56.2,0.0,徐家力的Apple Watch
+2025-02-01 22:25:35,Cycling,24.9,0.0,徐家力的Apple Watch
+2025-02-03 14:04:02,Cycling,14.8,0.0,徐家力的Apple Watch
+2025-02-06 13:56:16,Walking,18.0,0.0,徐家力的Apple Watch
+2025-02-08 09:16:52,Cycling,10.6,0.0,徐家力的Apple Watch
+2025-02-10 18:43:18,Walking,45.0,0.0,徐家力的Apple Watch
+2025-02-10 20:06:18,Walking,24.9,0.0,徐家力的Apple Watch
+2025-02-11 09:05:07,Cycling,18.5,0.0,徐家力的Apple Watch
+2025-02-11 20:22:09,Cycling,11.6,0.0,徐家力的Apple Watch
+2025-02-13 08:29:46,Cycling,9.7,0.0,徐家力的Apple Watch
+2025-02-13 08:55:49,FunctionalStrengthTraining,24.6,0.0,徐家力的Apple Watch
+2025-02-13 20:10:56,Cycling,16.3,0.0,徐家力的Apple Watch
+2025-02-14 09:17:07,Cycling,23.3,0.0,徐家力的Apple Watch
+2025-02-14 18:03:06,Cycling,8.1,0.0,徐家力的Apple Watch
+2025-02-15 09:09:20,Cycling,10.8,0.0,徐家力的Apple Watch
+2025-02-16 10:56:18,Cycling,12.1,0.0,徐家力的Apple Watch
+2025-02-16 15:15:34,Running,25.4,0.0,徐家力的Apple Watch
+2025-02-16 15:45:01,FunctionalStrengthTraining,46.1,0.0,徐家力的Apple Watch
+2025-02-16 18:25:03,Cycling,12.9,0.0,徐家力的Apple Watch
+2025-02-17 09:25:19,Cycling,10.9,0.0,徐家力的Apple Watch
+2025-02-17 12:39:45,Walking,33.1,0.0,徐家力的Apple Watch
+2025-02-17 21:05:10,Cycling,13.1,0.0,徐家力的Apple Watch
+2025-02-18 08:38:40,Cycling,17.4,0.0,徐家力的Apple Watch
+2025-02-18 09:15:52,FunctionalStrengthTraining,5.7,0.0,徐家力的Apple Watch
+2025-02-18 20:51:27,Cycling,12.5,0.0,徐家力的Apple Watch
+2025-02-19 08:04:42,Cycling,10.8,0.0,徐家力的Apple Watch
+2025-02-19 08:36:05,FunctionalStrengthTraining,49.1,0.0,徐家力的Apple Watch
+2025-02-19 18:22:44,Walking,30.9,0.0,徐家力的Apple Watch
+2025-02-19 20:20:20,Cycling,11.5,0.0,徐家力的Apple Watch
+2025-02-20 08:38:26,Cycling,9.5,0.0,徐家力的Apple Watch
+2025-02-20 21:28:43,Cycling,9.3,0.0,徐家力的Apple Watch
+2025-02-21 08:25:35,Cycling,12.9,0.0,徐家力的Apple Watch
+2025-02-21 08:51:50,Running,9.6,0.0,徐家力的Apple Watch
+2025-02-21 09:01:36,FunctionalStrengthTraining,24.4,0.0,徐家力的Apple Watch
+2025-02-21 19:47:14,Cycling,35.5,0.0,徐家力的Apple Watch
+2025-02-22 10:48:59,Cycling,13.2,0.0,徐家力的Apple Watch
+2025-02-22 15:23:06,Badminton,28.3,0.0,徐家力的Apple Watch
+2025-02-23 10:45:33,Running,29.4,0.0,徐家力的Apple Watch
+2025-02-23 11:16:05,TraditionalStrengthTraining,20.8,0.0,徐家力的Apple Watch
+2025-02-23 17:49:55,Cycling,17.2,0.0,徐家力的Apple Watch
+2025-02-24 09:17:24,Cycling,14.9,0.0,徐家力的Apple Watch
+2025-02-24 20:20:39,Cycling,16.4,0.0,徐家力的Apple Watch
+2025-02-25 08:37:26,Cycling,11.9,0.0,徐家力的Apple Watch
+2025-02-25 09:25:12,Running,8.7,0.0,徐家力的Apple Watch
+2025-02-25 09:34:09,TraditionalStrengthTraining,9.9,0.0,徐家力的Apple Watch
+2025-02-25 18:24:54,Walking,34.3,0.0,徐家力的Apple Watch
+2025-02-25 20:10:09,Cycling,11.2,0.0,徐家力的Apple Watch
+2025-02-26 08:11:23,Cycling,12.9,0.0,徐家力的Apple Watch
+2025-02-26 08:36:12,Running,10.2,0.0,徐家力的Apple Watch
+2025-02-26 08:46:32,TraditionalStrengthTraining,34.5,0.0,徐家力的Apple Watch
+2025-02-26 20:05:32,Cycling,16.1,0.0,徐家力的Apple Watch
+2025-02-27 08:38:13,Running,1.9,0.0,徐家力的Apple Watch
+2025-02-27 08:42:37,Running,9.7,0.0,徐家力的Apple Watch
+2025-02-27 08:52:26,TraditionalStrengthTraining,21.4,0.0,徐家力的Apple Watch
+2025-02-27 20:48:16,Cycling,18.0,0.0,徐家力的Apple Watch
+2025-02-28 08:11:30,Cycling,11.2,0.0,徐家力的Apple Watch
+2025-02-28 08:33:21,Cycling,27.2,0.0,徐家力的Apple Watch
+2025-02-28 18:42:07,Cycling,20.8,0.0,徐家力的Apple Watch
+2025-03-01 10:54:12,Cycling,16.4,0.0,徐家力的Apple Watch
+2025-03-01 18:02:40,Cycling,11.6,0.0,徐家力的Apple Watch
+2025-03-02 10:58:33,Hiking,369.6,0.0,徐家力的Apple Watch
+2025-03-03 18:29:12,Walking,33.9,0.0,徐家力的Apple Watch
+2025-03-03 20:52:39,Cycling,10.4,0.0,徐家力的Apple Watch
+2025-03-04 08:25:25,Cycling,10.4,0.0,徐家力的Apple Watch
+2025-03-04 08:49:59,Stairs,36.7,0.0,徐家力的Apple Watch
+2025-03-05 08:52:16,Cycling,12.0,0.0,徐家力的Apple Watch
+2025-03-06 08:58:59,Running,38.6,0.0,徐家力的Apple Watch
+2025-03-07 09:07:55,Running,18.7,0.0,徐家力的Apple Watch
+2025-03-11 08:51:25,Stairs,34.3,0.0,徐家力的Apple Watch
+2025-03-11 18:29:31,Walking,71.3,0.0,徐家力的Apple Watch
+2025-03-12 08:16:21,Cycling,11.8,0.0,徐家力的Apple Watch
+2025-03-12 08:41:26,Stairs,34.2,0.0,徐家力的Apple Watch
+2025-03-12 18:26:03,Walking,40.6,0.0,徐家力的Apple Watch
+2025-03-13 08:31:36,Cycling,13.0,0.0,徐家力的Apple Watch
+2025-03-13 18:02:15,Walking,128.3,0.0,徐家力的Apple Watch
+2025-03-13 20:18:31,Cycling,14.2,0.0,徐家力的Apple Watch
+2025-03-14 08:31:23,Cycling,10.1,0.0,徐家力的Apple Watch
+2025-03-14 08:56:05,Running,28.6,0.0,徐家力的Apple Watch
+2025-03-14 18:29:11,Cycling,16.3,0.0,徐家力的Apple Watch
+2025-03-15 18:18:35,Cycling,19.7,0.0,徐家力的Apple Watch
+2025-03-16 09:18:40,Cycling,13.2,0.0,徐家力的Apple Watch
+2025-03-16 18:29:57,Cycling,15.5,0.0,徐家力的Apple Watch
+2025-03-17 09:13:48,Cycling,12.1,0.0,徐家力的Apple Watch
+2025-03-17 18:27:27,Walking,24.9,0.0,徐家力的Apple Watch
+2025-03-17 20:12:57,Cycling,15.5,0.0,徐家力的Apple Watch
+2025-03-18 08:34:18,Cycling,19.5,0.0,徐家力的Apple Watch
+2025-03-18 19:50:42,Cycling,12.2,0.0,徐家力的Apple Watch
+2025-03-19 08:16:07,Cycling,14.3,0.0,徐家力的Apple Watch
+2025-03-19 08:47:05,Stairs,31.5,0.0,徐家力的Apple Watch
+2025-03-19 18:08:40,Walking,39.0,0.0,徐家力的Apple Watch
+2025-03-20 08:31:07,Stairs,56.3,0.0,徐家力的Apple Watch
+2025-03-20 20:09:25,Cycling,11.0,0.0,徐家力的Apple Watch
+2025-03-21 08:48:36,Cycling,9.1,0.0,徐家力的Apple Watch
+2025-03-21 09:06:52,Running,11.8,0.0,徐家力的Apple Watch
+2025-03-22 16:41:38,Cycling,25.5,0.0,徐家力的Apple Watch
+2025-03-23 09:27:41,Cycling,8.0,0.0,徐家力的Apple Watch
+2025-03-23 10:09:18,Running,52.8,0.0,徐家力的Apple Watch
+2025-03-23 19:20:31,Cycling,11.3,0.0,徐家力的Apple Watch
+2025-03-24 09:02:26,Cycling,8.8,0.0,徐家力的Apple Watch
+2025-03-25 08:31:12,Cycling,10.3,0.0,徐家力的Apple Watch
+2025-03-25 08:52:39,Stairs,45.0,0.0,徐家力的Apple Watch
+2025-03-26 08:30:08,Cycling,10.1,0.0,徐家力的Apple Watch
+2025-03-26 08:43:57,Stairs,21.8,0.0,徐家力的Apple Watch
+2025-03-27 08:54:44,Stairs,42.5,0.0,徐家力的Apple Watch
+2025-03-27 20:25:56,Stairs,2.8,0.0,徐家力的Apple Watch
+2025-03-29 14:10:48,Cycling,22.1,0.0,徐家力的Apple Watch
+2025-03-31 09:01:24,Stairs,35.5,0.0,徐家力的Apple Watch
+2025-04-01 08:56:06,Stairs,53.4,0.0,徐家力的Apple Watch
+2025-04-02 08:58:49,Stairs,40.6,0.0,徐家力的Apple Watch
+2025-04-08 09:06:55,Stairs,37.0,0.0,徐家力的Apple Watch
+2025-04-09 08:36:32,Stairs,51.0,0.0,徐家力的Apple Watch
+2025-04-10 09:00:49,Stairs,42.3,0.0,徐家力的Apple Watch
+2025-04-11 09:11:22,Stairs,39.3,0.0,徐家力的Apple Watch
+2025-04-14 08:34:48,Stairs,58.3,0.0,徐家力的Apple Watch
+2025-04-15 08:32:17,Stairs,63.9,0.0,徐家力的Apple Watch
+2025-04-16 08:51:42,Stairs,52.0,0.0,徐家力的Apple Watch
+2025-04-17 08:44:23,Stairs,57.3,0.0,徐家力的Apple Watch
+2025-04-18 08:41:56,Running,10.3,0.0,徐家力的Apple Watch
+2025-04-18 08:52:28,TraditionalStrengthTraining,39.6,0.0,徐家力的Apple Watch
+2025-04-19 08:21:44,Hiking,154.4,0.0,徐家力的Apple Watch
+2025-04-20 16:52:36,Running,33.7,0.0,徐家力的Apple Watch
+2025-04-21 08:56:15,Stairs,39.1,0.0,徐家力的Apple Watch
+2025-04-23 09:00:49,Stairs,44.0,0.0,徐家力的Apple Watch
+2025-04-24 09:01:11,Running,13.8,0.0,徐家力的Apple Watch
+2025-04-24 09:15:12,TraditionalStrengthTraining,29.2,0.0,徐家力的Apple Watch
+2025-04-26 17:10:49,Running,10.8,0.0,徐家力的Apple Watch
+2025-04-26 17:21:48,TraditionalStrengthTraining,31.9,0.0,徐家力的Apple Watch
+2025-05-02 16:22:59,TraditionalStrengthTraining,30.1,0.0,徐家力的Apple Watch
+2025-05-05 15:43:58,Running,22.7,0.0,徐家力的Apple Watch
+2025-05-05 16:07:19,TraditionalStrengthTraining,55.8,0.0,徐家力的Apple Watch
+2025-05-07 08:49:08,Running,10.6,0.0,徐家力的Apple Watch
+2025-05-07 08:59:56,TraditionalStrengthTraining,30.8,0.0,徐家力的Apple Watch
+2025-05-08 08:47:35,Stairs,40.5,0.0,徐家力的Apple Watch
+2025-05-11 12:30:53,Hiking,221.1,0.0,徐家力的Apple Watch
+2025-05-13 09:08:58,Running,6.1,0.0,徐家力的Apple Watch
+2025-05-13 09:15:16,TraditionalStrengthTraining,20.7,0.0,徐家力的Apple Watch
+2025-05-14 08:38:38,Cycling,11.9,0.0,徐家力的Apple Watch
+2025-05-14 09:06:17,Stairs,31.4,0.0,徐家力的Apple Watch
+2025-05-15 08:45:30,Running,14.0,0.0,徐家力的Apple Watch
+2025-05-15 09:00:41,TraditionalStrengthTraining,32.4,0.0,徐家力的Apple Watch
+2025-05-21 09:02:25,Stairs,26.1,0.0,徐家力的Apple Watch
+2025-05-22 09:00:14,Stairs,42.8,0.0,徐家力的Apple Watch
+2025-06-02 10:46:23,Cycling,0.2,0.0,行者
+2025-06-02 10:48:48,Cycling,151.8,0.0,行者
+2025-06-02 10:49:35,Cycling,169.2,0.0,徐家力的Apple Watch
+2025-06-02 16:27:07,Cycling,84.0,0.0,徐家力的Apple Watch
+2025-06-02 17:59:06,Stairs,6.1,0.0,徐家力的Apple Watch
+2025-06-11 08:56:44,Stairs,43.4,0.0,徐家力的Apple Watch
+2025-06-12 09:04:19,Stairs,37.6,0.0,徐家力的Apple Watch
+2025-06-19 08:42:47,Stairs,57.9,0.0,徐家力的Apple Watch
+2025-06-20 09:20:51,Stairs,23.3,0.0,徐家力的Apple Watch
+2025-06-20 17:41:30,Cycling,18.0,0.0,徐家力的Apple Watch
+2025-06-21 18:26:24,Cycling,80.5,0.0,徐家力的Apple Watch
+2025-06-22 09:46:14,Running,27.0,0.0,徐家力的Apple Watch
+2025-06-22 10:17:39,TraditionalStrengthTraining,18.8,0.0,徐家力的Apple Watch
+2025-06-24 08:36:56,Stairs,62.7,0.0,徐家力的Apple Watch
+2025-06-25 09:02:04,Stairs,40.0,0.0,徐家力的Apple Watch
+2025-06-26 08:49:25,Stairs,45.3,0.0,徐家力的Apple Watch
+2025-06-28 18:17:25,Running,33.1,0.0,徐家力的Apple Watch
+2025-06-28 18:52:25,TraditionalStrengthTraining,7.7,0.0,徐家力的Apple Watch
+2025-07-09 08:52:13,Stairs,43.9,0.0,徐家力的Apple Watch
+2025-07-10 08:49:18,Stairs,50.4,0.0,徐家力的Apple Watch
+2025-07-14 08:56:10,Stairs,25.0,0.0,徐家力的Apple Watch
+2025-07-15 08:54:42,Stairs,24.5,0.0,徐家力的Apple Watch
+2025-07-18 09:01:48,Stairs,21.7,0.0,徐家力的Apple Watch
+2025-07-21 09:00:00,Stairs,25.4,0.0,徐家力的Apple Watch
+2025-07-22 08:41:52,Stairs,51.5,0.0,徐家力的Apple Watch
+2025-07-24 08:31:30,Running,16.7,0.0,徐家力的Apple Watch
+2025-07-24 08:48:33,TraditionalStrengthTraining,21.2,0.0,徐家力的Apple Watch
+2025-07-31 08:47:29,TraditionalStrengthTraining,42.6,0.0,徐家力的Apple Watch
+2025-08-01 09:19:58,TraditionalStrengthTraining,22.2,0.0,徐家力的Apple Watch
+2025-08-03 14:38:04,Running,23.9,0.0,徐家力的Apple Watch
+2025-08-06 08:50:36,Running,5.9,0.0,徐家力的Apple Watch
+2025-08-06 08:56:41,TraditionalStrengthTraining,22.7,0.0,徐家力的Apple Watch
+2025-08-10 15:42:13,TraditionalStrengthTraining,28.8,0.0,徐家力的Apple Watch
+2025-08-14 08:53:29,TraditionalStrengthTraining,6.9,0.0,徐家力的Apple Watch
+2025-08-15 09:06:29,TraditionalStrengthTraining,30.1,0.0,徐家力的Apple Watch
+2025-08-16 11:19:17,TraditionalStrengthTraining,58.2,0.0,徐家力的Apple Watch
+2025-08-17 12:48:16,TraditionalStrengthTraining,74.8,0.0,徐家力的Apple Watch
+2025-09-03 08:51:30,TraditionalStrengthTraining,2.6,0.0,徐家力的Apple Watch
+2025-09-03 08:54:25,Rowing,6.2,0.0,徐家力的Apple Watch
+2025-09-03 09:00:44,TraditionalStrengthTraining,20.2,0.0,徐家力的Apple Watch
+2025-09-04 08:53:05,TraditionalStrengthTraining,32.5,0.0,徐家力的Apple Watch
+2025-09-05 08:53:09,TraditionalStrengthTraining,36.6,0.0,徐家力的Apple Watch
+2025-09-06 10:01:03,Running,21.5,0.0,徐家力的Apple Watch
+2025-09-06 10:22:41,TraditionalStrengthTraining,37.9,0.0,徐家力的Apple Watch
+2025-09-09 09:03:09,TraditionalStrengthTraining,25.9,0.0,徐家力的Apple Watch
+2025-09-11 08:34:38,Running,26.3,0.0,徐家力的Apple Watch
+2025-09-11 09:01:11,TraditionalStrengthTraining,20.4,0.0,徐家力的Apple Watch
+2025-09-12 08:34:53,Running,28.5,0.0,徐家力的Apple Watch
+2025-09-12 09:03:33,TraditionalStrengthTraining,25.5,0.0,徐家力的Apple Watch
+2025-09-13 09:16:43,Running,63.2,0.0,徐家力的Apple Watch
+2025-09-13 10:58:18,TraditionalStrengthTraining,23.3,0.0,徐家力的Apple Watch
+2025-09-16 09:00:33,TraditionalStrengthTraining,29.3,0.0,徐家力的Apple Watch
+2025-09-18 08:58:53,Running,33.3,0.0,徐家力的Apple Watch
+2025-09-19 08:20:58,Running,14.2,0.0,徐家力的Apple Watch
+2025-09-23 08:36:17,Running,29.4,0.0,徐家力的Apple Watch
+2025-09-23 09:09:17,TraditionalStrengthTraining,25.1,0.0,徐家力的Apple Watch
+2025-09-25 09:02:44,Running,18.9,0.0,徐家力的Apple Watch
+2025-09-25 09:21:46,TraditionalStrengthTraining,20.8,0.0,徐家力的Apple Watch
+2025-09-26 08:35:08,Running,32.6,0.0,徐家力的Apple Watch
+2025-09-26 09:13:58,TraditionalStrengthTraining,9.5,0.0,徐家力的Apple Watch
+2025-09-28 08:43:52,Running,35.3,0.0,徐家力的Apple Watch
+2025-09-28 09:19:30,TraditionalStrengthTraining,12.9,0.0,徐家力的Apple Watch
+2025-09-30 08:46:55,Running,31.4,0.0,徐家力的Apple Watch
+2025-09-30 09:18:31,TraditionalStrengthTraining,18.8,0.0,徐家力的Apple Watch
+2025-10-12 10:05:51,Running,17.6,0.0,徐家力的Apple Watch
+2025-10-12 10:23:34,TraditionalStrengthTraining,16.9,0.0,徐家力的Apple Watch
+2025-10-13 09:22:24,Cycling,17.4,0.0,徐家力的Apple Watch
+2025-10-15 08:38:07,Running,21.8,0.0,徐家力的Apple Watch
+2025-10-15 09:02:48,TraditionalStrengthTraining,17.3,0.0,徐家力的Apple Watch
+2025-10-16 08:45:23,Running,23.6,0.0,徐家力的Apple Watch
+2025-10-16 09:09:05,TraditionalStrengthTraining,16.0,0.0,徐家力的Apple Watch
+2025-10-18 11:11:34,Running,62.3,0.0,徐家力的Apple Watch
+2025-10-18 12:25:53,TraditionalStrengthTraining,23.2,0.0,徐家力的Apple Watch
+2025-10-20 09:00:39,Running,8.3,0.0,徐家力的Apple Watch
+2025-10-20 09:09:11,TraditionalStrengthTraining,21.9,0.0,徐家力的Apple Watch
+2025-10-21 09:03:55,Running,23.3,0.0,徐家力的Apple Watch
+2025-10-21 09:27:27,TraditionalStrengthTraining,16.7,0.0,徐家力的Apple Watch
+2025-10-22 08:50:53,Running,14.6,0.0,徐家力的Apple Watch
+2025-10-22 09:05:41,TraditionalStrengthTraining,20.4,0.0,徐家力的Apple Watch
+2025-10-23 08:53:34,Running,10.9,0.0,徐家力的Apple Watch
+2025-10-23 09:04:42,TraditionalStrengthTraining,26.2,0.0,徐家力的Apple Watch
+2025-10-24 16:20:29,Cycling,99.6,0.0,徐家力的Apple Watch
+2025-10-25 11:10:04,Running,68.7,0.0,徐家力的Apple Watch
+2025-10-25 12:43:41,TraditionalStrengthTraining,16.6,0.0,徐家力的Apple Watch
+2025-10-28 09:16:18,Running,6.5,0.0,徐家力的Apple Watch
+2025-10-28 09:22:56,TraditionalStrengthTraining,8.2,0.0,徐家力的Apple Watch
+2025-10-29 08:52:45,Running,7.4,0.0,徐家力的Apple Watch
+2025-10-29 09:00:22,Running,24.6,0.0,徐家力的Apple Watch
+2025-10-30 08:59:03,Stairs,43.1,0.0,徐家力的Apple Watch
+2025-11-02 16:05:38,Running,78.4,0.0,徐家力的Apple Watch
+2025-11-04 09:00:36,Running,33.0,0.0,徐家力的Apple Watch
+2025-11-05 08:53:52,Running,28.2,0.0,徐家力的Apple Watch
+2025-11-08 15:46:56,Running,172.7,0.0,徐家力的Apple Watch
+2025-11-12 09:03:36,TraditionalStrengthTraining,25.9,0.0,徐家力的Apple Watch
+2025-11-19 08:56:34,TraditionalStrengthTraining,37.5,0.0,徐家力的Apple Watch
+2025-11-21 08:55:52,Running,7.5,0.0,徐家力的Apple Watch
+2025-11-21 09:03:31,TraditionalStrengthTraining,14.8,0.0,徐家力的Apple Watch
+2025-11-22 10:53:09,Running,61.0,0.0,徐家力的Apple Watch
+2025-11-22 11:54:21,TraditionalStrengthTraining,14.1,0.0,徐家力的Apple Watch
+2025-11-23 11:15:02,Cycling,24.3,0.0,徐家力的Apple Watch
+2025-11-26 08:53:15,Running,7.0,0.0,徐家力的Apple Watch
+2025-11-26 09:00:26,TraditionalStrengthTraining,24.6,0.0,徐家力的Apple Watch
+2025-11-27 08:49:30,Stairs,54.5,0.0,徐家力的Apple Watch
+2025-12-02 09:14:27,Stairs,19.9,0.0,徐家力的Apple Watch
+2025-12-03 09:07:13,Stairs,47.4,0.0,徐家力的Apple Watch
+2025-12-04 09:19:06,TraditionalStrengthTraining,17.4,0.0,徐家力的Apple Watch
+2025-12-07 11:51:41,Running,36.2,0.0,徐家力的Apple Watch
+2025-12-08 09:07:20,Stairs,43.3,0.0,徐家力的Apple Watch
+2025-12-09 09:07:23,Running,5.0,0.0,徐家力的Apple Watch
+2025-12-09 09:12:34,TraditionalStrengthTraining,4.3,0.0,徐家力的Apple Watch
+2025-12-11 08:53:40,Running,11.8,0.0,徐家力的Apple Watch
+2025-12-11 09:05:38,TraditionalStrengthTraining,15.3,0.0,徐家力的Apple Watch
+2025-12-17 08:30:13,Running,38.2,0.0,徐家力的Apple Watch
+2025-12-18 09:00:25,Stairs,47.5,0.0,徐家力的Apple Watch
+2025-12-19 09:01:26,Stairs,42.8,0.0,徐家力的Apple Watch
+2025-12-20 10:04:52,Running,32.8,0.0,徐家力的Apple Watch
+2025-12-20 10:38:39,Running,21.7,0.0,徐家力的Apple Watch
+2025-12-23 08:45:36,Stairs,48.2,0.0,徐家力的Apple Watch
+2025-12-25 09:07:21,Stairs,20.6,0.0,徐家力的Apple Watch
+2025-12-26 09:14:07,Stairs,81.6,0.0,徐家力的Apple Watch
+2025-12-28 17:03:17,Running,37.8,0.0,徐家力的Apple Watch
+2025-12-30 09:05:45,Stairs,45.2,0.0,徐家力的Apple Watch
+2025-12-31 09:12:54,Running,11.2,0.0,徐家力的Apple Watch
+2026-01-03 10:42:55,Running,40.8,0.0,徐家力的Apple Watch
+2026-01-04 09:03:55,Elliptical,16.4,0.0,徐家力的Apple Watch
+2026-01-05 08:52:46,Stairs,51.6,0.0,徐家力的Apple Watch
+2026-01-06 09:04:00,Running,22.5,0.0,徐家力的Apple Watch
+2026-01-07 09:03:56,Stairs,42.2,0.0,徐家力的Apple Watch

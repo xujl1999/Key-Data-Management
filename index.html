@@ -197,20 +197,30 @@
                 style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;">
               </div>
             </div>
-            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">建议 1800-2200kcal</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">建议 1800-2200kcal<span
+                id="viz1-calorie-diff"></span></div>
+          </div>
+          <div class="viz-card" data-metric="basal_energy"
+            style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">基础代谢</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-basal">--</div>
+            <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+              <div id="viz1-basal-bar"
+                style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #06b6d4); transition: width 0.5s;">
+              </div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">每日固定消耗</div>
           </div>
           <div class="viz-card" data-metric="active_energy"
             style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; cursor: pointer;">
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">日均消耗</div>
-            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-burn">--</div>
-            <div style="font-size: 11px; margin-top: 4px;" id="viz1-burn-detail">基础代谢 + 主动能量</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;">主动能量</div>
+            <div style="font-size: 24px; font-weight: 700; color: #f8fafc;" id="viz1-active">--</div>
             <div style="margin-top: 8px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-              <div id="viz1-burn-bar"
+              <div id="viz1-active-bar"
                 style="height: 100%; width: 0%; background: linear-gradient(90deg, #f97316, #22c55e); transition: width 0.5s;">
               </div>
             </div>
-            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">热量差: <span id="viz1-calorie-diff"
-                style="font-weight: 600;">--</span></div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">运动消耗</div>
           </div>
           <div
             style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; padding: 14px; text-align: center; border: 1px solid #334155; opacity: 0.6;">

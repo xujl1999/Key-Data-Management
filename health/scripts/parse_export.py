@@ -7,6 +7,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 from typing import Optional
+import re # Added this import
 
 import pandas as pd
 
@@ -131,23 +132,28 @@ def parse_export():
                 if elem.tag == "Workout":
                      workout_type = elem.attrib.get("workoutActivityType", "")
                      duration = elem.attrib.get("duration", "0")
-                     total_energy = elem.attrib.get("totalEnergyBurned", "0")
                      start_raw = elem.attrib.get("startDate", "")
                      source_name = elem.attrib.get("sourceName", "Unknown")
                      start_dt = parse_datetime(start_raw)
                      
                      if start_dt:
-                         # Clean up type name
                          simple_type = workout_type.replace("HKWorkoutActivityType", "")
                          try:
                              dur_val = float(duration)
                          except:
                              dur_val = 0.0
-                         try:
-                             energy_val = float(total_energy)
-                         except:
-                             energy_val = 0.0
-                             
+                         
+                         energy_val = 0.0
+                         # Check child elements for WorkoutStatistics
+                         for child in elem:
+                             if child.tag == "WorkoutStatistics" and child.attrib.get("type") == "HKQuantityTypeIdentifierActiveEnergyBurned":
+                                 e_sum = child.attrib.get("sum", "0")
+                                 try:
+                                     energy_val = float(e_sum)
+                                 except:
+                                     energy_val = 0.0
+                                 break
+                         
                          workouts.append((start_dt, simple_type, dur_val, energy_val, source_name))
                      elem.clear()
                      continue

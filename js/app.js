@@ -1263,6 +1263,8 @@ const loadHealthHighlight = async () => {
     updateVizPanels({ basalEnergy: basalAvg, activeEnergy: activeAvg, totalBurn: totalBurn });
   } catch (error) {
     console.error("加载能量消耗数据失败:", error);
+    setEl("viz1-basal", "Err"); // 调试用
+    setEl("viz1-active", "Err");
   }
 
   // 加载睡眠趋势数据（最近7天入睡/起床时间）
@@ -1317,18 +1319,31 @@ const updateVizPanels = (data) => {
   if (carb !== null) setEl("viz1-carb", Math.round(carb) + "g");
 
   // 能量消耗数据
-  if (totalBurn !== null && totalBurn > 0) {
-    setEl("viz1-burn", Math.round(totalBurn) + "kcal");
-    setEl("viz1-burn-detail", `基础${Math.round(basalEnergy || 0)} + 主动${Math.round(activeEnergy || 0)}`);
-    const burnPct = Math.max(0, Math.min(100, (totalBurn / 2500) * 100));
-    setStyle("viz1-burn-bar", "width", burnPct + "%");
+  // 能量消耗数据 (拆分为基础和主动)
+  if (basalEnergy !== null) {
+    setEl("viz1-basal", Math.round(basalEnergy) + "kcal");
+    const basalPct = Math.max(0, Math.min(100, (basalEnergy / 2000) * 100)); // 假设基础代谢满格为2000
+    setStyle("viz1-basal-bar", "width", basalPct + "%");
+  }
 
-    // 计算热量差
+  if (activeEnergy !== null) {
+    setEl("viz1-active", Math.round(activeEnergy) + "kcal");
+    const activePct = Math.max(0, Math.min(100, (activeEnergy / 1000) * 100)); // 假设主动能量满格为1000
+    setStyle("viz1-active-bar", "width", activePct + "%");
+  }
+
+  if (totalBurn !== null && totalBurn > 0) {
+    // 移除旧的 viz1-burn 逻辑
+
+    // 计算热量差 (逻辑不变，但DOM位置需要确保存在)
     if (kcal !== null) {
       const calorieDiff = Math.round(kcal - totalBurn);
       const diffColor = calorieDiff > 200 ? "#ef4444" : calorieDiff < -500 ? "#3b82f6" : "#22c55e";
       const diffSign = calorieDiff > 0 ? "+" : "";
-      setHtml("viz1-calorie-diff", `<span style="color: ${diffColor}">${diffSign}${calorieDiff}kcal</span>`);
+
+      // 尝试更新 viz1-calorie-diff，如果它不存在于HTML将不生效
+      // 建议在HTML中找个位置放它，例如摄入卡片里
+      setHtml("viz1-calorie-diff", `<span style="color: ${diffColor}; margin-left: 6px;">(差: ${diffSign}${calorieDiff})</span>`);
     }
   }
 
@@ -2343,6 +2358,8 @@ const METRIC_KEY_TO_LABEL = {
   dietary_protein_g: "蛋白质",
   dietary_fat_g: "脂肪",
   dietary_carb_g: "碳水",
+  active_energy: "主动能量",
+  basal_energy: "基础代谢",
 };
 
 document.querySelectorAll(".viz-card[data-metric]").forEach((card) => {

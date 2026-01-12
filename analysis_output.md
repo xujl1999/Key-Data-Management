@@ -1,11 +1,10 @@
-### 最近30天运动数据分析 (2025-12-09 ~ 2026-01-08)
+### 最近30天运动数据分析 (2025-12-13 ~ 2026-01-12)
 
 | 运动类型 | 来源 | 次数 | 总时长(分) | 总消耗(kcal) |
 | :--- | :--- | :--- | :--- | :--- |
 | Stairs | 徐家力的Apple Watch | 8 | 379.7 | 0.0 |
-| Running | 徐家力的Apple Watch | 8 | 216.8 | 0.0 |
+| Running | 徐家力的Apple Watch | 7 | 205.0 | 0.0 |
 | Elliptical | 徐家力的Apple Watch | 1 | 16.4 | 0.0 |
-| TraditionalStrengthTraining | 徐家力的Apple Watch | 1 | 15.3 | 0.0 |
 
 
 ### 明细数据 (最近10条)

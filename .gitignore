@@ -1,3 +1,11 @@
 health/*.zip
 __pycache__/
 *.pyc
+
+# Food Service Temp
+food_service/*.png
+food_service/logs/
+food_service/check_env.py
+food_service/scan_ports.py
+food_service/verify_food.py
+food_service/test_*.py

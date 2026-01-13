@@ -921,9 +921,9 @@ window.parseDate = parseDate;
 
 const avgWindowByDate = (series, days, offsetDays = 0) => {
   if (!series.length) return null;
-  const lastDate = series[series.length - 1].date;
-  const end = new Date(lastDate);
-  end.setHours(23, 59, 59, 999); // 设置为当天的结束时间
+  // 使用今天作为基准，而不是数据集的最后一天
+  const today = new Date();
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
   end.setDate(end.getDate() - offsetDays);
   const start = new Date(end);
   start.setDate(start.getDate() - (days - 1));
@@ -1218,10 +1218,50 @@ const loadHealthHighlight = async () => {
   }
 
   try {
-    const { text } = await fetchFromSources(EXERCISE_SOURCES);
-    const exerciseSeries = parseMetricSeries(text, "exercise_time_min");
-    const weekCount = countWindowByDate(exerciseSeries, 7, 0);
-    const monthCount = countWindowByDate(exerciseSeries, 30, 0);
+    const { text } = await fetchFromSources(WORKOUT_SOURCES);
+    // 解析 workouts_daily.csv，格式：date,workout_type,duration_min,energy_kcal,source
+    // 每行是一次锻炼记录，需要统计有 Workout 的天数
+    const countWorkoutDays = (csvText, days, offsetDays = 0) => {
+      const allRows = parseCSV(csvText);
+      if (allRows.length < 2) return null; // 至少要有标题行和一行数据
+
+      // 第一行是标题，跳过
+      const dataRows = allRows.slice(1);
+
+      // 提取所有锻炼日期（只取日期部分，不含时间）
+      // CSV格式：date,workout_type,duration_min,energy_kcal,source
+      // 索引0是日期列
+      const workoutDates = dataRows.map(row => {
+        const dateStr = row[0] || "";
+        if (!dateStr) return null;
+        // date 格式是 "2026-01-10 11:07:02"，取前10位
+        return dateStr.substring(0, 10);
+      }).filter(d => d !== null);
+
+      if (workoutDates.length === 0) return null;
+
+      // 使用今天作为基准，而不是最后一个Workout日期
+      const today = new Date();
+      const end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+      end.setDate(end.getDate() - offsetDays);
+      const start = new Date(end);
+      start.setDate(start.getDate() - (days - 1));
+      start.setHours(0, 0, 0, 0);
+
+      // 筛选时间窗口内的日期并去重
+      const uniqueDates = new Set();
+      workoutDates.forEach(dateStr => {
+        const d = new Date(dateStr);
+        if (d >= start && d <= end) {
+          uniqueDates.add(dateStr);
+        }
+      });
+
+      return uniqueDates.size;
+    };
+
+    const weekCount = countWorkoutDays(text, 7, 0);
+    const monthCount = countWorkoutDays(text, 30, 0);
     setHighlightValue(highlightEls.exerciseWeek, weekCount === null ? "--" : weekCount);
     setHighlightValue(highlightEls.exerciseMonth, monthCount === null ? "--" : monthCount);
     const canRest = (weekCount || 0) >= 5 || (monthCount || 0) >= 21;

@@ -2,7 +2,7 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 import json
 from pathlib import Path
 
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = 8001
 OUTPUT_DIR = Path(__file__).resolve().parent / "video"
 

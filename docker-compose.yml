@@ -1,0 +1,18 @@
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/usr/share/nginx/html:ro
+    depends_on:
+      - app
+
+  app:
+    build: .
+    volumes:
+      - .:/app
+      - ./config/rclone:/root/.config/rclone # Persist rclone config
+    environment:
+      - TZ=Asia/Shanghai

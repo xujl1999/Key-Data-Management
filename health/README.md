@@ -32,9 +32,27 @@ python health/parse_export.py
 
 ## 一键更新（OneDrive）
 ```bash
-python health/update_from_onedrive.py
+python health/scripts/update_from_onedrive.py
+# 默认会：复制最新导出 zip -> 解析 -> 生成最近7天汇总 + 数据质量报告
 # 可选：--delete-source（复制后删除 OneDrive 源文件）
 # 可选：--source-dir 指定 OneDrive 目录，--pattern 指定匹配模式
+# 可选：--no-last7 跳过生成 health/_last7_summary.md
+# 可选：--no-quality 跳过生成 health/_data_quality.md
+```
+
+## 数据质量检查 / 小仪表盘（Markdown）
+```bash
+python health/scripts/quality_report.py --days 14
+# 输出 health/_data_quality.md（缺失天数、覆盖率、异常提示、sparkline）
+```
+
+## 酷炫小实验：OneDrive 导出 zip 自动监听（无需装服务）
+> 目标：你只要“导出健康数据到 OneDrive”，本地终端会自动触发解析 + 生成报告。
+
+```powershell
+cd D:\dream_life\data-management
+powershell -ExecutionPolicy Bypass -File .\health\scripts\watch_onedrive.ps1
+# Ctrl+C 退出
 ```
 
 ## 快速查看/解压

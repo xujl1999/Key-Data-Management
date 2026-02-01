@@ -14,6 +14,8 @@ DEFAULT_SOURCE_DIR = Path(r"C:\Users\23711\OneDrive\DATA")
 DEFAULT_PATTERN = "导出*.zip"
 DEST_ZIP = HEALTH_DIR / "导出.zip"
 PARSE_SCRIPT = SCRIPT_DIR / "parse_export.py"
+QUALITY_SCRIPT = SCRIPT_DIR / "quality_report.py"
+SUMMARY_SCRIPT = SCRIPT_DIR / "summarize_last7.py"
 PARSE_CWD = HEALTH_DIR
 
 try:
@@ -71,8 +73,8 @@ def copy_zip(source: Path, dest: Path) -> None:
     os.replace(tmp, dest)
 
 
-def run_parse(script: Path) -> None:
-    subprocess.run([sys.executable, str(script)], check=True, cwd=PARSE_CWD)
+def run_py(script: Path, *extra_args: str) -> None:
+    subprocess.run([sys.executable, str(script), *extra_args], check=True, cwd=PARSE_CWD)
 
 
 def main() -> int:
@@ -118,6 +120,16 @@ def main() -> int:
         action="store_true",
         help="Delete source zip after successful copy.",
     )
+    parser.add_argument(
+        "--no-quality",
+        action="store_true",
+        help="Skip generating health/_data_quality.md after parsing.",
+    )
+    parser.add_argument(
+        "--no-last7",
+        action="store_true",
+        help="Skip generating health/_last7_summary.md after parsing.",
+    )
     args = parser.parse_args()
 
     source_dir = args.source_dir
@@ -155,8 +167,23 @@ def main() -> int:
         print(f"Parse script not found: {PARSE_SCRIPT}")
         return 4
 
-    run_parse(PARSE_SCRIPT)
+    run_py(PARSE_SCRIPT)
     print("Parse complete.")
+
+    if not args.no_last7:
+        if SUMMARY_SCRIPT.exists():
+            run_py(SUMMARY_SCRIPT)
+            print("Last7 summary complete.")
+        else:
+            print(f"Summary script not found: {SUMMARY_SCRIPT}")
+
+    if not args.no_quality:
+        if QUALITY_SCRIPT.exists():
+            run_py(QUALITY_SCRIPT)
+            print("Quality report complete.")
+        else:
+            print(f"Quality script not found: {QUALITY_SCRIPT}")
+
     return 0
 
 

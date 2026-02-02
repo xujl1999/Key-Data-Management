@@ -1,0 +1,67 @@
+{
+  "updated_at": "2026-02-02T13:30:00+08:00",
+  "models": [
+    {
+      "name": "Opus 4.5",
+      "quota_percent": 80,
+      "reset_in_minutes": 150,
+      "status": "warning"
+    },
+    {
+      "name": "G3 Pro",
+      "quota_percent": 60,
+      "reset_in_minutes": 105,
+      "status": "ok"
+    },
+    {
+      "name": "G2.5 Flash",
+      "quota_percent": 40,
+      "reset_in_minutes": 190,
+      "status": "ok"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "修复数据源问题",
+      "status": "in_progress",
+      "project": "data-management",
+      "priority": "high"
+    },
+    {
+      "id": "2",
+      "title": "添加工作台 Tab",
+      "status": "in_progress",
+      "project": "data-management",
+      "priority": "high"
+    },
+    {
+      "id": "3",
+      "title": "整理模型额度预警规则",
+      "status": "todo",
+      "project": "ops",
+      "priority": "medium"
+    },
+    {
+      "id": "4",
+      "title": "确认健康数据抓取时间",
+      "status": "todo",
+      "project": "health",
+      "priority": "low"
+    },
+    {
+      "id": "5",
+      "title": "发布模型状态日报",
+      "status": "done",
+      "project": "ops",
+      "priority": "medium"
+    },
+    {
+      "id": "6",
+      "title": "梳理本周项目目标",
+      "status": "done",
+      "project": "planning",
+      "priority": "low"
+    }
+  ]
+}

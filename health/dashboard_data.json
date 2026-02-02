@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-02-02T16:15:04+08:00",
+  "updated_at": "2026-02-02T16:40:30+08:00",
   "weather": {
     "shenzhen": {
-      "temp_current": 18,
+      "temp_current": 19,
       "temp_min": 13,
       "temp_max": 19,
       "humidity": 55,
@@ -17,9 +17,9 @@
       "temp_current": 13,
       "temp_min": 6,
       "temp_max": 14,
-      "humidity": 43,
+      "humidity": 44,
       "description": "阴",
-      "wind_kmph": 4,
+      "wind_kmph": 5,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -30,14 +30,14 @@
     {
       "name": "腾讯",
       "symbol": "0700.HK",
-      "price": 597.5,
-      "change": -3.94
+      "price": 598.5,
+      "change": -3.78
     },
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26751.84,
-      "change": -2.32
+      "price": 26775.57,
+      "change": -2.23
     },
     {
       "name": "纳指",

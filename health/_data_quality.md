@@ -1,6 +1,6 @@
 # Health Data Quality Report
 
-Generated: 2026-02-01 23:32:07
+Generated: 2026-02-02 08:46:41
 
 Window: last 14 days (per-file, aligned to each file's latest date)
 

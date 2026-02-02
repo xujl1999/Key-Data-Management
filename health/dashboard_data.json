@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-02T23:02:00+08:00",
+  "updated_at": "2026-02-02T23:30:28+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 17,
@@ -14,12 +14,12 @@
       "source": "caiyun(failed)->open-meteo"
     },
     "chengdu": {
-      "temp_current": 9,
+      "temp_current": 8,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 73,
+      "humidity": 75,
       "description": "阴",
-      "wind_kmph": 3,
+      "wind_kmph": 2,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -42,14 +42,14 @@
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 25492.62,
-      "change": -0.23
+      "price": 25748.46,
+      "change": 0.77
     },
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6926.25,
-      "change": -0.18
+      "price": 6969.84,
+      "change": 0.44
     },
     {
       "name": "上证综指",

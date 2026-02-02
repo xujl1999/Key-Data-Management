@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-02-02T19:30:12+08:00",
+  "updated_at": "2026-02-02T20:00:27+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 18,
       "temp_min": 13,
       "temp_max": 19,
-      "humidity": 59,
+      "humidity": 60,
       "description": "晴",
       "wind_kmph": 11,
       "aqi": null,
@@ -17,9 +17,9 @@
       "temp_current": 10,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 63,
-      "description": "多云",
-      "wind_kmph": 6,
+      "humidity": 65,
+      "description": "阴",
+      "wind_kmph": 5,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",

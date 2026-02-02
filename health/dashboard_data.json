@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-02-03T05:00:12+08:00",
+  "updated_at": "2026-02-03T05:30:55+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 16,
       "temp_min": 16,
       "temp_max": 18,
-      "humidity": 59,
+      "humidity": 60,
       "description": "多云",
       "wind_kmph": 10,
       "aqi": null,
@@ -14,7 +14,7 @@
       "source": "caiyun(failed)->open-meteo"
     },
     "chengdu": {
-      "temp_current": 7,
+      "temp_current": 6,
       "temp_min": 6,
       "temp_max": 13,
       "humidity": 85,
@@ -48,7 +48,7 @@
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6976.52,
+      "price": 6976.44,
       "change": 0.54
     },
     {

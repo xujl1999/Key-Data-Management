@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-02-02T22:00:20+08:00",
+  "updated_at": "2026-02-02T22:30:28+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 17,
       "temp_min": 13,
       "temp_max": 19,
-      "humidity": 59,
+      "humidity": 58,
       "description": "多云",
-      "wind_kmph": 9,
+      "wind_kmph": 10,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -17,9 +17,9 @@
       "temp_current": 9,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 72,
+      "humidity": 73,
       "description": "阴",
-      "wind_kmph": 4,
+      "wind_kmph": 3,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -42,14 +42,14 @@
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 25552.39,
-      "change": -1.28
+      "price": 25492.62,
+      "change": -0.23
     },
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6939.03,
-      "change": -0.43
+      "price": 6926.25,
+      "change": -0.18
     },
     {
       "name": "上证综指",
@@ -66,6 +66,11 @@
   ],
   "ai_news": [
     {
+      "title": "Snowflake and OpenAI partner to bring frontier intelligence to enterprise data",
+      "summary": "OpenAI and Snowflake partner in a $200M agreement to bring frontier intelligence into enterprise data, enabling AI agent…",
+      "url": "https://openai.com/index/snowflake-partnership"
+    },
+    {
       "title": "Inside OpenAI’s in-house data agent",
       "summary": "How OpenAI built an in-house AI data agent that uses GPT-5, Codex, and memory to reason over massive datasets and delive…",
       "url": "https://openai.com/index/inside-our-in-house-data-agent"
@@ -79,11 +84,6 @@
       "title": "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
       "summary": "On February 13, 2026, alongside the previously announced retirement⁠ of GPT‑5 (Instant, Thinking, and Pro), we will reti…",
       "url": "https://openai.com/index/retiring-gpt-4o-and-older-models"
-    },
-    {
-      "title": "The next chapter for AI in the EU",
-      "summary": "OpenAI launches the EU Economic Blueprint 2.0 with new data, partnerships, and initiatives to accelerate AI adoption, sk…",
-      "url": "https://openai.com/index/the-next-chapter-for-ai-in-the-eu"
     },
     {
       "title": "EMEA Youth & Wellbeing Grant",

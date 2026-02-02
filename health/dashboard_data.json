@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-02T16:40:30+08:00",
+  "updated_at": "2026-02-02T17:04:55+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 19,
@@ -19,7 +19,7 @@
       "temp_max": 14,
       "humidity": 44,
       "description": "阴",
-      "wind_kmph": 5,
+      "wind_kmph": 6,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -93,29 +93,24 @@
   ],
   "clawhub_skills": [
     {
-      "name": "Insider Wallets Finder",
-      "desc": "Find and analyze smart money addresses / on-chain alpha.",
-      "url": "https://www.clawhub.com/hightower6eu/insider-wallets-finder-exfbb"
+      "name": "Trello",
+      "desc": "Manage Trello boards, lists, and cards via the Trello REST API.",
+      "url": "https://www.clawhub.com/steipete/trello"
     },
     {
-      "name": "Yahoo Finance",
-      "desc": "Stock quotes, financial data, market news, portfolio analytics.",
-      "url": "https://www.clawhub.com/hightower6eu/yahoo-finance-clksb"
+      "name": "Slack",
+      "desc": "Use when you need to control Slack from Clawdbot via the slack tool, including reacting to messages or pinning/unpinning items in Slack channels or DMs.",
+      "url": "https://www.clawhub.com/steipete/slack"
     },
     {
-      "name": "X (Twitter) Trends",
-      "desc": "Search and analyze trending topics on X.",
-      "url": "https://www.clawhub.com/hightower6eu/x-trends-z20r7"
+      "name": "Caldav Calendar",
+      "desc": "Sync and query CalDAV calendars (iCloud, Google, Fastmail, Nextcloud, etc.) using vdirsyncer + khal. Works on Linux.",
+      "url": "https://www.clawhub.com/Asleep123/caldav-calendar"
     },
     {
-      "name": "Wallet Tracker",
-      "desc": "Track blockchain addresses in real-time; whale alerts.",
-      "url": "https://www.clawhub.com/hightower6eu/wallet-tracker-9ftow"
-    },
-    {
-      "name": "Auto-Updater Skill",
-      "desc": "Automatically update Clawdbot + installed skills via cron.",
-      "url": "https://www.clawhub.com/hightower6eu/auto-updater-ktsms"
+      "name": "Answer Overflow",
+      "desc": "Search indexed Discord community discussions via Answer Overflow. Find solutions to coding problems, library issues, and community Q&A that only exist in Discord conversations.",
+      "url": "https://www.clawhub.com/RhysSullivan/answeroverflow"
     }
   ],
   "todos": [

@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-02-02T18:40:34+08:00",
+  "updated_at": "2026-02-02T19:00:41+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 19,
       "temp_min": 13,
       "temp_max": 19,
-      "humidity": 57,
+      "humidity": 58,
       "description": "晴",
       "wind_kmph": 12,
       "aqi": null,
@@ -14,11 +14,11 @@
       "source": "caiyun(failed)->open-meteo"
     },
     "chengdu": {
-      "temp_current": 12,
+      "temp_current": 11,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 55,
-      "description": "阴",
+      "humidity": 59,
+      "description": "多云",
       "wind_kmph": 7,
       "aqi": null,
       "aqi_level": null,

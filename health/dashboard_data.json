@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-03T04:30:18+08:00",
+  "updated_at": "2026-02-03T05:00:12+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 16,
@@ -7,7 +7,7 @@
       "temp_max": 18,
       "humidity": 59,
       "description": "多云",
-      "wind_kmph": 9,
+      "wind_kmph": 10,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -17,8 +17,8 @@
       "temp_current": 7,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 84,
-      "description": "多云",
+      "humidity": 85,
+      "description": "阴",
       "wind_kmph": 2,
       "aqi": null,
       "aqi_level": null,
@@ -42,14 +42,14 @@
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 25746.37,
-      "change": 0.76
+      "price": 25738.61,
+      "change": 0.73
     },
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6979.59,
-      "change": 0.58
+      "price": 6976.52,
+      "change": 0.54
     },
     {
       "name": "上证综指",

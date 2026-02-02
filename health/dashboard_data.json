@@ -27,17 +27,17 @@
   "ai_news": [
     {
       "title": "OpenClaw 更新",
-      "summary": "记忆检索优化，响应速度提升。",
+      "summary": "记忆检索优化，响应速度提升",
       "url": "https://github.com/openclaw/openclaw"
     },
     {
       "title": "AgentFlow 发布",
-      "summary": "新增多智能体协作模板与可视化监控。",
+      "summary": "新增多智能体协作模板与可视化监控",
       "url": "https://github.com"
     },
     {
       "title": "ClawOS 周报",
-      "summary": "本周重点：插件生态扩展与性能修复。",
+      "summary": "本周重点：插件生态扩展与性能修复",
       "url": "https://clawhub.com"
     }
   ],
@@ -52,7 +52,7 @@
     },
     {
       "name": "Slack",
-      "url": "https://clawhub.com"
+      "url": "https://clawhub.com/kn70pywhg0fyz996kpa8xj89s57yhv26/slack"
     }
   ],
   "todos": [

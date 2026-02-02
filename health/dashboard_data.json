@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-02T15:42:26+08:00",
+  "updated_at": "2026-02-02T16:15:04+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 18,
@@ -7,43 +7,43 @@
       "temp_max": 19,
       "humidity": 55,
       "description": "晴",
-      "wind_kmph": 13,
+      "wind_kmph": 12,
       "aqi": null,
       "aqi_level": null,
-      "rain_forecast": "未来24小时无雨",
-      "source": "open-meteo"
+      "rain_forecast": "未来24小时无明显降雨",
+      "source": "caiyun(failed)->open-meteo"
     },
     "chengdu": {
       "temp_current": 13,
-      "temp_min": 1,
-      "temp_max": 13,
-      "humidity": 46,
-      "description": "多云",
-      "wind_kmph": 5,
+      "temp_min": 6,
+      "temp_max": 14,
+      "humidity": 43,
+      "description": "阴",
+      "wind_kmph": 4,
       "aqi": null,
       "aqi_level": null,
-      "rain_forecast": "20:00~23:00 降雨概率 33%（峰值）",
-      "source": "open-meteo"
+      "rain_forecast": "未来24小时无明显降雨",
+      "source": "caiyun(failed)->open-meteo"
     }
   },
   "markets": [
     {
       "name": "腾讯",
       "symbol": "0700.HK",
-      "price": 593.5,
-      "change": -2.06
+      "price": 597.5,
+      "change": -3.94
     },
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26658.08,
-      "change": -2.66
+      "price": 26751.84,
+      "change": -2.32
     },
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 23461.82,
-      "change": -0.94
+      "price": 25552.39,
+      "change": -1.28
     },
     {
       "name": "标普500",
@@ -66,24 +66,29 @@
   ],
   "ai_news": [
     {
-      "title": "OpenAI 将于 2 月 13 日在 ChatGPT 退役 GPT-4o/4.1/4.1 mini/o4-mini",
-      "summary": "OpenAI 表示绝大多数使用已转向 GPT‑5.2，仅 0.1% 用户仍每日选择 GPT‑4o；API 暂无变化。",
-      "url": "https://openai.com/index/retiring-gpt-4o-and-older-models/"
+      "title": "Inside OpenAI’s in-house data agent",
+      "summary": "How OpenAI built an in-house AI data agent that uses GPT-5, Codex, and memory to reason over massive datasets and delive…",
+      "url": "https://openai.com/index/inside-our-in-house-data-agent"
     },
     {
-      "title": "Anthropic 发布 Cowork（研究预览），并引入 connectors/skills 强化代理式工作流",
-      "summary": "Cowork 让非开发者也能像用 Claude Code 一样给 Claude 授权文件夹，让它更“带执行力”地完成整理、生成文档等任务。",
-      "url": "https://claude.com/blog/cowork-research-preview"
+      "title": "Taisei Corporation shapes the next generation of talent with ChatGPT",
+      "summary": "Taisei Corporation uses ChatGPT Enterprise to support HR-led talent development and scale generative AI across its globa…",
+      "url": "https://openai.com/index/taisei"
     },
     {
-      "title": "Google Maps 步行/骑行导航上线 Gemini 语音助手",
-      "summary": "支持边走边问“我在哪个街区”、附近餐厅推荐；骑行时也可免手操作查询 ETA、发消息等。",
-      "url": "https://blog.google/products-and-platforms/products/maps/gemini-navigation-biking-walking/"
+      "title": "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
+      "summary": "On February 13, 2026, alongside the previously announced retirement⁠ of GPT‑5 (Instant, Thinking, and Pro), we will reti…",
+      "url": "https://openai.com/index/retiring-gpt-4o-and-older-models"
     },
     {
-      "title": "The Verge：Nvidia 与 OpenAI 百亿美元级合作谈判“搁置/调整”",
-      "summary": "据 The Verge 转述 WSJ：双方可能从原先设想调整为更偏股权投资的形式继续谈。",
-      "url": "https://www.theverge.com/ai-artificial-intelligence"
+      "title": "The next chapter for AI in the EU",
+      "summary": "OpenAI launches the EU Economic Blueprint 2.0 with new data, partnerships, and initiatives to accelerate AI adoption, sk…",
+      "url": "https://openai.com/index/the-next-chapter-for-ai-in-the-eu"
+    },
+    {
+      "title": "EMEA Youth & Wellbeing Grant",
+      "summary": "Apply for the EMEA Youth & Wellbeing Grant, a €500,000 program funding NGOs and researchers advancing youth safety and w…",
+      "url": "https://openai.com/index/emea-youth-and-wellbeing-grant"
     }
   ],
   "clawhub_skills": [

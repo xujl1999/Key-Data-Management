@@ -80,6 +80,11 @@ CHECKS: list[FileCheck] = [
         bounds={"sleep_hours": (0, 24)},
     ),
     FileCheck(
+        filename="sleep_sessions.csv",
+        important_cols=("duration_hours",),
+        bounds={"duration_hours": (0, 24)},
+    ),
+    FileCheck(
         filename="weight_daily.csv",
         important_cols=("weight_kg",),
         bounds={"weight_kg": (20, 300)},
@@ -98,11 +103,25 @@ CHECKS: list[FileCheck] = [
 
 
 def _read_daily_csv(path: Path) -> pd.DataFrame:
-    df = pd.read_csv(path, parse_dates=["date"])
+    """Read a *daily* csv that has a `date` column."""
+    df = pd.read_csv(path)
     if "date" not in df.columns:
         raise ValueError(f"missing 'date' column: {path}")
-    df["date"] = pd.to_datetime(df["date"]).dt.date
+    df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.date
     return df.sort_values("date")
+
+
+def _read_sessions_csv(path: Path) -> pd.DataFrame:
+    """Read a sessions csv (e.g. sleep_sessions.csv) that has start/end timestamps."""
+    df = pd.read_csv(path)
+    for c in ("start", "end"):
+        if c not in df.columns:
+            raise ValueError(f"missing '{c}' column: {path}")
+    df["start"] = pd.to_datetime(df["start"], errors="coerce")
+    df["end"] = pd.to_datetime(df["end"], errors="coerce")
+    # Define per-day bucket by start date.
+    df["date"] = df["start"].dt.date
+    return df.sort_values("start")
 
 
 def _recent_window(end: date, days: int) -> list[date]:
@@ -140,7 +159,10 @@ def main() -> int:
             rows.append((check.filename, "MISSING", "", "", ""))
             continue
 
-        df = _read_daily_csv(path)
+        if check.filename.endswith("_sessions.csv"):
+            df = _read_sessions_csv(path)
+        else:
+            df = _read_daily_csv(path)
         if df.empty:
             rows.append((check.filename, "EMPTY", "", "", ""))
             continue

@@ -11,7 +11,19 @@
 - `video_update.bat`：一键执行抓取并将整个仓库提交到远端。
 
 ## 使用步骤
-1) 准备环境  
+
+### 0) 快速自检（推荐）
+仓库里有一套 **health 数据管线的快速体检 + smoke test**，用于提升稳定性（数据缺失/异常能尽早暴露）。
+
+- 生成健康数据质量报告（输出 `health/_data_quality.md`）：
+  - `python health/scripts/quality_report.py --days 14`
+- 一键体检（质量报告 + 校验 `health/dashboard_data.json`）：
+  - `python health/scripts/doctor.py --days 14`
+- 一键 smoke（PowerShell，适合睡前/提交前跑一遍）：
+  - `pwsh -File scripts/smoke.ps1`
+  - 离线模式（不发起网络请求更新 dashboard）：`pwsh -File scripts/smoke.ps1 -NoNetwork`
+
+### 1) 准备环境  
    - 安装 Edge 浏览器与对应的 Selenium WebDriver（需与浏览器版本匹配）。  
    - 在本机已有的 Python/conda 环境中安装依赖：`selenium`、`pandas`、`tqdm`。  
    - 配置作者列表文件 `video/bilibili_authors.json`（存放作者 id、类别等信息）。

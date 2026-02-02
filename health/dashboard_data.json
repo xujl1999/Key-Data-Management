@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-02-03T00:30:23+08:00",
+  "updated_at": "2026-02-03T01:00:16+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 15,
       "temp_min": 15,
       "temp_max": 19,
-      "humidity": 69,
+      "humidity": 70,
       "description": "多云",
-      "wind_kmph": 26,
-      "aqi": 62,
+      "wind_kmph": 29,
+      "aqi": 53,
       "aqi_level": "良",
       "rain_forecast": "未来24小时无明显降雨",
       "source": "caiyun"
@@ -17,10 +17,10 @@
       "temp_current": 9,
       "temp_min": 8,
       "temp_max": 13,
-      "humidity": 70,
-      "description": "多云",
+      "humidity": 74,
+      "description": "阴",
       "wind_kmph": 12,
-      "aqi": 72,
+      "aqi": 73,
       "aqi_level": "良",
       "rain_forecast": "未来24小时无明显降雨",
       "source": "caiyun"
@@ -31,7 +31,7 @@
       "name": "腾讯",
       "symbol": "0700.HK",
       "price": 598.5,
-      "change": -3.78
+      "change": -1.24
     },
     {
       "name": "恒生指数",
@@ -42,14 +42,14 @@
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 25774.91,
-      "change": 0.87
+      "price": 25780.05,
+      "change": 0.89
     },
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6977.52,
-      "change": 0.55
+      "price": 6979.74,
+      "change": 0.59
     },
     {
       "name": "上证综指",

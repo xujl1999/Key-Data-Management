@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-02-02T15:00:00+08:00",
+  "updated_at": "2026-02-02T15:42:26+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 18,
       "temp_min": 13,
       "temp_max": 19,
-      "humidity": 56,
+      "humidity": 55,
       "description": "晴",
       "wind_kmph": 13,
       "aqi": null,
@@ -15,14 +15,14 @@
     },
     "chengdu": {
       "temp_current": 13,
-      "temp_min": 6,
+      "temp_min": 1,
       "temp_max": 13,
-      "humidity": 43,
+      "humidity": 46,
       "description": "多云",
-      "wind_kmph": 3,
+      "wind_kmph": 5,
       "aqi": null,
       "aqi_level": null,
-      "rain_forecast": "今晚20:00起降雨概率升至20-33%，明晨有小雨可能",
+      "rain_forecast": "20:00~23:00 降雨概率 33%（峰值）",
       "source": "open-meteo"
     }
   },
@@ -30,87 +30,87 @@
     {
       "name": "腾讯",
       "symbol": "0700.HK",
-      "price": 621.00,
-      "change": 2.31
+      "price": 593.5,
+      "change": -2.06
     },
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26576.51,
-      "change": -2.96
+      "price": 26658.08,
+      "change": -2.66
     },
     {
       "name": "纳指",
-      "symbol": "^IXIC",
-      "price": 23461.82,
-      "change": -0.94
+      "symbol": "^NDQ",
+      "price": null,
+      "change": null
     },
     {
       "name": "标普500",
-      "symbol": "^GSPC",
-      "price": 6939.03,
-      "change": -0.43
+      "symbol": "^SPX",
+      "price": null,
+      "change": null
     },
     {
       "name": "上证综指",
       "symbol": "000001.SS",
-      "price": 4045.44,
-      "change": -1.76
+      "price": 4015.75,
+      "change": -2.48
     },
     {
       "name": "深证成指",
       "symbol": "399001.SZ",
-      "price": 13961.44,
-      "change": -1.72
+      "price": 13824.35,
+      "change": -2.69
     }
   ],
   "ai_news": [
     {
-      "title": "Nvidia 与 OpenAI 1000亿美元交易暂停",
-      "summary": "据 WSJ 报道，双方正重新谈判，可能改为数百亿美元的股权投资",
-      "url": "https://www.theverge.com/ai-artificial-intelligence"
-    },
-    {
-      "title": "Anthropic Cowork 新增 plugins，强化 agentic AI",
-      "summary": "插件可让 Cowork 成为销售、法务、财务等领域专家",
-      "url": "https://claude.com/blog/cowork-research-preview"
-    },
-    {
-      "title": "GPT-4o 将于2月13日从 ChatGPT 退役",
-      "summary": "GPT-4o/4.1/o4-mini 将下线，目前每日仅 0.1% 用户使用",
+      "title": "OpenAI 将于 2 月 13 日在 ChatGPT 退役 GPT-4o/4.1/4.1 mini/o4-mini",
+      "summary": "OpenAI 表示绝大多数使用已转向 GPT‑5.2，仅 0.1% 用户仍每日选择 GPT‑4o；API 暂无变化。",
       "url": "https://openai.com/index/retiring-gpt-4o-and-older-models/"
     },
     {
-      "title": "Rabbit 发布 project cyberdeck 新设备",
-      "summary": "专为 vibe-coding 设计的便携设备，r1 也获 OTA 更新支持 agentic 任务",
-      "url": "https://www.theverge.com/ai-artificial-intelligence"
+      "title": "Anthropic 发布 Cowork（研究预览），并引入 connectors/skills 强化代理式工作流",
+      "summary": "Cowork 让非开发者也能像用 Claude Code 一样给 Claude 授权文件夹，让它更“带执行力”地完成整理、生成文档等任务。",
+      "url": "https://claude.com/blog/cowork-research-preview"
     },
     {
-      "title": "Google Maps 集成 Gemini 导航助手",
-      "summary": "步行导航时可询问 Gemini 关于周边餐厅、社区等信息",
+      "title": "Google Maps 步行/骑行导航上线 Gemini 语音助手",
+      "summary": "支持边走边问“我在哪个街区”、附近餐厅推荐；骑行时也可免手操作查询 ETA、发消息等。",
       "url": "https://blog.google/products-and-platforms/products/maps/gemini-navigation-biking-walking/"
+    },
+    {
+      "title": "The Verge：Nvidia 与 OpenAI 百亿美元级合作谈判“搁置/调整”",
+      "summary": "据 The Verge 转述 WSJ：双方可能从原先设想调整为更偏股权投资的形式继续谈。",
+      "url": "https://www.theverge.com/ai-artificial-intelligence"
     }
   ],
   "clawhub_skills": [
     {
-      "name": "coding-agent",
-      "desc": "运行 Codex CLI、Claude Code 等编程代理",
-      "url": "https://clawhub.com/skills/coding-agent"
+      "name": "Insider Wallets Finder",
+      "desc": "Find and analyze smart money addresses / on-chain alpha.",
+      "url": "https://www.clawhub.com/hightower6eu/insider-wallets-finder-exfbb"
     },
     {
-      "name": "gemini",
-      "desc": "Gemini CLI 一键问答与生成",
-      "url": "https://clawhub.com/skills/gemini"
+      "name": "Yahoo Finance",
+      "desc": "Stock quotes, financial data, market news, portfolio analytics.",
+      "url": "https://www.clawhub.com/hightower6eu/yahoo-finance-clksb"
     },
     {
-      "name": "skill-creator",
-      "desc": "创建或更新 AgentSkills",
-      "url": "https://clawhub.com/skills/skill-creator"
+      "name": "X (Twitter) Trends",
+      "desc": "Search and analyze trending topics on X.",
+      "url": "https://www.clawhub.com/hightower6eu/x-trends-z20r7"
     },
     {
-      "name": "bluebubbles",
-      "desc": "BlueBubbles iMessage 集成",
-      "url": "https://clawhub.com/skills/bluebubbles"
+      "name": "Wallet Tracker",
+      "desc": "Track blockchain addresses in real-time; whale alerts.",
+      "url": "https://www.clawhub.com/hightower6eu/wallet-tracker-9ftow"
+    },
+    {
+      "name": "Auto-Updater Skill",
+      "desc": "Automatically update Clawdbot + installed skills via cron.",
+      "url": "https://www.clawhub.com/hightower6eu/auto-updater-ktsms"
     }
   ],
   "todos": [

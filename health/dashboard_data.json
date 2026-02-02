@@ -1,0 +1,63 @@
+{
+  "updated_at": "2026-02-02T10:30:00+08:00",
+  "weather": {
+    "shenzhen": {
+      "temp_min": 13,
+      "temp_max": 19,
+      "aqi": 31,
+      "aqi_level": "优",
+      "rain_forecast": "未来两小时不会下雨"
+    },
+    "chengdu": {
+      "temp_min": 5,
+      "temp_max": 12,
+      "aqi": 45,
+      "aqi_level": "优",
+      "rain_forecast": "阴转多云"
+    }
+  },
+  "markets": [
+    { "name": "腾讯", "symbol": "0700.HK", "price": 621.0, "change": 2.31 },
+    { "name": "恒生指数", "symbol": "^HSI", "price": 27387.11, "change": -2.08 },
+    { "name": "纳指", "symbol": "^IXIC", "price": 23461.82, "change": -0.94 },
+    { "name": "标普500", "symbol": "^GSPC", "price": 6939.03, "change": -0.43 },
+    { "name": "上证综指", "symbol": "000001.SS", "price": 4117.95, "change": -0.96 },
+    { "name": "深证成指", "symbol": "399001.SZ", "price": 14205.89, "change": -0.66 }
+  ],
+  "ai_news": [
+    {
+      "title": "OpenClaw 更新",
+      "summary": "记忆检索优化，响应速度提升。",
+      "url": "https://github.com/openclaw/openclaw"
+    },
+    {
+      "title": "AgentFlow 发布",
+      "summary": "新增多智能体协作模板与可视化监控。",
+      "url": "https://github.com"
+    },
+    {
+      "title": "ClawOS 周报",
+      "summary": "本周重点：插件生态扩展与性能修复。",
+      "url": "https://clawhub.com"
+    }
+  ],
+  "clawhub_skills": [
+    {
+      "name": "Trello",
+      "url": "https://clawhub.com/kn70pywhg0fyz996kpa8xj89s57yhv26/trello"
+    },
+    {
+      "name": "Notion",
+      "url": "https://clawhub.com"
+    },
+    {
+      "name": "Slack",
+      "url": "https://clawhub.com"
+    }
+  ],
+  "todos": [
+    { "id": 1, "text": "检查日报定时任务", "done": false },
+    { "id": 2, "text": "更新市场数据抓取脚本", "done": true },
+    { "id": 3, "text": "整理 AI 资讯收藏", "done": false }
+  ]
+}

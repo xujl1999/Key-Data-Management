@@ -1,29 +1,29 @@
 {
-  "updated_at": "2026-02-02T23:30:28+08:00",
+  "updated_at": "2026-02-03T00:00:18+08:00",
   "weather": {
     "shenzhen": {
-      "temp_current": 17,
-      "temp_min": 13,
+      "temp_current": 15,
+      "temp_min": 14,
       "temp_max": 19,
-      "humidity": 58,
+      "humidity": 69,
       "description": "多云",
-      "wind_kmph": 10,
-      "aqi": null,
-      "aqi_level": null,
+      "wind_kmph": 31,
+      "aqi": 62,
+      "aqi_level": "良",
       "rain_forecast": "未来24小时无明显降雨",
-      "source": "caiyun(failed)->open-meteo"
+      "source": "caiyun"
     },
     "chengdu": {
-      "temp_current": 8,
-      "temp_min": 6,
-      "temp_max": 13,
-      "humidity": 75,
-      "description": "阴",
-      "wind_kmph": 2,
-      "aqi": null,
-      "aqi_level": null,
+      "temp_current": 9,
+      "temp_min": 7,
+      "temp_max": 14,
+      "humidity": 70,
+      "description": "多云",
+      "wind_kmph": 11,
+      "aqi": 72,
+      "aqi_level": "良",
       "rain_forecast": "未来24小时无明显降雨",
-      "source": "caiyun(failed)->open-meteo"
+      "source": "caiyun"
     }
   },
   "markets": [
@@ -42,13 +42,13 @@
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 25748.46,
-      "change": 0.77
+      "price": 25725.02,
+      "change": 0.68
     },
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6969.84,
+      "price": 6969.61,
       "change": 0.44
     },
     {

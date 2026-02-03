@@ -1,25 +1,25 @@
 {
-  "updated_at": "2026-02-03T10:00:24+08:00",
+  "updated_at": "2026-02-03T10:30:23+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 16,
       "temp_min": 15,
       "temp_max": 18,
-      "humidity": 62,
+      "humidity": 63,
       "description": "晴",
-      "wind_kmph": 7,
+      "wind_kmph": 6,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
       "source": "caiyun(failed)->open-meteo"
     },
     "chengdu": {
-      "temp_current": 7,
+      "temp_current": 8,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 81,
+      "humidity": 75,
       "description": "多云",
-      "wind_kmph": 0,
+      "wind_kmph": 1,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "23:00~02:00 降雨概率 23%（峰值）",
@@ -30,14 +30,14 @@
     {
       "name": "腾讯",
       "symbol": "0700.HK",
-      "price": 595.5,
-      "change": -0.5
+      "price": 582.5,
+      "change": -2.67
     },
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 27018.13,
-      "change": -1.35
+      "price": 26891.85,
+      "change": -1.81
     },
     {
       "name": "纳指",
@@ -54,14 +54,14 @@
     {
       "name": "上证综指",
       "symbol": "000001.SS",
-      "price": 4036.26,
-      "change": -1.98
+      "price": 4030.29,
+      "change": -2.13
     },
     {
       "name": "深证成指",
       "symbol": "399001.SZ",
-      "price": 14010.76,
-      "change": -1.37
+      "price": 13928.97,
+      "change": -1.95
     }
   ],
   "ai_news": [

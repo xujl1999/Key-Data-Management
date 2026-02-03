@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-02-03T09:00:31+08:00",
+  "updated_at": "2026-02-03T09:30:20+08:00",
   "weather": {
     "shenzhen": {
-      "temp_current": 15,
+      "temp_current": 16,
       "temp_min": 15,
       "temp_max": 18,
       "humidity": 62,
@@ -14,10 +14,10 @@
       "source": "caiyun(failed)->open-meteo"
     },
     "chengdu": {
-      "temp_current": 6,
+      "temp_current": 7,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 87,
+      "humidity": 84,
       "description": "多云",
       "wind_kmph": 0,
       "aqi": null,
@@ -30,8 +30,8 @@
     {
       "name": "腾讯",
       "symbol": "0700.HK",
-      "price": 598.5,
-      "change": -1.24
+      "price": 591.0,
+      "change": -1.25
     },
     {
       "name": "恒生指数",

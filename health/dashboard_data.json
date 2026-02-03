@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-03T15:30:17+08:00",
+  "updated_at": "2026-02-03T16:00:22+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 17,
@@ -17,7 +17,7 @@
       "temp_current": 13,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 51,
+      "humidity": 50,
       "description": "多云",
       "wind_kmph": 3,
       "aqi": null,
@@ -36,8 +36,8 @@
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26840.21,
-      "change": 0.24
+      "price": 26825.79,
+      "change": 0.19
     },
     {
       "name": "纳指",
@@ -54,14 +54,14 @@
     {
       "name": "上证综指",
       "symbol": "000001.SS",
-      "price": 4064.26,
-      "change": 1.21
+      "price": 4067.74,
+      "change": 1.29
     },
     {
       "name": "深证成指",
       "symbol": "399001.SZ",
-      "price": 14103.7,
-      "change": 2.02
+      "price": 14127.1,
+      "change": 2.19
     }
   ],
   "ai_news": [

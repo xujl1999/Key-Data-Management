@@ -1,116 +1,116 @@
 {
-  "updated_at": "2026-02-03T11:30:25+08:00",
+  "updated_at": "2026-02-03T12:00:31+08:00",
   "weather": {
     "shenzhen": {
-      "temp_current": 16,
-      "temp_min": 15,
+      "temp_current": 17,
+      "temp_min": 16,
       "temp_max": 18,
-      "humidity": 63,
-      "description": "晴",
+      "humidity": 68,
+      "description": "大部晴朗",
       "wind_kmph": 4,
       "aqi": null,
       "aqi_level": null,
-      "rain_forecast": "未来24小时无明显降雨",
-      "source": "caiyun(failed)->open-meteo"
+      "rain_forecast": "未来24小时无雨",
+      "source": "open-meteo"
     },
     "chengdu": {
-      "temp_current": 10,
-      "temp_min": 6,
+      "temp_current": 11,
+      "temp_min": 5,
       "temp_max": 13,
-      "humidity": 65,
-      "description": "多云",
-      "wind_kmph": 1,
+      "humidity": 64,
+      "description": "大部晴朗",
+      "wind_kmph": 5,
       "aqi": null,
       "aqi_level": null,
-      "rain_forecast": "23:00~02:00 降雨概率 23%（峰值）",
-      "source": "caiyun(failed)->open-meteo"
+      "rain_forecast": "01:00~23:00 降雨概率 10%（峰值）",
+      "source": "open-meteo"
     }
   },
   "markets": [
     {
       "name": "腾讯",
       "symbol": "0700.HK",
-      "price": 572.0,
-      "change": -4.43
+      "price": 579.0,
+      "change": -3.26
     },
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26637.32,
-      "change": -2.74
+      "price": 26803.27,
+      "change": 0.1
     },
     {
       "name": "纳指",
       "symbol": "^NDQ",
-      "price": 25738.61,
-      "change": 0.73
+      "price": null,
+      "change": null
     },
     {
       "name": "标普500",
       "symbol": "^SPX",
-      "price": 6976.44,
-      "change": 0.54
+      "price": null,
+      "change": null
     },
     {
       "name": "上证综指",
       "symbol": "000001.SS",
-      "price": 4017.13,
-      "change": -2.45
+      "price": 4031.07,
+      "change": 0.38
     },
     {
       "name": "深证成指",
       "symbol": "399001.SZ",
-      "price": 13902.06,
-      "change": -2.14
+      "price": 13952.38,
+      "change": 0.93
     }
   ],
   "ai_news": [
     {
-      "title": "Snowflake and OpenAI partner to bring frontier intelligence to enterprise data",
-      "summary": "OpenAI and Snowflake partner in a $200M agreement to bring frontier intelligence into enterprise data, enabling AI agent…",
-      "url": "https://openai.com/index/snowflake-partnership"
+      "title": "OpenAI 将于 2 月 13 日在 ChatGPT 退役 GPT-4o/4.1/4.1 mini/o4-mini",
+      "summary": "OpenAI 表示绝大多数使用已转向 GPT‑5.2，仅 0.1% 用户仍每日选择 GPT‑4o；API 暂无变化。",
+      "url": "https://openai.com/index/retiring-gpt-4o-and-older-models/"
     },
     {
-      "title": "Introducing the Codex app",
-      "summary": "Introducing the Codex app for macOS—a command center for AI coding and software development with multiple agents, parall…",
-      "url": "https://openai.com/index/introducing-the-codex-app"
+      "title": "Anthropic 发布 Cowork（研究预览），并引入 connectors/skills 强化代理式工作流",
+      "summary": "Cowork 让非开发者也能像用 Claude Code 一样给 Claude 授权文件夹，让它更“带执行力”地完成整理、生成文档等任务。",
+      "url": "https://claude.com/blog/cowork-research-preview"
     },
     {
-      "title": "Inside OpenAI’s in-house data agent",
-      "summary": "How OpenAI built an in-house AI data agent that uses GPT-5, Codex, and memory to reason over massive datasets and delive…",
-      "url": "https://openai.com/index/inside-our-in-house-data-agent"
+      "title": "Google Maps 步行/骑行导航上线 Gemini 语音助手",
+      "summary": "支持边走边问“我在哪个街区”、附近餐厅推荐；骑行时也可免手操作查询 ETA、发消息等。",
+      "url": "https://blog.google/products-and-platforms/products/maps/gemini-navigation-biking-walking/"
     },
     {
-      "title": "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
-      "summary": "On February 13, 2026, alongside the previously announced retirement⁠ of GPT‑5 (Instant, Thinking, and Pro), we will reti…",
-      "url": "https://openai.com/index/retiring-gpt-4o-and-older-models"
-    },
-    {
-      "title": "Taisei Corporation shapes the next generation of talent with ChatGPT",
-      "summary": "Taisei Corporation uses ChatGPT Enterprise to support HR-led talent development and scale generative AI across its globa…",
-      "url": "https://openai.com/index/taisei"
+      "title": "The Verge：Nvidia 与 OpenAI 百亿美元级合作谈判“搁置/调整”",
+      "summary": "据 The Verge 转述 WSJ：双方可能从原先设想调整为更偏股权投资的形式继续谈。",
+      "url": "https://www.theverge.com/ai-artificial-intelligence"
     }
   ],
   "clawhub_skills": [
     {
-      "name": "Trello",
-      "desc": "Manage Trello boards, lists, and cards via the Trello REST API.",
-      "url": "https://www.clawhub.com/steipete/trello"
+      "name": "Insider Wallets Finder",
+      "desc": "Find and analyze smart money addresses / on-chain alpha.",
+      "url": "https://www.clawhub.com/hightower6eu/insider-wallets-finder-exfbb"
     },
     {
-      "name": "Slack",
-      "desc": "Use when you need to control Slack from Clawdbot via the slack tool, including reacting to messages or pinning/unpinning items in Slack channels or DMs.",
-      "url": "https://www.clawhub.com/steipete/slack"
+      "name": "Yahoo Finance",
+      "desc": "Stock quotes, financial data, market news, portfolio analytics.",
+      "url": "https://www.clawhub.com/hightower6eu/yahoo-finance-clksb"
     },
     {
-      "name": "Caldav Calendar",
-      "desc": "Sync and query CalDAV calendars (iCloud, Google, Fastmail, Nextcloud, etc.) using vdirsyncer + khal. Works on Linux.",
-      "url": "https://www.clawhub.com/Asleep123/caldav-calendar"
+      "name": "X (Twitter) Trends",
+      "desc": "Search and analyze trending topics on X.",
+      "url": "https://www.clawhub.com/hightower6eu/x-trends-z20r7"
     },
     {
-      "name": "Answer Overflow",
-      "desc": "Search indexed Discord community discussions via Answer Overflow. Find solutions to coding problems, library issues, and community Q&A that only exist in Discord conversations.",
-      "url": "https://www.clawhub.com/RhysSullivan/answeroverflow"
+      "name": "Wallet Tracker",
+      "desc": "Track blockchain addresses in real-time; whale alerts.",
+      "url": "https://www.clawhub.com/hightower6eu/wallet-tracker-9ftow"
+    },
+    {
+      "name": "Auto-Updater Skill",
+      "desc": "Automatically update Clawdbot + installed skills via cron.",
+      "url": "https://www.clawhub.com/hightower6eu/auto-updater-ktsms"
     }
   ],
   "todos": [

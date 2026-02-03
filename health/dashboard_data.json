@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-03T08:00:28+08:00",
+  "updated_at": "2026-02-03T08:30:14+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 15,
@@ -19,7 +19,7 @@
       "temp_max": 13,
       "humidity": 87,
       "description": "多云",
-      "wind_kmph": 2,
+      "wind_kmph": 0,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "23:00~02:00 降雨概率 23%（峰值）",

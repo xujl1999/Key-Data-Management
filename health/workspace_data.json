@@ -1,22 +1,81 @@
 {
-  "updated_at": "2026-02-02T15:26:00+08:00",
+  "updated_at": "2026-02-03T08:20:16+08:00",
   "models": [
     {
-      "name": "Opus 4.5",
-      "quota_percent": 75,
-      "reset_in_minutes": 120,
-      "status": "warning"
-    },
-    {
-      "name": "G3 Pro",
-      "quota_percent": 55,
-      "reset_in_minutes": 90,
+      "name": "claude-opus-4-5-thinking",
+      "quota_percent": 40.0,
+      "reset_time": "2026-02-09T00:04:02Z",
+      "reset_in_minutes": 8623,
       "status": "ok"
     },
     {
-      "name": "G2.5 Flash",
-      "quota_percent": 35,
-      "reset_in_minutes": 160,
+      "name": "claude-sonnet-4-5",
+      "quota_percent": 40.0,
+      "reset_time": "2026-02-09T00:04:02Z",
+      "reset_in_minutes": 8623,
+      "status": "ok"
+    },
+    {
+      "name": "claude-sonnet-4-5-thinking",
+      "quota_percent": 40.0,
+      "reset_time": "2026-02-09T00:04:02Z",
+      "reset_in_minutes": 8623,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-2.5-flash",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-2.5-flash-lite",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-2.5-flash-thinking",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-2.5-pro",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-3-flash",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-3-pro-high",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-3-pro-image",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
+      "status": "ok"
+    },
+    {
+      "name": "gemini-3-pro-low",
+      "quota_percent": 100.0,
+      "reset_time": "2026-02-03T05:20:09Z",
+      "reset_in_minutes": 299,
       "status": "ok"
     }
   ],
@@ -70,5 +129,10 @@
       "project": "learning",
       "priority": "medium"
     }
-  ]
+  ],
+  "source": {
+    "kind": "antigravity-tools",
+    "base_url": "http://127.0.0.1:8045",
+    "account": "xujl19990311@gmail.com"
+  }
 }

@@ -1,6 +1,6 @@
 # Health Data Quality Report
 
-Generated: 2026-02-02 08:46:41
+Generated: 2026-02-03 08:46:25
 
 Window: last 14 days (per-file, aligned to each file's latest date)
 
@@ -8,6 +8,7 @@ Window: last 14 days (per-file, aligned to each file's latest date)
 | --- | --- | --- | --- | --- | --- |
 | steps_daily.csv | OK | 2026-01-31 | 100% |  | █▆▅▅▆▆▅▄▅▆▅▆▇▁ |
 | sleep_daily.csv | MISS(1) | 2026-01-31 | 93% | sleep_hours:max>24 | ·▃█▇█▅▃█▆▁▇▆▇▄ |
+| sleep_sessions.csv | MISS(1) | 2026-01-31 | 93% |  | ·▂▂▃▂▂▃▂▃█▁▂▁▂ |
 | weight_daily.csv | MISS(7) | 2026-01-30 | 50% |  | ··█▆▅▆▄·▃····▁ |
 | energy_daily.csv | OK | 2026-01-31 | 100% |  | █▆▅▅▆▆▇▅▅▅▅▆▇▁ |
 | heart_rate_daily.csv | OK | 2026-01-31 | 100% |  | █▅▅▅▅▅▇▄▄▄▄▅▅▁ |

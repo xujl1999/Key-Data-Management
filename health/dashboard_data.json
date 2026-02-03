@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-02-03T16:00:22+08:00",
+  "updated_at": "2026-02-03T16:30:21+08:00",
   "weather": {
     "shenzhen": {
-      "temp_current": 17,
+      "temp_current": 18,
       "temp_min": 16,
       "temp_max": 18,
-      "humidity": 69,
+      "humidity": 68,
       "description": "多云",
-      "wind_kmph": 8,
+      "wind_kmph": 7,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -17,7 +17,7 @@
       "temp_current": 13,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 50,
+      "humidity": 49,
       "description": "多云",
       "wind_kmph": 3,
       "aqi": null,
@@ -36,8 +36,8 @@
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26825.79,
-      "change": 0.19
+      "price": 26834.77,
+      "change": 0.22
     },
     {
       "name": "纳指",

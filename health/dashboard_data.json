@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-02-03T14:30:17+08:00",
+  "updated_at": "2026-02-03T15:00:15+08:00",
   "weather": {
     "shenzhen": {
       "temp_current": 17,
       "temp_min": 16,
       "temp_max": 18,
-      "humidity": 68,
+      "humidity": 69,
       "description": "多云",
-      "wind_kmph": 7,
+      "wind_kmph": 8,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -17,9 +17,9 @@
       "temp_current": 13,
       "temp_min": 6,
       "temp_max": 13,
-      "humidity": 52,
+      "humidity": 51,
       "description": "多云",
-      "wind_kmph": 4,
+      "wind_kmph": 3,
       "aqi": null,
       "aqi_level": null,
       "rain_forecast": "未来24小时无明显降雨",
@@ -36,8 +36,8 @@
     {
       "name": "恒生指数",
       "symbol": "^HSI",
-      "price": 26828.66,
-      "change": -2.04
+      "price": 26840.21,
+      "change": 0.24
     },
     {
       "name": "纳指",
@@ -54,14 +54,14 @@
     {
       "name": "上证综指",
       "symbol": "000001.SS",
-      "price": 4057.23,
-      "change": -1.47
+      "price": 4064.26,
+      "change": 1.21
     },
     {
       "name": "深证成指",
       "symbol": "399001.SZ",
-      "price": 14082.74,
-      "change": -0.87
+      "price": 14103.7,
+      "change": 2.02
     }
   ],
   "ai_news": [

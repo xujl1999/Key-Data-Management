@@ -1,6 +1,7 @@
 from pathlib import Path
 import argparse
 import json
+import os
 import random
 import time
 from typing import Dict, List, Optional
@@ -46,6 +47,45 @@ def human_scroll(driver: webdriver.Edge, min_scrolls: int, max_scrolls: int) -> 
     time.sleep(random_between([0.5, 1.0]))
 
 
+def parse_cookie_header(raw: str) -> List[Dict[str, str]]:
+    cookies: List[Dict[str, str]] = []
+    for part in raw.split(";"):
+        seg = part.strip()
+        if not seg or "=" not in seg:
+            continue
+        k, v = seg.split("=", 1)
+        k = k.strip()
+        v = v.strip()
+        if not k:
+            continue
+        cookies.append({"name": k, "value": v})
+    return cookies
+
+
+def apply_bili_cookies_if_any(driver: webdriver.Edge) -> None:
+    raw = (os.environ.get("BILI_COOKIE") or "").strip()
+    if not raw:
+        return
+    try:
+        cookies = parse_cookie_header(raw)
+        if not cookies:
+            return
+        for ck in cookies:
+            driver.add_cookie(
+                {
+                    "name": ck["name"],
+                    "value": ck["value"],
+                    "domain": ".bilibili.com",
+                    "path": "/",
+                }
+            )
+        driver.refresh()
+        time.sleep(random_between([1.2, 2.2]))
+    except Exception:
+        # cookie 注入失败时不阻断主流程
+        pass
+
+
 def build_driver(edge_options: List[str], headless: bool) -> webdriver.Edge:
     options = Options()
     for opt in edge_options:
@@ -56,6 +96,7 @@ def build_driver(edge_options: List[str], headless: bool) -> webdriver.Edge:
     driver = webdriver.Edge(options=options)
     driver.get("https://www.bilibili.com")
     time.sleep(random_between([1.5, 3.5]))
+    apply_bili_cookies_if_any(driver)
     return driver
 
 
@@ -120,6 +161,7 @@ def wait_video_cards(driver: webdriver.Edge, timeout: int = 12):
     selectors = [
         ".video-list .bili-video-card",
         "div.bili-video-card",
+        ".bili-video-card",
     ]
     wait = WebDriverWait(driver, timeout)
     for sel in selectors:
@@ -201,6 +243,124 @@ def collect_from_cards(
     return rows
 
 
+def extract_initial_state(source: str) -> Optional[Dict]:
+    markers = [
+        "window.__INITIAL_STATE__=",
+        "window.__INITIAL_STATE__ =",
+    ]
+    for marker in markers:
+        idx = source.find(marker)
+        if idx == -1:
+            continue
+        start = source.find("{", idx + len(marker))
+        if start == -1:
+            continue
+        depth = 0
+        in_string = False
+        escape = False
+        for i in range(start, len(source)):
+            ch = source[i]
+            if in_string:
+                if escape:
+                    escape = False
+                elif ch == "\\":
+                    escape = True
+                elif ch == '"':
+                    in_string = False
+            else:
+                if ch == '"':
+                    in_string = True
+                elif ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        blob = source[start : i + 1]
+                        try:
+                            return json.loads(blob)
+                        except Exception:
+                            return None
+        return None
+    return None
+
+
+def find_video_items(state: Dict) -> List[Dict]:
+    candidates: List[List[Dict]] = []
+
+    def visit(obj):
+        if isinstance(obj, dict):
+            for v in obj.values():
+                visit(v)
+        elif isinstance(obj, list):
+            if obj and all(isinstance(it, dict) for it in obj):
+                sample = obj[0]
+                if "title" in sample and ("bvid" in sample or "aid" in sample):
+                    candidates.append(obj)
+            for it in obj:
+                visit(it)
+
+    visit(state)
+    if not candidates:
+        return []
+    candidates.sort(key=len, reverse=True)
+    return candidates[0]
+
+
+def author_name_from_state(state: Dict) -> str:
+    for path in [
+        ("userInfo", "name"),
+        ("userInfo", "uname"),
+        ("userInfo", "username"),
+        ("space", "name"),
+        ("upinfo", "name"),
+        ("upinfo", "uname"),
+    ]:
+        cur = state
+        ok = True
+        for key in path:
+            if not isinstance(cur, dict) or key not in cur:
+                ok = False
+                break
+            cur = cur[key]
+        if ok and isinstance(cur, str) and cur.strip():
+            return cur.strip()
+    return ""
+
+
+def collect_from_state(state: Dict, author: Dict, max_videos: int) -> List[Dict]:
+    items = find_video_items(state)
+    if not items:
+        return []
+    author_name = author_name_from_state(state) or author.get("author_name", "")
+    rows: List[Dict] = []
+    for rank, item in enumerate(items[:max_videos], start=1):
+        if not isinstance(item, dict):
+            continue
+        title = (item.get("title") or "").strip()
+        bvid = (item.get("bvid") or "").strip()
+        aid = item.get("aid")
+        url = ""
+        if bvid:
+            url = f"https://www.bilibili.com/video/{bvid}"
+        elif isinstance(aid, (int, str)) and str(aid).strip():
+            url = f"https://www.bilibili.com/video/av{aid}"
+        publish_date = ""
+        ts = item.get("created") or item.get("pubdate")
+        if isinstance(ts, (int, float)):
+            publish_date = time.strftime("%Y-%m-%d", time.localtime(ts))
+        rows.append(
+            {
+                "category": author.get("category", ""),
+                "author": author_name,
+                "rank": rank,
+                "publish_date": publish_date,
+                "title": title,
+                "url": url,
+            }
+        )
+    return [r for r in rows if r["title"] or r["url"]]
+
+
 def collect_for_author(
     driver: webdriver.Edge,
     author: Dict,
@@ -258,6 +418,13 @@ def collect_for_author(
     fallback_rows = collect_from_cards(driver, author, cards, max_videos=max_videos)
     if fallback_rows:
         return fallback_rows
+
+    # 兜底逻辑：从页面内嵌 JSON 解析
+    state = extract_initial_state(driver.page_source)
+    if isinstance(state, dict):
+        json_rows = collect_from_state(state, author, max_videos=max_videos)
+        if json_rows:
+            return json_rows
 
     src = driver.page_source
     append_failure_log(

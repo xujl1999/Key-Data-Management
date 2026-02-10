@@ -19,7 +19,10 @@
 2) 抓取数据  
    - 进入仓库根目录并激活环境：`conda activate base`（或你的 Python 环境）。  
    - 运行脚本：`python video/get_video_ls.py`。  
-   - 成功后会生成/更新 `video/video_ls.csv`，并可供前端页面读取。
+   - 成功后会生成/更新 `video/video_ls.csv`，并可供前端页面读取。  
+   - 若遇到 B站风控/412，可先注入登录 cookie 再运行：  
+     - macOS/Linux：`export BILI_COOKIE='SESSDATA=...; bili_jct=...; DedeUserID=...'; python video/get_video_ls.py`  
+     - Windows PowerShell：`$env:BILI_COOKIE='SESSDATA=...; bili_jct=...; DedeUserID=...'; python video/get_video_ls.py`
 
 3) 本地预览页面  
    - 在仓库根目录启动简易服务：`python -m http.server 8000`。  

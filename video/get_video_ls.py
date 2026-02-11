@@ -9,7 +9,7 @@ from typing import Dict, List, Optional
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
 
@@ -35,7 +35,7 @@ def random_between(span: List[float]) -> float:
     return random.uniform(span[0], span[1])
 
 
-def human_scroll(driver: webdriver.Edge, min_scrolls: int, max_scrolls: int) -> None:
+def human_scroll(driver: webdriver.Chrome, min_scrolls: int, max_scrolls: int) -> None:
     steps = random.randint(min_scrolls, max_scrolls)
     for _ in range(steps):
         scroll_px = random.randint(300, 1200)
@@ -62,7 +62,7 @@ def parse_cookie_header(raw: str) -> List[Dict[str, str]]:
     return cookies
 
 
-def apply_bili_cookies_if_any(driver: webdriver.Edge) -> None:
+def apply_bili_cookies_if_any(driver: webdriver.Chrome) -> None:
     raw = (os.environ.get("BILI_COOKIE") or "").strip()
     if not raw:
         return
@@ -86,14 +86,16 @@ def apply_bili_cookies_if_any(driver: webdriver.Edge) -> None:
         pass
 
 
-def build_driver(edge_options: List[str], headless: bool) -> webdriver.Edge:
+def build_driver(browser_options: List[str], headless: bool) -> webdriver.Chrome:
     options = Options()
-    for opt in edge_options:
+    for opt in browser_options:
         options.add_argument(opt)
     if headless:
         # 使用新版 headless 以减少兼容性问题
         options.add_argument("--headless=new")
-    driver = webdriver.Edge(options=options)
+    # ---- 关键：绕过系统代理直连 B站（避免海外出口触发风控） ----
+    options.add_argument("--no-proxy-server")
+    driver = webdriver.Chrome(options=options)
     driver.get("https://www.bilibili.com")
     time.sleep(random_between([1.5, 3.5]))
     apply_bili_cookies_if_any(driver)
@@ -134,7 +136,7 @@ def load_authors(authors_path: Path) -> List[Dict]:
     return normalize_authors(data)
 
 
-def detect_failure_reason(driver: webdriver.Edge, source: str) -> str:
+def detect_failure_reason(driver: webdriver.Chrome, source: str) -> str:
     title = (driver.title or "").strip()
     cur = driver.current_url
     if "passport.bilibili.com" in cur or "登录" in title:
@@ -157,7 +159,7 @@ def append_failure_log(debug_dir: Path, payload: Dict) -> None:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
-def wait_video_cards(driver: webdriver.Edge, timeout: int = 12):
+def wait_video_cards(driver: webdriver.Chrome, timeout: int = 12):
     selectors = [
         ".video-list .bili-video-card",
         "div.bili-video-card",
@@ -193,7 +195,7 @@ def first_href(card, selectors: List[str]) -> str:
 
 
 def collect_from_cards(
-    driver: webdriver.Edge,
+    driver: webdriver.Chrome,
     author: Dict,
     cards,
     max_videos: int,
@@ -362,7 +364,7 @@ def collect_from_state(state: Dict, author: Dict, max_videos: int) -> List[Dict]
 
 
 def collect_for_author(
-    driver: webdriver.Edge,
+    driver: webdriver.Chrome,
     author: Dict,
     sleep_after_load: List[float],
     scroll_min: int,
@@ -472,7 +474,7 @@ def main() -> None:
         authors = [one]
 
     driver = build_driver(
-        config.get("edge_options", []),
+        config.get("chrome_options", config.get("edge_options", [])),
         headless=config.get("headless", False),
     )
 

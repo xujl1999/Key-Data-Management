@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from tqdm import tqdm
@@ -96,6 +97,7 @@ def build_driver(browser_options: List[str], headless: bool) -> webdriver.Chrome
     # ---- 关键：绕过系统代理直连 B站（避免海外出口触发风控） ----
     options.add_argument("--no-proxy-server")
     driver = webdriver.Chrome(options=options)
+    driver.set_page_load_timeout(45)
     driver.get("https://www.bilibili.com")
     time.sleep(random_between([1.5, 3.5]))
     apply_bili_cookies_if_any(driver)
@@ -374,7 +376,10 @@ def collect_for_author(
 ) -> List[Dict]:
     author_id = author["author_id"]
 
-    driver.get(f"https://space.bilibili.com/{author_id}/upload/video")
+    try:
+        driver.get(f"https://space.bilibili.com/{author_id}/upload/video")
+    except TimeoutException:
+        driver.execute_script("window.stop();")
     time.sleep(random_between(sleep_after_load))
     human_scroll(driver, scroll_min, scroll_max)
 

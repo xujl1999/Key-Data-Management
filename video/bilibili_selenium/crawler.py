@@ -276,26 +276,36 @@ def crawl_up_videos(config: CrawlConfig) -> List[Dict[str, str]]:
         for mid in config.mids:
             up_name = ""
             for page in range(1, config.max_pages + 1):
-                url = f"https://space.bilibili.com/{mid}/video?tid=0&page={page}&keyword=&order=pubdate"
-                driver.get(url)
+                # 优先使用 upload/video（与原项目一致），失败再回退 video 路径。
+                candidate_urls = [
+                    f"https://space.bilibili.com/{mid}/upload/video?tid=0&page={page}&keyword=&order=pubdate",
+                    f"https://space.bilibili.com/{mid}/video?tid=0&page={page}&keyword=&order=pubdate",
+                ]
 
-                try:
-                    WebDriverWait(driver, config.timeout_sec).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
-                    )
-                except TimeoutException:
-                    continue
+                last_rows: List[Dict[str, str]] = []
+                for url in candidate_urls:
+                    driver.get(url)
 
-                time.sleep(config.sleep_sec)
+                    try:
+                        WebDriverWait(driver, config.timeout_sec).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+                        )
+                    except TimeoutException:
+                        continue
 
-                if not up_name:
-                    up_name = _detect_up_name(driver)
+                    time.sleep(config.sleep_sec)
 
-                rows = _collect_from_page(driver, mid=mid, up_name=up_name, page=page)
-                if not rows:
+                    if not up_name:
+                        up_name = _detect_up_name(driver)
+
+                    rows = _collect_from_page(driver, mid=mid, up_name=up_name, page=page)
+                    if rows:
+                        all_rows.extend(rows)
+                        last_rows = rows
+                        break
+
+                if not last_rows:
                     break
-
-                all_rows.extend(rows)
 
     finally:
         driver.quit()

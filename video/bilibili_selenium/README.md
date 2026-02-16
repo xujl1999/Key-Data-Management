@@ -10,13 +10,14 @@
 - 输出目录：`video/output/`
 
 ## 依赖
-1. Python 3.9+
-2. Google Chrome（或 Chromium）
+1. Python 3.9+（建议使用 conda 环境，按你的习惯默认 `base`）
+2. Google Chrome（不使用 Edge）
 3. 与 Chrome 匹配版本的 ChromeDriver（Selenium 4.6+ 常可自动管理驱动，但受网络/环境影响）
 4. Python 包：
 
 ```bash
-pip install -r video/bilibili_selenium/requirements.txt
+conda activate base
+python -m pip install -r video/bilibili_selenium/requirements.txt
 ```
 
 ## Cookie 支持（提升稳定性）
@@ -41,8 +42,11 @@ export BILI_COOKIE='SESSDATA=xxx; bili_jct=xxx; DedeUserID=xxx'
 抓取一个或多个 up 主（`mid` 可逗号分隔）：
 
 ```bash
-python video/bilibili_selenium/main.py --mids 354638894 --max-pages 2
+conda activate base
+python video/bilibili_selenium/main.py --mids 946974 --max-pages 2
 ```
+
+说明：脚本默认优先访问 `upload/video` 路径（与原项目一致），失败时自动回退到 `video` 路径。
 
 常用参数：
 - `--mids`：必填，up 主 mid，支持逗号分隔

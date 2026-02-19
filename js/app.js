@@ -32,6 +32,8 @@ const DEFAULT_CATEGORY = "超优质";
 const DEFAULT_LIMIT = 1;
 const MAX_LIMIT = 10;
 const CSV_SOURCES = [{ url: "video/video_ls.csv", label: "Local" }];
+const YOUTUBE_CSV_SOURCES = [{ url: "video_youtube/youtube_ls.csv", label: "Local" }];
+let currentPlatform = "youtube";
 const HEALTH_SOURCES = [{ url: "health/data/sleep_daily.csv", label: "Local" }];
 const WEIGHT_SOURCES = [{ url: "health/data/weight_daily.csv", label: "Local" }];
 const STEPS_SOURCES = [{ url: "health/data/steps_daily.csv", label: "Local" }];
@@ -636,6 +638,10 @@ const buildRecords = (rows) => {
     headers.forEach((key, idx) => {
       record[key] = (row[idx] || "").trim();
     });
+    // YouTube CSV uses 'channel' instead of 'author'
+    if (!record.author && record.channel) {
+      record.author = record.channel;
+    }
     record._timestamp = parsePublishDate(record.publish_date || record["publish_date"]);
     return record;
   });
@@ -1796,8 +1802,9 @@ const initHealthMetricTable = async () => {
 
 
 const fetchCSVSource = async () => {
+  const sources = currentPlatform === "youtube" ? YOUTUBE_CSV_SOURCES : CSV_SOURCES;
   const errors = [];
-  for (const source of CSV_SOURCES) {
+  for (const source of sources) {
     try {
       const response = await fetch(source.url, { cache: "no-store" });
       if (!response.ok) {
@@ -1856,6 +1863,35 @@ renderBody([]);
 initHealthMetricTable();
 loadHealthHighlight();
 loadCSV();
+
+// Platform toggle
+const platformSwitch = document.getElementById("ent-platform-switch");
+if (platformSwitch) {
+  platformSwitch.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-platform]");
+    if (!btn || btn.dataset.platform === currentPlatform) return;
+    currentPlatform = btn.dataset.platform;
+    // Update button styles
+    platformSwitch.querySelectorAll(".ent-platform-btn").forEach((b) => {
+      if (b.dataset.platform === currentPlatform) {
+        b.classList.add("ent-platform-btn--active");
+        if (currentPlatform === "youtube") {
+          b.style.background = "linear-gradient(135deg, #dc2626, #ef4444)";
+        } else {
+          b.style.background = "linear-gradient(135deg, #0c94d4, #23ade5)";
+        }
+        b.style.color = "#fff";
+        b.style.fontWeight = "600";
+      } else {
+        b.classList.remove("ent-platform-btn--active");
+        b.style.background = "transparent";
+        b.style.color = "#64748b";
+        b.style.fontWeight = "500";
+      }
+    });
+    loadCSV();
+  });
+}
 
 window.records = records;
 window.healthMetricDefs = healthMetricDefs;
@@ -2594,10 +2630,17 @@ function renderEntertainmentTagCloud() {
   const records = window.records || [];
   if (!records.length) return;
 
-  let categoryOrder = ["超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
-  const config = window.KDM_CONFIG && window.KDM_CONFIG.bilibiliAuthors;
-  if (config) {
-    categoryOrder = Object.keys(config).filter((key) => !key.startsWith("_"));
+  let categoryOrder;
+  if (currentPlatform === "youtube") {
+    const ytConfig = window.KDM_CONFIG && window.KDM_CONFIG.youtubeChannels;
+    categoryOrder = ytConfig
+      ? Object.keys(ytConfig).filter((key) => !key.startsWith("_"))
+      : ["AI & Tech", "Science & Education"];
+  } else {
+    const biliConfig = window.KDM_CONFIG && window.KDM_CONFIG.bilibiliAuthors;
+    categoryOrder = biliConfig
+      ? Object.keys(biliConfig).filter((key) => !key.startsWith("_"))
+      : ["超优质", "历史区", "创意区", "运动区", "游戏区", "影视综", "数分"];
   }
 
   const categoryCount = {};
@@ -2614,8 +2657,9 @@ function renderEntertainmentTagCloud() {
     if (!categoryOrder.includes(cat)) sortedCats.push([cat, count]);
   });
 
+  const defaultTag = currentPlatform === "youtube" ? "优质" : "超优质";
   let activeTag =
-    sortedCats.find(([cat]) => cat === "超优质")?.[0] ||
+    sortedCats.find(([cat]) => cat === defaultTag)?.[0] ||
     sortedCats[0]?.[0] ||
     "全部";
 
@@ -2656,12 +2700,23 @@ function renderEntertainmentTagCloud() {
       .slice(0, 20)
       .map((v, idx) => {
         const bg = idx % 2 === 0 ? "rgba(59, 130, 246, 0.08)" : "rgba(59, 130, 246, 0.03)";
-        return `<a href="${v.url || "#"}" target="_blank" rel="noopener" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: ${bg}; border-radius: 6px; text-decoration: none; transition: background 0.2s;">
-          <div style="flex: 1; min-width: 0;">
-            <div style="font-size: 13px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${v.title}</div>
-            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${v.author} · ${v.publish_date || ""}</div>
+        const hasSummary = v.summary && v.summary.trim();
+        const summaryText = hasSummary ? v.summary : "暂无总结";
+        const summaryColor = hasSummary ? "#cbd5e1" : "#475569";
+        const cardId = `ent-card-${idx}`;
+        return `<div id="${cardId}" style="background: ${bg}; border-radius: 6px; transition: background 0.2s; overflow: hidden;">
+          <div style="display: flex; align-items: center; padding: 10px 12px; cursor: pointer;" onclick="(function(e){var s=document.getElementById('${cardId}-summary');s.style.display=s.style.display==='none'?'block':'none';e.querySelector('.ent-arrow').textContent=s.style.display==='none'?'▸':'▾'})(this.parentElement)">
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 13px; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${v.title}</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${v.author} · ${v.publish_date || ""}</div>
+            </div>
+            <a href="${v.url || "#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="margin-left: 8px; font-size: 11px; color: #3b82f6; text-decoration: none; white-space: nowrap;">▶ 打开</a>
+            <span class="ent-arrow" style="margin-left: 8px; color: #475569; font-size: 12px;">▸</span>
           </div>
-        </a>`;
+          <div id="${cardId}-summary" style="display: none; padding: 6px 12px 10px 12px; border-top: 1px solid rgba(71,85,105,0.3);">
+            <div style="font-size: 12px; color: ${summaryColor}; line-height: 1.6; white-space: pre-wrap;">${summaryText}</div>
+          </div>
+        </div>`;
       })
       .join("");
   };

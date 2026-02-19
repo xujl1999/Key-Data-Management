@@ -1,0 +1,12 @@
+{
+  "channels_file": "../config/youtube_channels.json",
+  "max_videos_per_channel": 10,
+  "outputs": [
+    "youtube_ls.csv"
+  ],
+  "summarize": {
+    "model": "google/gemini-3-flash-preview",
+    "length": "medium",
+    "youtube_mode": "auto"
+  }
+}

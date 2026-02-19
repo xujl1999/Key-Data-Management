@@ -1,0 +1,67 @@
+{
+  "_说明": "YouTube 关注的频道列表，按分类整理，用于自动拉取视频更新并总结",
+  "优质": [
+    {
+      "channel_id": "UCfQNB91qRP_5ILeu_S_bSkg",
+      "channel_name": "Alex Finn"
+    },
+    {
+      "channel_id": "UC4dtpugIYK56S_7btf5a-iQ",
+      "channel_name": "林亦LYi"
+    },
+    {
+      "channel_id": "UCilwQlk62k1z7aUEZPOB6yw",
+      "channel_name": "小Lin说"
+    },
+    {
+      "channel_id": "UCi5ExcD5LfyHbKz5ThnK-aw",
+      "channel_name": "小王Albert"
+    },
+    {
+      "channel_id": "UC33VP_gIBzCVcEvaGKBocZA",
+      "channel_name": "罗永浩的十字路口"
+    },
+    {
+      "channel_id": "UC2cRwTuSWxxEtrRnT4lrlQA",
+      "channel_name": "影视飓风"
+    },
+    {
+      "channel_id": "UClQmK2XRrZNGO96awVYED9w",
+      "channel_name": "龙四爷"
+    },
+    {
+      "channel_id": "UCXUPKJO5MZQN11PqgIvyuvQ",
+      "channel_name": "Andrej Karpathy"
+    },
+    {
+      "channel_id": "UCbfYPyITQ-7l4upoX8nvctg",
+      "channel_name": "Two Minute Papers"
+    },
+    {
+      "channel_id": "UCsBjURrPoezykLs9EqgamOA",
+      "channel_name": "Fireship"
+    }
+  ],
+  "其他": [
+    {
+      "channel_id": "UCzJpE2zKwAFZ8JwMerlNquw",
+      "channel_name": "swyx"
+    },
+    {
+      "channel_id": "UCSw5U1MuzDED2Nvlx9m65-Q",
+      "channel_name": "Levels (levelsio)"
+    },
+    {
+      "channel_id": "UCPjNBjflYl0-HQtUvOx0Ibw",
+      "channel_name": "Greg Isenberg"
+    },
+    {
+      "channel_id": "UCYO_jab_esuFRV4b17AJtAw",
+      "channel_name": "3Blue1Brown"
+    },
+    {
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_name": "Veritasium"
+    }
+  ]
+}

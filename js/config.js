@@ -18,5 +18,6 @@
     healthGoals: loadJsonSync("config/health_goals.json") || {},
     healthMetrics: loadJsonSync("config/health_metrics.json") || {},
     bilibiliAuthors: loadJsonSync("config/bilibili_authors.json") || {},
+    youtubeChannels: loadJsonSync("config/youtube_channels.json") || {},
   };
 })();

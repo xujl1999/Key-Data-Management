@@ -521,9 +521,21 @@
         </div>
       </div>
 
-      <!-- 数据更新时间 -->
-      <p style="margin: 0 0 12px; font-size: 0.85rem; color: #64748b; text-align: right;">数据更新：<span
-          id="update-time">--</span></p>
+      <!-- 平台切换 -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <div id="ent-platform-switch"
+          style="display: inline-flex; background: #1e293b; border-radius: 10px; border: 1px solid #334155; padding: 3px; gap: 2px;">
+          <button type="button" data-platform="youtube" class="ent-platform-btn ent-platform-btn--active"
+            style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; background: linear-gradient(135deg, #dc2626, #ef4444); color: #fff;">
+            ▶ YouTube
+          </button>
+          <button type="button" data-platform="bilibili" class="ent-platform-btn"
+            style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.25s; background: transparent; color: #64748b;">
+            📺 Bilibili
+          </button>
+        </div>
+        <span style="font-size: 0.85rem; color: #64748b;">数据更新：<span id="update-time">--</span></span>
+      </div>
 
       <!-- 筛选和标签云 -->
       <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
@@ -917,7 +929,7 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
 
-  <script src="js/config.js?v=3"></script>
+  <script src="js/config.js?v=4"></script>
   <script src="js/utils.js?v=3"></script>
   <script src="js/data-loader.js?v=3"></script>
   <script src="js/chart-renderer.js?v=3"></script>
@@ -926,7 +938,7 @@
   <script src="js/tabs/wealth.js?v=3"></script>
   <script src="js/dashboard.js?v=1"></script>
   <script src="js/workspace.js?v=1"></script>
-  <script src="js/app.js?v=5"></script>
+  <script src="js/app.js?v=8"></script>
 </body>
 
 </html>

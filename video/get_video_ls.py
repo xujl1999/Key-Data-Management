@@ -80,8 +80,9 @@ def apply_bili_cookies_if_any(driver: webdriver.Chrome) -> None:
                     "path": "/",
                 }
             )
-        driver.refresh()
-        time.sleep(random_between([1.2, 2.2]))
+        # 不需要刷新，因后续会直接访问目标页
+        # driver.refresh()
+        # time.sleep(random_between([1.2, 2.2]))
     except Exception:
         # cookie 注入失败时不阻断主流程
         pass
@@ -92,14 +93,19 @@ def build_driver(browser_options: List[str], headless: bool) -> webdriver.Chrome
     for opt in browser_options:
         options.add_argument(opt)
     if headless:
-        # 使用新版 headless 以减少兼容性问题
+        # Use new headless mode
         options.add_argument("--headless=new")
-    # ---- 关键：绕过系统代理直连 B站（避免海外出口触发风控） ----
+    
+    # Bypass system proxy
     options.add_argument("--no-proxy-server")
+    
     driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(45)
-    driver.get("https://www.bilibili.com")
-    time.sleep(random_between([1.5, 3.5]))
+    # 访问轻量级页面以注入 cookie，避免加载首页
+    try:
+        driver.get("https://www.bilibili.com/robots.txt")
+    except:
+        pass
     apply_bili_cookies_if_any(driver)
     return driver
 
@@ -463,6 +469,37 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+import concurrent.futures
+
+# ... existing imports ...
+
+def safe_collect_for_author(author_config: Dict, config: Dict, max_videos: int) -> List[Dict]:
+    """Worker function for parallel execution. Creates its own driver."""
+    author_id = author_config.get("author_id", "unknown")
+    try:
+        driver = build_driver(
+            config.get("chrome_options", config.get("edge_options", [])),
+            headless=config.get("headless", True),
+        )
+        # Apply cookie if single thread or handle in build_driver (build_driver handles it globally via env)
+        # Note: apply_bili_cookies_if_any uses os.environ, which is shared.
+        # It's fine for multiple drivers to use same cookie.
+        apply_bili_cookies_if_any(driver)
+        
+        results = collect_for_author(
+            driver,
+            author_config,
+            sleep_after_load=config["sleep_after_load_seconds"],
+            scroll_min=config["scroll_steps"]["min"],
+            scroll_max=config["scroll_steps"]["max"],
+            max_videos=max_videos,
+        )
+        driver.quit()
+        return results
+    except Exception as e:
+        print(f"  ❌ Error collecting for {author_id}: {e}")
+        return []
+
 def main() -> None:
     args = parse_args()
     config = load_config()
@@ -478,29 +515,41 @@ def main() -> None:
             one = {"author_id": str(args.smoke_author_id), "category": "smoke"}
         authors = [one]
 
-    driver = build_driver(
-        config.get("chrome_options", config.get("edge_options", [])),
-        headless=config.get("headless", False),
-    )
-
+    max_videos = args.smoke_limit if args.smoke_author_id else config["max_videos_per_author"]
+    
+    # max_workers logic: don't spawn too many browsers
+    # 3 workers usually optimal for visible windows to avoid overwhelmed desktop
+    max_workers = 3
+    if len(authors) < max_workers:
+        max_workers = len(authors)
+    
+    print(f"Starting parallel scrape with {max_workers} workers for {len(authors)} authors...")
+    
     rows: List[Dict] = []
-    try:
-        for author in tqdm(authors):
-            rows.extend(
-                collect_for_author(
-                    driver,
-                    author,
-                    sleep_after_load=config["sleep_after_load_seconds"],
-                    scroll_min=config["scroll_steps"]["min"],
-                    scroll_max=config["scroll_steps"]["max"],
-                    max_videos=args.smoke_limit if args.smoke_author_id else config["max_videos_per_author"],
-                )
-            )
-    finally:
-        driver.quit()
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_author = {
+            executor.submit(safe_collect_for_author, author, config, max_videos): author 
+            for author in authors
+        }
+        
+        # Use simple progress indication
+        completed = 0
+        total = len(authors)
+        
+        for future in concurrent.futures.as_completed(future_to_author):
+            author = future_to_author[future]
+            try:
+                data = future.result()
+                rows.extend(data)
+                completed += 1
+                print(f"[{completed}/{total}] ✓ {author.get('author_id')} ({len(data)} videos)")
+            except Exception as exc:
+                print(f"[{completed}/{total}] ❌ {author.get('author_id')} generated an exception: {exc}")
+                completed += 1
 
     write_outputs(rows, config["outputs"])
-    print(f"rows={len(rows)}")
+    print(f"Done. Total rows={len(rows)}")
 
 
 if __name__ == "__main__":

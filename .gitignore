@@ -9,3 +9,6 @@ food_service/check_env.py
 food_service/scan_ports.py
 food_service/verify_food.py
 food_service/test_*.py
+
+weread/cookies.txt
+server.log

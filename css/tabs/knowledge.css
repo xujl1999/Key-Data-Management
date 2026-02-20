@@ -1,0 +1,592 @@
+.weread-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(30, 41, 59, 0.5);
+  /* Glass-like dark background */
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Removed column styles for mobile friendly vertical layout */
+
+.weread-main {
+  flex: 2;
+  display: flex;
+  gap: 16px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.weread-main:hover {
+  transform: translateY(-2px);
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.weread-cover-large {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.weread-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weread-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.weread-author {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.weread-stat-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.weread-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.weread-stat-label {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.weread-stat-val {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.weread-progress-bar {
+  height: 6px;
+  background: #334155;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.weread-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  border-radius: 3px;
+}
+
+.weread-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weread-item-small {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.weread-item-small:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.weread-cover-small {
+  width: 40px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.weread-info-small {
+  flex: 1;
+  overflow: hidden;
+}
+
+.weread-title-small {
+  font-size: 13px;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.weread-meta-small {
+  font-size: 11px;
+  color: #64748b;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Vertical List Layout */
+.weread-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.weread-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  /* Key for expansion */
+  gap: 16px;
+  align-items: flex-start;
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.weread-list-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Internal Row for main info */
+.weread-list-item>div:not(.weread-expansion) {
+  /* Implicitly targets the content row */
+}
+
+/* Ensure flex for the main content part if we didn't wrap it differently */
+/* In app.js we render img and info under list-item.
+   We should wrap them to keep row layout for the top part.
+   But earlier we didn't wrap.
+   Let's check createWereadListItem in app.js.
+   It appends img and div.weread-list-info directly to item.
+   So item needs to be flex row, but wrapping expansion?
+
+   Better fix: Make .weread-list-item display: block or flex-column,
+   and wrap the top part (img + info) in a row div.
+
+   Wait, modifying app.js structure might be safer.
+   Or... use flex-wrap?
+
+   Let's check logic:
+   item.innerHTML = img + info (+ expansion later)
+
+   If we want img + info side by side, and expansion below:
+   .weread-list-item { display: flex; flex-wrap: wrap; }
+   img, info { }
+   .weread-expansion { width: 100%; }
+*/
+
+.weread-active {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: inset 3px 0 0 #3b82f6;
+}
+
+.active-indicator {
+  display: none;
+  color: #3b82f6;
+  margin-left: auto;
+}
+
+.weread-active .active-indicator {
+  display: block;
+}
+
+.weread-list-cover {
+  width: 70px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.weread-list-info {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weread-list-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin-bottom: 4px;
+}
+
+.weread-list-author {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+/* Expansion Area */
+.weread-expansion {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 12px;
+  padding-top: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Removed .weread-read-btn as it is replaced by .weread-btn-primary */
+
+/* Show More Button */
+.weread-show-more-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.weread-show-more-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Action Buttons */
+.weread-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.weread-btn-primary,
+.weread-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.weread-btn-primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.weread-btn-primary:hover {
+  background: #2563eb;
+}
+
+.weread-btn-secondary {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.weread-btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.weread-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.weread-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.weread-grid-item:hover {
+  transform: translateY(-2px);
+}
+
+.weread-grid-cover {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.weread-grid-title {
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Details Panel Styles */
+.weread-detail-header {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+}
+
+.weread-detail-cover {
+  width: 90px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.weread-detail-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weread-detail-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.weread-detail-author {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.review-item,
+.highlight-item {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.review-tag {
+  display: inline-block;
+  font-size: 10px;
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.review-content,
+.highlight-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+
+.section-title {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.weread-action-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+
+.weread-main:hover .weread-action-btn,
+.weread-grid-item:hover .weread-action-btn {
+  opacity: 1;
+}
+
+.weread-action-btn:hover {
+  background: #3b82f6;
+}
+
+.weread-highlights-container {
+  grid-column: 1 / -1;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 10px;
+  border-left: 3px solid #3b82f6;
+}
+
+.ai-summary-box {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px dashed rgba(168, 85, 247, 0.4);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+  color: #e9d5ff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.highlight-item {
+  font-size: 13px;
+  color: #cbd5e1;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1.6;
+  position: relative;
+  padding-left: 14px;
+}
+
+.highlight-item::before {
+  content: "“";
+  position: absolute;
+  left: 0;
+  color: #475569;
+  font-size: 18px;
+  top: 0px;
+}
+
+.highlight-meta {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Removed .weread-highlight-hint as it is replaced by action buttons */
+
+/* Removed .weread-all-list-container *//* WeRead Tabs */
+.weread-tabs-header {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 6px;
+}
+
+.weread-tab {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+    cursor: pointer;
+    padding-bottom: 6px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.weread-tab:hover {
+    color: #e2e8f0;
+}
+
+.weread-tab.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+.weread-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    /* 1px border + 6px padding */
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3b82f6;
+    /* Blue highlight */
+    border-radius: 2px;
+}
+
+.weread-tab-content {
+    min-height: 50px;
+    animation: fadeIn 0.3s ease;
+}
+
+.empty-state {
+    color: #64748b;
+    font-size: 12px;
+    font-style: italic;
+    padding: 10px 0;
+}
+
+.more-hint {
+    text-align: center;
+    color: #64748b;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

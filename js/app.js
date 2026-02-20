@@ -722,8 +722,378 @@ if (limitInput) {
 }
 
 tabButtons.forEach((button) => {
-  button.addEventListener("click", () => switchTab(button.dataset.tab));
+  button.addEventListener("click", () => {
+    switchTab(button.dataset.tab);
+    if (button.dataset.tab === "knowledge") {
+      fetchWereadData();
+    }
+  });
 });
+
+const fetchWereadData = async () => {
+  const container = document.getElementById("weread-content");
+  const updateTimeEl = document.getElementById("weread-update-time");
+
+  if (!container) return;
+
+  // Check if already loaded to avoid blink
+  if (container.dataset.loaded === "true") return;
+
+  try {
+    const res = await fetch("/api/weread");
+    if (!res.ok) throw new Error("API Error");
+    const data = await res.json();
+
+    if (data.error) {
+      container.innerHTML = `<div style="text-align: center; padding: 20px; color: #ef4444;">${data.error}</div>`;
+      return;
+    }
+
+    if (updateTimeEl && data.updatedAt) {
+      updateTimeEl.textContent = `更新于: ${data.updatedAt}`;
+    }
+
+    const books = data.books || [];
+    const allBooks = data.all_books || [];
+
+    if (books.length === 0) {
+      container.innerHTML = `<div style="text-align: center; padding: 20px; color: #94a3b8;">暂无阅读数据</div>`;
+      return;
+    }
+
+    container.innerHTML = ""; // Clear
+    container.dataset.loaded = "true";
+
+    // --- Single Column Layout (Reverted) ---
+    container.classList.remove("weread-layout-container");
+
+    // Just a simple list container
+    const listContainer = document.createElement("div");
+    listContainer.className = "weread-list-container";
+    container.appendChild(listContainer);
+
+    // Merge logic
+    const allList = [...books];
+    if (allBooks && allBooks.length > 0) {
+      const set = new Set(allList.map(b => b.bookId));
+      allBooks.forEach(b => {
+        if (!set.has(b.bookId)) allList.push(b);
+      });
+    }
+
+    const INITIAL_LIMIT = 3;
+
+    // Render List Function
+    const renderListBatch = (items, startIndex) => {
+      items.forEach((book, index) => {
+        const item = createWereadListItem(book);
+        listContainer.appendChild(item);
+      });
+    };
+
+    renderListBatch(allList.slice(0, INITIAL_LIMIT), 0);
+
+    // Show More Button
+    if (allList.length > INITIAL_LIMIT) {
+      const showMoreBtn = document.createElement("button");
+      showMoreBtn.className = "weread-show-more-btn";
+      showMoreBtn.innerHTML = `展开更多书籍 (${allList.length - INITIAL_LIMIT}) <i class="ri-arrow-down-s-line"></i>`;
+
+      showMoreBtn.onclick = () => {
+        renderListBatch(allList.slice(INITIAL_LIMIT), INITIAL_LIMIT);
+        showMoreBtn.remove();
+      };
+      container.appendChild(showMoreBtn);
+    }
+
+  } catch (e) {
+    console.error("Weread fetch error", e);
+    container.innerHTML = `<div style="text-align: center; padding: 20px; color: #ef4444;">数据加载失败</div>`;
+  }
+};
+
+// --- Helpers ---
+
+// Factory function for consistent list items
+function createWereadListItem(book) {
+  const item = document.createElement("div");
+  item.className = "weread-list-item";
+  item.dataset.bookId = book.bookId;
+  item.dataset.encryptedId = book.encryptedBookId || "";
+
+  // Helper to open book properly
+  const handleOpenBook = (e) => {
+    e.stopPropagation();
+    openWereadBook(book.bookId, book.encryptedBookId, e.currentTarget);
+  };
+
+  const handleToggle = (e) => {
+    e.stopPropagation();
+    toggleWereadItem(book.bookId, item, book.encryptedBookId);
+  };
+
+  // Clicking the item body also toggles highlights
+  item.onclick = handleToggle;
+
+  item.innerHTML = `
+        <img src="${book.cover}" class="weread-list-cover" alt="${book.title}" />
+        <div class="weread-list-info">
+            <div class="weread-list-title">${book.title}</div>
+            <div class="weread-list-author">${book.author}</div>
+            
+            <div class="weread-stat-row">
+                 ${book.readingTime ? `
+                <div class="weread-stat">
+                    <span class="weread-stat-label">阅读时长</span>
+                    <span class="weread-stat-val">${book.readingTime}</span>
+                </div>` : ''}
+                <div class="weread-stat">
+                    <span class="weread-stat-label">进度</span>
+                    <span class="weread-stat-val">${book.progress}%</span>
+                </div>
+            </div>
+            
+            <div class="weread-progress-bar" style="margin-top:8px; margin-bottom: 12px;">
+                <div class="weread-progress-fill" style="width: ${book.progress}%"></div>
+            </div>
+
+            <!-- Action Buttons Row -->
+             <div class="weread-actions-row">
+                <button class="weread-btn-primary" onclick="event.stopPropagation(); openWereadBook('${book.bookId}', '${book.encryptedBookId || ''}', this)">
+                    <i class="ri-book-read-line"></i> 继续阅读
+                </button>
+                <button class="weread-btn-secondary" onclick="event.stopPropagation(); toggleWereadItem('${book.bookId}', this.closest('.weread-list-item'), '${book.encryptedBookId || ''}')">
+                    <i class="ri-ball-pen-line"></i> 划线 / 想法
+                    <i class="ri-arrow-down-s-line arrow-icon" style="margin-left: 4px; transition: transform 0.2s;"></i>
+                </button>
+            </div>
+        </div>
+    `;
+  return item;
+}
+
+// Helper to determine active tab class
+const getTabClass = (current, target) => {
+  return current === target ? "weread-tab active" : "weread-tab";
+};
+
+// Render function for tabs
+window.renderWereadTab = (expansion, tabName) => {
+  const data = expansion._wereadData;
+  if (!data) return;
+
+  const highlights = data.highlights || [];
+  const reviews = data.reviews || [];
+
+  // Header HTML with Tabs
+  let html = `
+        <div class="ai-summary-box">
+            <i class="ri-sparkling-fill ai-icon"></i>
+            <div>
+                <div style="font-weight: 600; margin-bottom: 2px;">AI 总结</div>
+                <div>这里是 AI 自动生成的书籍阅读总结（占位符）...</div>
+            </div>
+        </div>
+        
+        <div class="weread-tabs-header">
+             <div class="${getTabClass(tabName, 'highlights')}" onclick="event.stopPropagation(); renderWereadTab(this.closest('.weread-expansion'), 'highlights')">
+                划线 (${highlights.length})
+             </div>
+             <div class="${getTabClass(tabName, 'reviews')}" onclick="event.stopPropagation(); renderWereadTab(this.closest('.weread-expansion'), 'reviews')">
+                想法 (${reviews.length})
+             </div>
+        </div>
+        <div class="weread-tab-content">
+    `;
+
+  if (tabName === 'highlights') {
+    if (highlights.length === 0) {
+      html += `<div class="empty-state">暂无划线</div>`;
+    } else {
+      highlights.slice(0, 10).forEach(h => {
+        const dateCodes = new Date(h.createTime * 1000);
+        const dateStr = `${dateCodes.getMonth() + 1}-${dateCodes.getDate()}`;
+        html += `
+                    <div class="highlight-item">
+                        <div class="highlight-text">${h.text}</div>
+                        <div class="highlight-meta">${dateStr}</div>
+                    </div>`;
+      });
+      if (highlights.length > 10) {
+        html += `<div class="more-hint">显示更多...</div>`;
+      }
+    }
+  } else {
+    // Reviews Tab
+    if (reviews.length === 0) {
+      html += `<div class="empty-state">暂无想法</div>`;
+    } else {
+      reviews.forEach(r => {
+        const dateCodes = new Date(r.createTime * 1000);
+        const dateStr = `${dateCodes.getMonth() + 1}-${dateCodes.getDate()}`;
+        html += `
+                    <div class="review-item">
+                        <div class="review-tag">想法</div>
+                        <div class="review-content">${r.content}</div>
+                        <div class="highlight-meta">${dateStr}</div>
+                    </div>`;
+      });
+    }
+  }
+
+  html += `</div>`; // Close content
+  expansion.innerHTML = html;
+};
+
+
+window.toggleWereadItem = async (bookId, container, encryptedId) => {
+  // Check if expansion exists
+  let expansion = container.querySelector(".weread-expansion");
+  const arrow = container.querySelector(".arrow-icon");
+
+  if (expansion) {
+    // Toggle
+    if (expansion.style.display === "none") {
+      expansion.style.display = "block";
+      if (arrow) arrow.style.transform = "rotate(180deg)";
+    } else {
+      expansion.style.display = "none";
+      if (arrow) arrow.style.transform = "rotate(0deg)";
+    }
+    return;
+  }
+
+  // Create expansion
+  expansion = document.createElement("div");
+  expansion.className = "weread-expansion";
+  // Prevent click on expansion from triggering container toggle (bubbling)
+  expansion.onclick = (e) => e.stopPropagation();
+
+  // Loading state
+  expansion.innerHTML = `<div style="color: #94a3b8; font-size: 13px; text-align: center; padding: 10px;">加载划线中...</div>`;
+  container.appendChild(expansion);
+
+  // Rotate arrow
+  if (arrow) {
+    arrow.style.transform = "rotate(180deg)";
+  }
+
+  try {
+    const highlightsResp = await fetch(`/api/weread/highlights?bookId=${bookId}`);
+    const data = await highlightsResp.json();
+
+    // Check for backend error response
+    if (data.error) {
+      expansion.innerHTML = `<div style="color: #ef4444; padding: 15px; text-align: center;">
+            <i class="ri-error-warning-line" style="font-size: 20px; vertical-align: middle;"></i> 
+            <span style="font-weight:600; vertical-align: middle;">获取失败: ${data.error}</span>
+            <div style="font-size: 12px; margin-top: 8px; color: #94a3b8;">
+                Cookies 可能已过期，请更新 <code>weread/cookies.txt</code>
+            </div>
+         </div>`;
+      return;
+    }
+
+    // Store data on the element for tab switching
+    expansion._wereadData = data;
+
+    // Render default tab (highlights)
+    renderWereadTab(expansion, 'highlights');
+
+  } catch (e) {
+    console.error("Highlights fetch error", e);
+    expansion.innerHTML = `<div style="color: #ef4444; padding: 10px;">网络请求失败</div>`;
+  }
+};
+
+// Sync WeRead data from API to local cache
+window.syncWereadData = async () => {
+  const btn = document.getElementById("weread-sync-btn");
+  if (!btn) return;
+
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="ri-loader-4-line"></i> 同步中...';
+  btn.disabled = true;
+  btn.style.opacity = "0.6";
+
+  try {
+    const resp = await fetch("/api/weread/sync");
+    const data = await resp.json();
+
+    if (data.success) {
+      btn.innerHTML = '<i class="ri-check-line"></i> 完成';
+      btn.style.borderColor = "#22c55e";
+      btn.style.color = "#22c55e";
+
+      // Clear existing expansion caches so next click loads fresh data
+      document.querySelectorAll(".weread-expansion").forEach(el => el.remove());
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.style.borderColor = "#3b82f6";
+        btn.style.color = "#3b82f6";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      }, 2000);
+    } else {
+      btn.innerHTML = '<i class="ri-error-warning-line"></i> 失败';
+      btn.style.borderColor = "#ef4444";
+      btn.style.color = "#ef4444";
+      console.error("Sync failed:", data.error);
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.style.borderColor = "#3b82f6";
+        btn.style.color = "#3b82f6";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      }, 3000);
+    }
+  } catch (e) {
+    console.error("Sync error:", e);
+    btn.innerHTML = '<i class="ri-error-warning-line"></i> 网络错误';
+    btn.style.borderColor = "#ef4444";
+    btn.style.color = "#ef4444";
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.style.borderColor = "#3b82f6";
+      btn.style.color = "#3b82f6";
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    }, 3000);
+  }
+};
+
+window.openWereadBook = async (bookId, encryptedId, element) => {
+  if (encryptedId && encryptedId !== "undefined") {
+    window.open(`https://weread.qq.com/web/reader/${encryptedId}`, "_blank");
+    return;
+  }
+  // Fetch link on demand
+  try {
+    if (element) element.style.opacity = "0.7";
+    const resp = await fetch(`/api/weread/link?bookId=${bookId}`);
+    const data = await resp.json();
+    if (element) element.style.opacity = "1";
+    if (data.url) {
+      window.open(data.url, "_blank");
+    } else {
+      alert("无法获取书籍链接");
+    }
+  } catch (e) {
+    console.error("Link fetch error", e);
+    if (element) element.style.opacity = "1";
+  }
+};
+
+// Toggle List - Compatibility
+window.toggleWereadList = () => { };
+window.toggleWereadGrid = window.toggleWereadList;
+window.toggleWereadHighlights = window.toggleWereadItem;
+
+// Removed old toggleWereadHighlights as we now use uniform item expansion
+window.toggleWereadHighlights = window.toggleWereadItem;
+
 
 const formatUpdateTime = (date) => {
   const year = date.getFullYear();

@@ -1,6 +1,6 @@
 """
 WeRead 数据同步脚本
-将 WeRead API 的划线和想法数据同步到本地 JSON 缓存。
+将 WeRead API 的书架、划线和想法数据同步到本地 JSON 缓存。
 前端页面从缓存读取，无需每次请求 API。
 
 用法:
@@ -19,6 +19,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from weread_api import WereadAPI
 
+CACHE_DIR = Path(__file__).parent / "cache"
+
 
 def load_cookies():
     cookie_path = Path(__file__).parent / "cookies.txt"
@@ -31,51 +33,148 @@ def load_cookies():
         return "".join(lines)
 
 
-def sync_book(api, book):
-    """Fetch highlights and reviews for a single book."""
-    book_id = book.get("bookId")
-    book_info = book.get("book", {})
-    title = book_info.get("title", "Unknown")
+def sync_book_shelf(api, notebooks):
+    """Sync book shelf data (title, author, cover, progress, encodeId)."""
+    print("同步书架信息...")
 
-    try:
-        highlights_resp = api.get_highlights(book_id)
-        reviews_resp = api.get_reviews(book_id)
+    def fetch_book_info(item):
+        book_id = item.get("bookId")
+        book_info = item.get("book", {})
+        title = book_info.get("title", "Unknown")
+        author = book_info.get("author", "Unknown")
+        cover = book_info.get("cover", "")
 
-        # Check for API errors
-        if highlights_resp and "errCode" in highlights_resp:
-            err_msg = highlights_resp.get("errMsg", "Unknown")
-            print(f"  ✗ {title}: API Error - {err_msg}")
-            return book_id, None
+        progress_val = 0
+        reading_time_str = ""
+        encrypted_id = book_id
 
-        highlights = []
-        if highlights_resp and "updated" in highlights_resp:
-            for item in highlights_resp["updated"]:
-                highlights.append({
-                    "text": item.get("markText", ""),
-                    "chapter": item.get("chapterUid", 0),
-                    "createTime": item.get("createTime", 0),
-                })
+        try:
+            progress_info = api.get_progress(book_id)
+            detail_info = api.get_book_detail(book_id)
 
-        reviews = []
-        if reviews_resp and "reviews" in reviews_resp:
-            for item in reviews_resp["reviews"]:
-                review = item.get("review", {})
-                reviews.append({
-                    "content": review.get("content", ""),
-                    "createTime": review.get("createTime", 0),
-                })
+            if detail_info and "encodeId" in detail_info:
+                encrypted_id = detail_info["encodeId"]
 
-        print(f"  ✓ {title}: {len(highlights)} 划线, {len(reviews)} 想法")
-        return book_id, {
+            if progress_info and "book" in progress_info:
+                data = progress_info["book"]
+                reading_time = data.get("readingTime", 0)
+                progress_val = data.get("progress", 0)
+                hours = reading_time // 3600
+                mins = (reading_time % 3600) // 60
+                reading_time_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+        except Exception as e:
+            print(f"  ⚠ {title}: {e}")
+
+        print(f"  ✓ {title}")
+        return {
             "title": title,
-            "highlights": highlights,
-            "reviews": reviews,
-            "syncedAt": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "author": author,
+            "cover": cover,
+            "progress": progress_val,
+            "readingTime": reading_time_str,
+            "bookId": book_id,
+            "encryptedBookId": encrypted_id,
+            "updated": item.get("updated", 0),
         }
 
-    except Exception as e:
-        print(f"  ✗ {title}: {e}")
-        return book_id, None
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        books = list(executor.map(fetch_book_info, notebooks))
+
+    books_data = {
+        "books": books,
+        "all_books": [],
+        "updatedAt": time.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    books_path = CACHE_DIR / "books.json"
+    with open(books_path, "w", encoding="utf-8") as f:
+        json.dump(books_data, f, ensure_ascii=False, indent=2)
+
+    print(f"  书架信息已缓存 ({len(books)} 本)\n")
+    return books_data
+
+
+def sync_highlights(api, notebooks):
+    """Sync highlights and reviews for all books."""
+    print("同步划线和想法...")
+
+    def sync_book(book):
+        book_id = book.get("bookId")
+        book_info = book.get("book", {})
+        title = book_info.get("title", "Unknown")
+
+        try:
+            highlights_resp = api.get_highlights(book_id)
+            reviews_resp = api.get_reviews(book_id)
+
+            if highlights_resp and "errCode" in highlights_resp:
+                err_msg = highlights_resp.get("errMsg", "Unknown")
+                print(f"  ✗ {title}: API Error - {err_msg}")
+                return book_id, None
+
+            highlights = []
+            if highlights_resp and "updated" in highlights_resp:
+                for item in highlights_resp["updated"]:
+                    highlights.append({
+                        "text": item.get("markText", ""),
+                        "chapter": item.get("chapterUid", 0),
+                        "createTime": item.get("createTime", 0),
+                    })
+
+            reviews = []
+            if reviews_resp and "reviews" in reviews_resp:
+                for item in reviews_resp["reviews"]:
+                    review = item.get("review", {})
+                    reviews.append({
+                        "content": review.get("content", ""),
+                        "createTime": review.get("createTime", 0),
+                    })
+
+            print(f"  ✓ {title}: {len(highlights)} 划线, {len(reviews)} 想法")
+            return book_id, {
+                "title": title,
+                "highlights": highlights,
+                "reviews": reviews,
+                "syncedAt": time.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        except Exception as e:
+            print(f"  ✗ {title}: {e}")
+            return book_id, None
+
+    # Load existing cache
+    cache_path = CACHE_DIR / "highlights.json"
+    existing_cache = {}
+    if cache_path.exists():
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                existing_cache = json.load(f)
+        except Exception:
+            existing_cache = {}
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [executor.submit(sync_book, book) for book in notebooks]
+        results = {}
+        for future in futures:
+            book_id, data = future.result()
+            if data is not None:
+                results[str(book_id)] = data
+
+    # Merge
+    for book_id, data in results.items():
+        existing_cache[book_id] = data
+
+    existing_cache["_meta"] = {
+        "lastSyncAt": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "totalBooks": len(existing_cache) - 1,
+    }
+
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(existing_cache, f, ensure_ascii=False, indent=2)
+
+    success_count = len(results)
+    fail_count = len(notebooks) - success_count
+    print(f"  划线同步完成: 成功 {success_count}, 失败 {fail_count}\n")
+    return success_count, fail_count
 
 
 def main():
@@ -92,51 +191,19 @@ def main():
         print("未找到任何笔记本，Cookie 可能已过期。")
         return False
 
-    print(f"找到 {len(notebooks)} 本书，开始同步划线和想法...\n")
+    print(f"找到 {len(notebooks)} 本书\n")
 
-    # Load existing cache (merge, don't overwrite on partial failure)
-    cache_dir = Path(__file__).parent / "cache"
-    cache_dir.mkdir(exist_ok=True)
-    cache_path = cache_dir / "highlights.json"
+    CACHE_DIR.mkdir(exist_ok=True)
 
-    existing_cache = {}
-    if cache_path.exists():
-        try:
-            with open(cache_path, "r", encoding="utf-8") as f:
-                existing_cache = json.load(f)
-        except Exception:
-            existing_cache = {}
+    # Sync both shelf and highlights
+    sync_book_shelf(api, notebooks)
+    success, fail = sync_highlights(api, notebooks)
 
-    # Sync each book (parallel for speed)
-    results = {}
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        futures = [executor.submit(sync_book, api, book) for book in notebooks]
-        for future in futures:
-            book_id, data = future.result()
-            if data is not None:
-                results[str(book_id)] = data
-
-    # Merge: update existing cache with new data, keep old entries
-    for book_id, data in results.items():
-        existing_cache[book_id] = data
-
-    # Add metadata
-    existing_cache["_meta"] = {
-        "lastSyncAt": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "totalBooks": len(existing_cache) - 1,  # exclude _meta
-    }
-
-    # Write cache
-    with open(cache_path, "w", encoding="utf-8") as f:
-        json.dump(existing_cache, f, ensure_ascii=False, indent=2)
-
-    success_count = len(results)
-    fail_count = len(notebooks) - success_count
-    print(f"\n同步完成！成功 {success_count} 本，失败 {fail_count} 本。")
-    print(f"缓存已保存到: {cache_path}")
+    print(f"全部同步完成！缓存目录: {CACHE_DIR}")
     return True
 
 
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
+

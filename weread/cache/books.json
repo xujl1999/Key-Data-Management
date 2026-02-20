@@ -1,0 +1,236 @@
+{
+  "books": [
+    {
+      "title": "洞见：从科学到哲学，打开人类的认知真相",
+      "author": "罗伯特·赖特",
+      "cover": "https://cdn.weread.qq.com/weread/cover/11/YueWen_33641196/t6_YueWen_33641196.jpg",
+      "progress": 12,
+      "readingTime": "1h 40m",
+      "bookId": "33641196",
+      "encryptedBookId": "b5d328f0720152ecb5d53f2",
+      "updated": 0
+    },
+    {
+      "title": "聪明的投资者（第4版，注疏点评版）",
+      "author": "[美]本杰明·格雷厄姆 [美]贾森·兹威格　著",
+      "cover": "https://cdn.weread.qq.com/weread/cover/16/3300014116/t6_3300014116.jpg",
+      "progress": 11,
+      "readingTime": "2h 0m",
+      "bookId": "3300014116",
+      "encryptedBookId": "08d329d0813ab6c03g016242",
+      "updated": 0
+    },
+    {
+      "title": "置身事内：中国政府与经济发展",
+      "author": "兰小欢",
+      "cover": "https://cdn.weread.qq.com/weread/cover/52/YueWen_40055543/t6_YueWen_40055543.jpg",
+      "progress": 34,
+      "readingTime": "15h 8m",
+      "bookId": "40055543",
+      "encryptedBookId": "2a332d10726332f72a34943",
+      "updated": 0
+    },
+    {
+      "title": "道德经：帛书版全本全译全析（果麦经典）",
+      "author": "[春秋]老子著 秦复观注解",
+      "cover": "https://cdn.weread.qq.com/weread/cover/75/cpplatform_22hrbz2nhurg8ggsqwnmqm/t6_cpplatform_22hrbz2nhurg8ggsqwnmqm1719476699.jpg",
+      "progress": 75,
+      "readingTime": "8h 46m",
+      "bookId": "3300103316",
+      "encryptedBookId": "63632e70813ab8edbg016f79",
+      "updated": 0
+    },
+    {
+      "title": "万历十五年（经典版）",
+      "author": "[美]黄仁宇",
+      "cover": "https://cdn.weread.qq.com/weread/cover/44/cpPlatform_wFh3Z1Xnp72HsAox1y9nUb/t6_cpPlatform_wFh3Z1Xnp72HsAox1y9nUb.jpg",
+      "progress": 10,
+      "readingTime": "32m",
+      "bookId": "3300036999",
+      "encryptedBookId": "af732390813ab74f3g019ddd",
+      "updated": 0
+    },
+    {
+      "title": "翦商：殷周之变与华夏新生",
+      "author": "李硕",
+      "cover": "https://cdn.weread.qq.com/weread/cover/31/cpplatform_qgm8mx4we5qpr3jsaspa9n/t6_cpplatform_qgm8mx4we5qpr3jsaspa9n1679558201.jpg",
+      "progress": 25,
+      "readingTime": "5h 53m",
+      "bookId": "3300053438",
+      "encryptedBookId": "7b032ae0813ab7b5fg0180c0",
+      "updated": 0
+    },
+    {
+      "title": "禅与摩托车维修艺术",
+      "author": "罗伯特·M.波西格",
+      "cover": "https://cdn.weread.qq.com/weread/cover/1/yuewen_33810356/t6_yuewen_338103561689835422.jpg",
+      "progress": 4,
+      "readingTime": "3h 50m",
+      "bookId": "33810356",
+      "encryptedBookId": "3a332f307203e7b43a34b29",
+      "updated": 0
+    },
+    {
+      "title": "道德经",
+      "author": "[春秋]老子 李若水译评",
+      "cover": "https://cdn.weread.qq.com/weread/cover/50/YueWen_832038/t6_YueWen_832038.jpg",
+      "progress": 19,
+      "readingTime": "2h 58m",
+      "bookId": "832038",
+      "encryptedBookId": "d81323305cb226d8152b3d7",
+      "updated": 0
+    },
+    {
+      "title": "易经真的很容易",
+      "author": "曾仕强 刘君政",
+      "cover": "https://cdn.weread.qq.com/weread/cover/60/cpplatform_biohgv8mekoxbq33a8fjnb/t6_cpplatform_biohgv8mekoxbq33a8fjnb1694158805.jpg",
+      "progress": 59,
+      "readingTime": "3h 24m",
+      "bookId": "3300070780",
+      "encryptedBookId": "43a323c0813ab8226g010df9",
+      "updated": 0
+    },
+    {
+      "title": "麦肯锡结构化战略思维：如何想清楚、说明白、做到位",
+      "author": "周国元",
+      "cover": "https://cdn.weread.qq.com/weread/cover/79/YueWen_34916572/t6_YueWen_34916572.jpg",
+      "progress": 12,
+      "readingTime": "1h 10m",
+      "bookId": "34916572",
+      "encryptedBookId": "c8a324607214c8dcc8ab841",
+      "updated": 0
+    },
+    {
+      "title": "剑来",
+      "author": "烽火戏诸侯",
+      "cover": "https://cdn.weread.qq.com/weread/cover/16/YueWen_22261199/t6_YueWen_22261199.jpg",
+      "progress": 12,
+      "readingTime": "8h 40m",
+      "bookId": "22261199",
+      "encryptedBookId": "8e5326b07153adcf8e53d42",
+      "updated": 0
+    },
+    {
+      "title": "金线",
+      "author": "冯唐",
+      "cover": "https://cdn.weread.qq.com/weread/cover/91/cpPlatform_aTK3KNGqXU3G48yoxy1mo3/t6_cpPlatform_aTK3KNGqXU3G48yoxy1mo3.jpg",
+      "progress": 100,
+      "readingTime": "2h 14m",
+      "bookId": "3300043863",
+      "encryptedBookId": "82332950813ab77a2g013c89",
+      "updated": 0
+    },
+    {
+      "title": "毛泽东选集（第一卷）",
+      "author": "",
+      "cover": "https://cdn.weread.qq.com/weread/cover/85/3300024285/t6_3300024285.jpg",
+      "progress": 13,
+      "readingTime": "2h 56m",
+      "bookId": "3300024285",
+      "encryptedBookId": "b8432cd0813ab6ffcg0159d3",
+      "updated": 0
+    },
+    {
+      "title": "非暴力沟通（修订版）",
+      "author": "马歇尔·卢森堡",
+      "cover": "https://cdn.weread.qq.com/weread/cover/88/cpplatform_9iwmvppcbjd1kqabdkbe1e/t6_cpplatform_9iwmvppcbjd1kqabdkbe1e1685513342.jpg",
+      "progress": 12,
+      "readingTime": "30m",
+      "bookId": "3300060305",
+      "encryptedBookId": "b7d32470813ab7e0eg015e3f",
+      "updated": 0
+    },
+    {
+      "title": "从零开始的女性主义",
+      "author": "[日]上野千鹤子 [日]田房永子",
+      "cover": "https://cdn.weread.qq.com/weread/cover/10/cpplatform_3300004399/t6_cpplatform_33000043991677502000.jpg",
+      "progress": 99,
+      "readingTime": "2h 30m",
+      "bookId": "3300004399",
+      "encryptedBookId": "38e32600813ab6837g019009",
+      "updated": 0
+    },
+    {
+      "title": "精准表达：开口就能说重点",
+      "author": "牛津",
+      "cover": "https://wfqqreader-1252317822.image.myqcloud.com/cover/850/22661850/t6_22661850.jpg",
+      "progress": 18,
+      "readingTime": "28m",
+      "bookId": "22661850",
+      "encryptedBookId": "45d329e07159cada45dc4b6",
+      "updated": 0
+    },
+    {
+      "title": "金字塔原理大全集",
+      "author": "[美]芭芭拉·明托",
+      "cover": "https://cdn.weread.qq.com/weread/cover/28/3300020528/t6_3300020528.jpg",
+      "progress": 28,
+      "readingTime": "4h 29m",
+      "bookId": "3300020528",
+      "encryptedBookId": "ff4323b0813ab6e84g018832",
+      "updated": 0
+    },
+    {
+      "title": "了凡四训（详解版）",
+      "author": "[明]袁了凡",
+      "cover": "https://cdn.weread.qq.com/weread/cover/44/YueWen_26187491/t6_YueWen_26187491.jpg",
+      "progress": 17,
+      "readingTime": "2h 39m",
+      "bookId": "26187491",
+      "encryptedBookId": "e3532ed0718f96e3e355fdc",
+      "updated": 0
+    },
+    {
+      "title": "太乙金华宗旨",
+      "author": "吕洞宾",
+      "cover": "https://cdn.weread.qq.com/weread/cover/58/yuewen_797575/t6_yuewen_7975751683812061.jpg",
+      "progress": 54,
+      "readingTime": "1h 42m",
+      "bookId": "797575",
+      "encryptedBookId": "96b329905c2b8796bf9e06e",
+      "updated": 0
+    },
+    {
+      "title": "底层逻辑：看清这个世界的底牌",
+      "author": "刘润",
+      "cover": "https://cdn.weread.qq.com/weread/cover/22/3300011622/t6_3300011622.jpg",
+      "progress": 24,
+      "readingTime": "2h 48m",
+      "bookId": "3300011622",
+      "encryptedBookId": "73132fa0813ab6b0ag012a5b",
+      "updated": 0
+    },
+    {
+      "title": "人生有何意义",
+      "author": "胡适",
+      "cover": "https://wfqqreader-1252317822.image.myqcloud.com/cover/412/814412/t6_814412.jpg",
+      "progress": 0,
+      "readingTime": "1m",
+      "bookId": "814412",
+      "encryptedBookId": "dc5324205c6d4cdc529f27f",
+      "updated": 0
+    },
+    {
+      "title": "被讨厌的勇气：“自我启发之父”阿德勒的哲学课",
+      "author": "岸见一郎 古贺史健",
+      "cover": "https://wfqqreader-1252317822.image.myqcloud.com/cover/385/25615385/t6_25615385.jpg",
+      "progress": 100,
+      "readingTime": "4h 14m",
+      "bookId": "25615385",
+      "encryptedBookId": "8b9329607186dc198b9bdab",
+      "updated": 0
+    },
+    {
+      "title": "自卑与超越（完整全译本）",
+      "author": "阿尔弗雷德·阿德勒",
+      "cover": "https://wfqqreader-1252317822.image.myqcloud.com/cover/750/29963750/t6_29963750.jpg",
+      "progress": 14,
+      "readingTime": "4h 59m",
+      "bookId": "29963750",
+      "encryptedBookId": "cb13259071c935e6cb13a8e",
+      "updated": 0
+    }
+  ],
+  "all_books": [],
+  "updatedAt": "2026-02-20 09:05:46"
+}

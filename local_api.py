@@ -43,108 +43,21 @@ class Handler(SimpleHTTPRequestHandler):
     CACHE_DURATION = 1800  # 30 minutes
 
     def handle_weread(self):
-        now = time.time()
-        # Check cache
-        if self.WEREAD_CACHE["data"] and (now - self.WEREAD_CACHE["timestamp"] < self.CACHE_DURATION):
-            # Refresh timestamp? No.
-            self._send_json(self.WEREAD_CACHE["data"])
+        """Read book shelf from local cache (no API call, no cookie needed)."""
+        cache_path = Path(__file__).parent / "weread" / "cache" / "books.json"
+
+        if not cache_path.exists():
+            self._send_error_json(
+                "本地缓存不存在，请先运行同步: python3 weread/sync_weread.py"
+            )
             return
 
-        print("Fetching Weread data from API...")
         try:
-            cookie_str = load_cookies()
-            if not cookie_str:
-                self._send_json({"error": "No cookies found"})
-                return
-
-            api = WereadAPI(cookie_str=cookie_str)
-            notebooks = api.get_notebooks()
-            
-            if not notebooks:
-                self._send_json({"books": []})
-                return
-
-            # Helper function to fetch details for a single book
-            def fetch_book_details(item):
-                book_id = item.get("bookId")
-                book_info = item.get("book", {})
-                
-                # Defaults
-                title = book_info.get("title", "Unknown")
-                author = book_info.get("author", "Unknown")
-                cover = book_info.get("cover", "")
-                
-                # Fetch deeper info
-                progress_val = 0
-                reading_time_str = ""
-                encrypted_id = book_id
-                
-                try:
-                    # Parallel fetch could be better here too, but let's keep it simple per book first
-                    # Or relying on api which requests sequentially? 
-                    # api methods are synchronous.
-                    
-                    progress_info = api.get_progress(book_id)
-                    detail_info = api.get_book_detail(book_id)
-                    
-                    if detail_info and "encodeId" in detail_info:
-                        encrypted_id = detail_info["encodeId"]
-                    
-                    if progress_info and "book" in progress_info:
-                        data = progress_info["book"]
-                        reading_time = data.get("readingTime", 0)
-                        progress_val = data.get("progress", 0)
-                        
-                        # Format time
-                        hours = reading_time // 3600
-                        mins = (reading_time % 3600) // 60
-                        reading_time_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
-                except Exception as e:
-                    print(f"Error fetching details for {book_id}: {e}")
-
-                return {
-                    "title": title,
-                    "author": author,
-                    "cover": cover,
-                    "progress": progress_val,
-                    "readingTime": reading_time_str,
-                    "bookId": book_id,
-                    "encryptedBookId": encrypted_id,
-                    "updated": item.get("updated", 0) # Sort key
-                }
-
-            # Use ThreadPool to fetch all books in parallel
-            from concurrent.futures import ThreadPoolExecutor
-            
-            # Limit max workers to avoid flooding API
-            with ThreadPoolExecutor(max_workers=10) as executor:
-                # notebooks list can be long, but usually < 50 for active ones?
-                # User has ~23 books. 10 threads is fine.
-                results = list(executor.map(fetch_book_details, notebooks))
-            
-            # Sort by updated time desc (if available) or assume notebooks order is relevant
-            # Weread usually returns notebooks sorted by update time desc.
-            # We can trust the list order or sort by 'updated' if we extracted it.
-            # results.sort(key=lambda x: x['updated'], reverse=True) 
-
-            # Top 3 are just the first 3
-            # But frontend now receives a single combined list.
-            # We will return the full rich list as 'books' and empty 'all_books' 
-            # or just put everything in 'books'.
-            
-            response_data = {
-                "books": results, 
-                "all_books": [], # Deprecated/Unused now as 'books' contains everything
-                "updatedAt": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-            
-            self.WEREAD_CACHE["data"] = response_data
-            self.WEREAD_CACHE["timestamp"] = now
-            
-            self._send_json(response_data)
-            
+            with open(cache_path, "r", encoding="utf-8") as f:
+                books_data = json.load(f)
+            self._send_json(books_data)
         except Exception as e:
-            print(f"Error handling weread: {e}")
+            print(f"Error reading books cache: {e}")
             self._send_error_json(str(e))
 
     def handle_weread_link(self, book_id):

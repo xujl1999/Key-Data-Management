@@ -730,6 +730,17 @@ tabButtons.forEach((button) => {
   });
 });
 
+// Detect if running on GitHub Pages (static mode, no backend)
+const isStaticMode = () => {
+  return location.hostname.includes('github.io') || location.hostname.includes('pages.dev');
+};
+
+// Hide sync button in static mode
+if (isStaticMode()) {
+  const syncBtn = document.getElementById('weread-sync-btn');
+  if (syncBtn) syncBtn.style.display = 'none';
+}
+
 const fetchWereadData = async () => {
   const container = document.getElementById("weread-content");
   const updateTimeEl = document.getElementById("weread-update-time");
@@ -740,7 +751,8 @@ const fetchWereadData = async () => {
   if (container.dataset.loaded === "true") return;
 
   try {
-    const res = await fetch("/api/weread");
+    const url = isStaticMode() ? "weread/cache/books.json" : "/api/weread";
+    const res = await fetch(url);
     if (!res.ok) throw new Error("API Error");
     const data = await res.json();
 
@@ -979,8 +991,17 @@ window.toggleWereadItem = async (bookId, container, encryptedId) => {
   }
 
   try {
-    const highlightsResp = await fetch(`/api/weread/highlights?bookId=${bookId}`);
-    const data = await highlightsResp.json();
+    let data;
+    if (isStaticMode()) {
+      // In static mode, fetch the full highlights cache and extract this book
+      const resp = await fetch('weread/cache/highlights.json');
+      const cache = await resp.json();
+      const bookData = cache[String(bookId)];
+      data = bookData ? { highlights: bookData.highlights || [], reviews: bookData.reviews || [] } : { highlights: [], reviews: [] };
+    } else {
+      const highlightsResp = await fetch(`/api/weread/highlights?bookId=${bookId}`);
+      data = await highlightsResp.json();
+    }
 
     // Check for backend error response
     if (data.error) {
